@@ -4,6 +4,7 @@ import auth from 'solid-auth-client';
 
 import './App.css';
 import HeaderNav from './comp/Header';
+import Profile from './comp/Profile';
 
 
 function App() {
@@ -32,7 +33,7 @@ function App() {
     <div className="App">
       <HeaderNav logout={ logout } />
       <Content>
-        { user && <p>Welcome { user }</p> }
+        { user && <Profile userID={ user } /> }
       </Content>
     </div>
   );
@@ -41,5 +42,5 @@ function App() {
 export default App;
 
 const Content = styled.div`
-    margin-top: 60px;
+        margin-top: 60px;
 `
