@@ -3,6 +3,8 @@ import styled from 'styled-components';
 import auth from 'solid-auth-client';
 
 import './App.css';
+import HeaderNav from './comp/Header';
+
 
 function App() {
 
@@ -17,37 +19,27 @@ function App() {
     setUser(session.webId)
   }
 
+  async function logout() {
+    await auth.logout();
+    setUser(null);
+  }
+
   useEffect(() => {
     if (!user) login()
   }, [user])
 
   return (
     <div className="App">
-      <Header>
-        <h3>Munny Pouch</h3>
-        <span className="spacer" />
-        <i className="material-icons click">person</i>
-      </Header>
-      { user && <p>Welcome { user }</p> }
+      <HeaderNav logout={ logout } />
+      <Content>
+        { user && <p>Welcome { user }</p> }
+      </Content>
     </div>
   );
 }
 
 export default App;
 
-const Header = styled.div`
-  position: fixed;
-  top: 0;
-  left: 0;
-  height: 50px;
-  width: 100vw;
-  display: flex;
-  align-items: center;
-  color: #fff;
-  background: navy;
-  box-shadow: gray 1px 1px 5px;
-
-  & * {
-    margin: 0px 10px;
-  }
+const Content = styled.div`
+    margin-top: 60px;
 `
