@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import TextField from '@material-ui/core/TextField';
 import { setField, getField } from '../util/pods';
 
 const SimpleForm = ({ userID, field }) => {
@@ -20,11 +21,15 @@ const SimpleForm = ({ userID, field }) => {
     }())
   }, []);
 
-  let input;
-
   return (
-    <form onSubmit={ e => updateField(e, input.value) }>
-      <input ref={ ref => input = ref } defaultValue={ value } />
+    <form onSubmit={ e => updateField(e, value) }>
+      <TextField
+        id={ field }
+        label={ field }
+        value={ value || "" }
+        onChange={ e => setValue(e.target.value) }
+        margin="normal"
+      />
     </form>
   )
 }

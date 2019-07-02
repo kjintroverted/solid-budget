@@ -4,7 +4,7 @@ import auth from 'solid-auth-client';
 
 import './App.css';
 import HeaderNav from './comp/Header';
-import Profile from './comp/Profile';
+import Settings from './comp/Settings';
 
 function App() {
 
@@ -32,7 +32,7 @@ function App() {
     <div className="App">
       <HeaderNav userID={ user } logout={ logout } />
       <Content>
-        { user && <Profile userID={ user } /> }
+        { user && <Settings userID={ user } /> }
       </Content>
     </div>
   );
@@ -41,5 +41,8 @@ function App() {
 export default App;
 
 const Content = styled.div`
+        display: flex;
+        flex-direction: column;
+        align-items: center;
         margin-top: 60px;
 `

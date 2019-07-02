@@ -35,7 +35,7 @@ let HeaderNav = ({ userID, logout }) => {
         open={ Boolean(anchor) }
         onClose={ close }
       >
-        <MenuItem onClick={ close }>Profile</MenuItem>
+        <MenuItem onClick={ close }>Settings</MenuItem>
         <MenuItem onClick={ () => { logout(); close(); setName("Welcome"); } }>Logout</MenuItem>
       </Menu>
     </Header>

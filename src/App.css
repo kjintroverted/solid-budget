@@ -5,3 +5,7 @@
 .click {
   cursor: pointer;
 }
+
+*:focus {
+  outline: none;
+}
