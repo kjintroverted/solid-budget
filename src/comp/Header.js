@@ -1,21 +1,33 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import styled from 'styled-components';
 import Button from '@material-ui/core/Button';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
+import { getField } from '../util/pods';
 
-let HeaderNav = ({ logout }) => {
+let HeaderNav = ({ userID, logout }) => {
 
   const [anchor, setAnchor] = React.useState();
+  const [name, setName] = React.useState("Welcome");
 
   let close = () => setAnchor(null);
+
+  useEffect(() => {
+    if (userID) {
+      (async function getName() {
+        const rec = await getField(userID, "name");
+        if (rec) setName(rec.value);
+      }())
+    }
+  }, [userID])
 
   return (
     <Header>
       <h3>Munny Pouch</h3>
       <span className="spacer" />
       <Button onClick={ event => setAnchor(event.currentTarget) }>
-        <Icon className="material-icons click">person</Icon>
+        { name }
+        <i className="material-icons click">person</i>
       </Button>
       <Menu
         anchorEl={ anchor }
@@ -24,7 +36,7 @@ let HeaderNav = ({ logout }) => {
         onClose={ close }
       >
         <MenuItem onClick={ close }>Profile</MenuItem>
-        <MenuItem onClick={ () => { logout(); close(); } }>Logout</MenuItem>
+        <MenuItem onClick={ () => { logout(); close(); setName("Welcome"); } }>Logout</MenuItem>
       </Menu>
     </Header>
   )
@@ -46,9 +58,6 @@ const Header = styled.div`
 
   & * {
     margin: 0px 10px;
+    color: #fff;
   }
-`
-
-const Icon = styled.i`
-  color: #fff;
 `

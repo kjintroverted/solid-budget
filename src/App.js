@@ -6,7 +6,6 @@ import './App.css';
 import HeaderNav from './comp/Header';
 import Profile from './comp/Profile';
 
-
 function App() {
 
   let [user, setUser] = useState();
@@ -31,7 +30,7 @@ function App() {
 
   return (
     <div className="App">
-      <HeaderNav logout={ logout } />
+      <HeaderNav userID={ user } logout={ logout } />
       <Content>
         { user && <Profile userID={ user } /> }
       </Content>
