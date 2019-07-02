@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import auth from 'solid-auth-client';
+import { BrowserRouter as Router, Route } from 'react-router-dom';
 
 import './App.css';
 import HeaderNav from './comp/Header';
 import Settings from './comp/Settings';
+import Dashboard from './comp/Dashboard';
 
 function App() {
 
@@ -29,12 +31,15 @@ function App() {
   }, [user])
 
   return (
-    <div className="App">
-      <HeaderNav userID={ user } logout={ logout } />
-      <Content>
-        { user && <Settings userID={ user } /> }
-      </Content>
-    </div>
+    <Router>
+      <div className="App">
+        <HeaderNav userID={ user } logout={ logout } />
+        <Content>
+          <Route path="/" exact render={ () => <Dashboard userID={ user } /> } />
+          <Route path="/settings/" render={ () => <Settings userID={ user } /> } />
+        </Content>
+      </div>
+    </Router>
   );
 }
 

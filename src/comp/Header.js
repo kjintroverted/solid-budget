@@ -3,6 +3,8 @@ import styled from 'styled-components';
 import Button from '@material-ui/core/Button';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
+import { Link } from 'react-router-dom'
+
 import { getField } from '../util/pods';
 
 let HeaderNav = ({ userID, logout }) => {
@@ -23,19 +25,26 @@ let HeaderNav = ({ userID, logout }) => {
 
   return (
     <Header>
-      <h3>Munny Pouch</h3>
+      <Link to="/">
+        <h3>Munny Pouch</h3>
+      </Link>
+
       <span className="spacer" />
+
       <Button onClick={ event => setAnchor(event.currentTarget) }>
         { name }
         <i className="material-icons click">person</i>
       </Button>
+
       <Menu
         anchorEl={ anchor }
         keepMounted
         open={ Boolean(anchor) }
         onClose={ close }
       >
-        <MenuItem onClick={ close }>Settings</MenuItem>
+        <Link to="/settings">
+          <MenuItem onClick={ close }>Settings</MenuItem>
+        </Link>
         <MenuItem onClick={ () => { logout(); close(); setName("Welcome"); } }>Logout</MenuItem>
       </Menu>
     </Header>
