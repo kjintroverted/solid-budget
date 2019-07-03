@@ -5,6 +5,8 @@ import SimpleForm from './SimpleForm';
 
 const Settings = ({ userID }) => {
 
+  if (!userID) return <></>;
+
   return (
     <ProfileView>
       <h2>Settings</h2>

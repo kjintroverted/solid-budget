@@ -33,7 +33,7 @@ function App() {
   return (
     <Router>
       <div className="App">
-        <HeaderNav userID={ user } logout={ logout } />
+        <HeaderNav userID={ user } logout={ logout } login={ login } />
         <Content>
           <Route path="/" exact render={ () => <Dashboard userID={ user } /> } />
           <Route path="/settings/" render={ () => <Settings userID={ user } /> } />

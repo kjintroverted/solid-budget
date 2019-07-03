@@ -7,10 +7,10 @@ import { Link } from 'react-router-dom'
 
 import { getField } from '../util/pods';
 
-let HeaderNav = ({ userID, logout }) => {
+let HeaderNav = ({ userID, logout, login }) => {
 
   const [anchor, setAnchor] = React.useState();
-  const [name, setName] = React.useState("Welcome");
+  const [name, setName] = React.useState("Login");
 
   let close = () => setAnchor(null);
 
@@ -31,7 +31,7 @@ let HeaderNav = ({ userID, logout }) => {
 
       <span className="spacer" />
 
-      <Button onClick={ event => setAnchor(event.currentTarget) }>
+      <Button onClick={ event => userID ? setAnchor(event.currentTarget) : login() }>
         { name }
         <i className="material-icons click">person</i>
       </Button>
@@ -45,7 +45,9 @@ let HeaderNav = ({ userID, logout }) => {
         <Link to="/settings">
           <MenuItem onClick={ close }>Settings</MenuItem>
         </Link>
-        <MenuItem onClick={ () => { logout(); close(); setName("Welcome"); } }>Logout</MenuItem>
+        <Link to="/">
+          <MenuItem onClick={ () => { logout(); close(); setName("Login"); } }>Logout</MenuItem>
+        </Link>
       </Menu>
     </Header>
   )
