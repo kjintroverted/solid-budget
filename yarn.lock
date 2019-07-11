@@ -6965,6 +6965,14 @@ nth-check@^1.0.2, nth-check@~1.0.1:
   dependencies:
     boolbase "~1.0.0"
 
+null-loader@^2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/null-loader/-/null-loader-2.0.0.tgz#1c99da3f0d2c0996b51e9eada3a898a5d57472aa"
+  integrity sha512-PhEeA3v/tAacxC5dNO1i2yXzGVWWrZ9jTx+TMEJ716amvnBXzvrxIwy9HW7MyJsHe8ACQzpiQgbrAjDRMA7gcg==
+  dependencies:
+    loader-utils "^1.2.3"
+    schema-utils "^1.0.0"
+
 num2fraction@^1.2.2:
   version "1.2.2"
   resolved "https://registry.yarnpkg.com/num2fraction/-/num2fraction-1.2.2.tgz#6f682b6a027a4e9ddfa4564cd2589d1d4e669ede"
@@ -9289,6 +9297,18 @@ solid-auth-cli@^0.1.12:
     n3 "^1.0.3"
     solid-rest "^1.0.2"
 
+solid-auth-cli@^0.2.6:
+  version "0.2.7"
+  resolved "https://registry.yarnpkg.com/solid-auth-cli/-/solid-auth-cli-0.2.7.tgz#0e03cca6c00638d0a452451d995167c1fad7b980"
+  integrity sha512-gdcCSenM4gp9Ppi3jSFbmh5SOinY/zA8MjJ4QE0zzQE89eLoDRul8bYMJZ9Y/x7KmAFf/O32kFDNJG9Xe8QVbQ==
+  dependencies:
+    "@solid/cli" "^0.1.1"
+    async "^2.6.1"
+    isomorphic-fetch "^2.2.1"
+    jsonld "^1.4.0"
+    n3 "^1.0.3"
+    solid-rest "^1.0.2"
+
 solid-auth-client@^2.3.0:
   version "2.3.0"
   resolved "https://registry.yarnpkg.com/solid-auth-client/-/solid-auth-client-2.3.0.tgz#4bac06984b61981ad9d06f285b8ead6200f21aaa"
@@ -9299,6 +9319,16 @@ solid-auth-client@^2.3.0:
     auth-header "^1.0.0"
     commander "^2.11.0"
     isomorphic-fetch "^2.2.1"
+
+solid-file-client@^0.5.2:
+  version "0.5.2"
+  resolved "https://registry.yarnpkg.com/solid-file-client/-/solid-file-client-0.5.2.tgz#52b882f17beec5f4321d1a8d7588df3833ee4377"
+  integrity sha512-a1ZdkE6i4UvTzMtXchDkfVPCJSvxWghAWUj67/zVn4gLBFghkGhbZMjq+BFWX3C8SqD5h/AcjvXaIupsw/y+eQ==
+  dependencies:
+    null-loader "^2.0.0"
+    rdflib "^0.20.1"
+    solid-auth-cli "^0.2.6"
+    solid-auth-client "^2.3.0"
 
 solid-rest@^1.0.2:
   version "1.0.5"

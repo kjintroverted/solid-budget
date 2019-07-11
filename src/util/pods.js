@@ -1,7 +1,7 @@
 import rdf from 'rdflib';
+const solidFiles = require('solid-file-client');
 
 const VCARD = rdf.Namespace("http://www.w3.org/2006/vcard/ns#")
-const LDP = rdf.Namespace("http://www.w3.org/ns/ldp#")
 const store = new rdf.IndexedFormula;
 const fetcher = new rdf.Fetcher(store);
 const updater = new rdf.UpdateManager(store);
@@ -22,4 +22,22 @@ export const setField = async (userID, field, value) => {
   updater.update(del, ins, (uri, ok) => {
     if (!ok) console.error("Failed update.", uri);
   })
+}
+
+export const initAppFolder = async (homepage) => {
+  await solidFiles.createFolder(homepage + "/munny")
+  console.info("Munny pouch initialized.");
+  return [];
+}
+
+export const getAppData = async (homepage) => {
+  let files;
+  try {
+    const folder = await solidFiles.readFolder(homepage + "/munny")
+    files = folder.files;
+  } catch {
+    console.info("No munny pouch found.");
+    files = await initAppFolder(homepage);
+  }
+  return files;
 }
