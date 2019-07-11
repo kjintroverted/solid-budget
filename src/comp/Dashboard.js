@@ -17,7 +17,8 @@ export default ({ userID }) => {
 
   function find(file) {
     if (!files) return
-    return files.find(val => val.indexOf(file) >= 0)
+    let info = files.find(val => val.name == file);
+    return info ? info.url : null;
   }
 
   useEffect(() => {
@@ -25,15 +26,19 @@ export default ({ userID }) => {
   }, [userID]);
 
   return (
-    <Dash>
+    <>
       <h3>Budget info from { homepage }</h3>
       { files &&
-        <>
-          <AccountBreakdown file={ find('accounts') } />
-        </>
+        <Widgets>
+          <AccountBreakdown file={ find('accounts') || homepage + '/munny/accounts.json' } />
+        </Widgets>
       }
-    </Dash>
+    </>
   )
 }
 
-const Dash = styled.div``
+const Widgets = styled.div`
+  display: grid;
+  justify-content: center;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 540px));
+`

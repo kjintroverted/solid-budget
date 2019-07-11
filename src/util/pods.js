@@ -39,5 +39,23 @@ export const getAppData = async (homepage) => {
     console.info("No munny pouch found.");
     files = await initAppFolder(homepage);
   }
+  console.log('files', files);
   return files;
 }
+
+export const loadJSON = async (file, initValue) => {
+  try {
+    const data = await solidFiles.readFile(file);
+    return JSON.parse(data);
+  } catch (err) {
+    await solidFiles.createFile(file)
+    await writeJSON(file, initValue);
+    console.info(file, 'not found. New file created.');
+    return initValue;
+  }
+}
+
+export const writeJSON = async (file, data) => {
+  await solidFiles.updateFile(file, JSON.stringify(data));
+  console.info('saved:', file);
+} 
