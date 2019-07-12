@@ -2,17 +2,22 @@ import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
 import AccountBreakdown from './AccountBreakdown'
-import { getAppData } from '../util/pods';
+import { getAppData, loadFile, saveFile } from '../util/pods';
 
 export default ({ userID }) => {
   let [homepage, setHomepage] = useState();
   let [files, setFiles] = useState();
+  let [accounts, setAccounts] = useState(null);
 
   async function load(user) {
     const root = "https://" + user.split("/")[2] + "/public";
     setHomepage(root);
     let loadedFiles = await getAppData(root);
     setFiles(loadedFiles);
+    let data;
+
+    data = await loadFile(find('accounts') || root + '/munny/accounts.json', []);
+    setAccounts(data);
   }
 
   function find(file) {
@@ -29,7 +34,12 @@ export default ({ userID }) => {
     <>
       { files &&
         <Widgets>
-          <AccountBreakdown file={ find('accounts') || homepage + '/munny/accounts.json' } />
+          <AccountBreakdown
+            data={ accounts }
+            save={ data => {
+              saveFile(find('accounts') || homepage + '/munny/accounts.json', data);
+              setAccounts(data);
+            } } />
         </Widgets>
       }
     </>

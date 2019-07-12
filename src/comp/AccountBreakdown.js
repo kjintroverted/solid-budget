@@ -4,17 +4,11 @@ import styled from 'styled-components';
 
 import { ActionBar, WidgetContainer, HeaderBar, Spacer } from './theme/ThemeComp';
 import AccountForm from './forms/AccountForm';
-import { saveFile, loadFile } from '../util/pods';
 
-export default ({ file }) => {
-  let [accounts, updateAccounts] = useState([]);
+export default ({ data, save }) => {
+  let [accounts, updateAccounts] = useState(data);
   let [isAdding, setAdding] = useState(false);
   let [isEditing, setEditing] = useState(false);
-
-  async function loadAccounts() {
-    let loadedAccounts = await loadFile(file, []);
-    updateAccounts(loadedAccounts);
-  }
 
   async function deleteAccount(i) {
     updateAccounts([...accounts.slice(0, i), ...accounts.slice(i + 1)]);
@@ -29,13 +23,12 @@ export default ({ file }) => {
   }
 
   useEffect(() => {
-    loadAccounts();
-    return () => saveFile(file, accounts);
-  }, [file]);
+    if (accounts) save(accounts);
+  }, [accounts]);
 
   useEffect(() => {
-    if (accounts) saveFile(file, accounts);
-  }, [accounts])
+    updateAccounts(data);
+  }, [data]);
 
   return (
     <WidgetContainer>
@@ -53,10 +46,10 @@ export default ({ file }) => {
       </HeaderBar>
 
       {/* NO ACCOUNTS TO DISPLAY */ }
-      { !accounts.length && "No Accounts to display." }
+      { (!accounts || !accounts.length) && "No Accounts to display." }
 
       {/* MAIN ACCOUNT DISPLAY */ }
-      {
+      { accounts &&
         accounts.map((acc, i) => (
           <AccountView key={ `account-${ i }` }>
             <p>{ acc.name } ({ acc.label })</p>

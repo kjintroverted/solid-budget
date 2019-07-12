@@ -37,7 +37,7 @@ let HeaderNav = ({ userID, logout, login }) => {
 
         <span className="spacer" />
 
-        <Button style={{color: "white"}} onClick={ event => userID ? setAnchor(event.currentTarget) : login() }>
+        <Button style={ { color: "white" } } onClick={ event => userID ? setAnchor(event.currentTarget) : login() }>
           { name }
           <i className="material-icons click">person</i>
         </Button>
@@ -64,4 +64,5 @@ export default HeaderNav;
 
 const Logo = styled.img`
   height: 40px;
+  margin: 0px 10px;
 `
