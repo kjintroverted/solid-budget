@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { IconButton, Input } from '@material-ui/core';
 import styled from 'styled-components';
 
-import { ActionBar, WidgetContainer, HeaderBar, Spacer } from './ThemeComp';
+import { ActionBar, WidgetContainer, HeaderBar, Spacer } from './theme/ThemeComp';
 import AccountForm from './forms/AccountForm';
 import { saveFile, loadFile } from '../util/pods';
 
