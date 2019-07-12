@@ -6,8 +6,6 @@ export const Spacer = styled.span`
 
 export const WidgetContainer = styled.div`
   position: relative;
-  width: 100%;
-  min-height: 100px;
   background: white;
   box-shadow: lightgray 1px 1px 5px;
   border-radius: 5px;

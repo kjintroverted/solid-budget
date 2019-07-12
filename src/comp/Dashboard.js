@@ -3,6 +3,7 @@ import styled from 'styled-components';
 
 import AccountBreakdown from './AccountBreakdown'
 import { getAppData, loadFile, saveFile } from '../util/pods';
+import BillSchedule from './BillSchedule';
 
 export default ({ userID }) => {
   let [homepage, setHomepage] = useState();
@@ -34,12 +35,18 @@ export default ({ userID }) => {
     <>
       { files &&
         <Widgets>
-          <AccountBreakdown
-            data={ accounts }
-            save={ data => {
-              saveFile(find('accounts') || homepage + '/munny/accounts.json', data);
-              setAccounts(data);
-            } } />
+          <div>
+            <AccountBreakdown
+              data={ accounts }
+              save={ data => {
+                saveFile(find('accounts') || homepage + '/munny/accounts.json', data);
+                setAccounts(data);
+              } } />
+          </div>
+
+          <div>
+            <BillSchedule />
+          </div>
         </Widgets>
       }
     </>
@@ -47,7 +54,9 @@ export default ({ userID }) => {
 }
 
 const Widgets = styled.div`
+  width: 100vw;
   display: grid;
   justify-content: center;
   grid-template-columns: repeat(auto-fill, minmax(300px, 540px));
+  grid-gap: 10px;
 `
