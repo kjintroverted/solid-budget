@@ -29,6 +29,7 @@ export default ({ onSubmit }) => {
           <MenuItem value={ 'Main' }>Main</MenuItem>
           <MenuItem value={ 'Checking' }>Checking</MenuItem>
           <MenuItem value={ 'Saving' }>Saving</MenuItem>
+          <MenuItem value={ 'Interest' }>Interest Saving</MenuItem>
           <MenuItem value={ 'Personal' }>Personal</MenuItem>
           <MenuItem value={ 'Business' }>Business</MenuItem>
           <MenuItem value={ 'Buckets' }>Buckets</MenuItem>
