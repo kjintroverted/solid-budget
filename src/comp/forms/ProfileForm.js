@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import TextField from '@material-ui/core/TextField';
-import { setField, getField } from '../util/pods';
+import { setField, getField } from '../../util/pods';
 
-const SimpleForm = ({ userID, field }) => {
+const ProfileForm = ({ userID, field }) => {
   let [value, setValue] = useState();
 
   let updateField = async (event, value) => {
@@ -34,4 +34,4 @@ const SimpleForm = ({ userID, field }) => {
   )
 }
 
-export default SimpleForm;
+export default ProfileForm;

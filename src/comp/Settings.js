@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 
-import SimpleForm from './SimpleForm';
+import ProfileForm from './forms/ProfileForm';
 
 const Settings = ({ userID }) => {
 
@@ -10,7 +10,7 @@ const Settings = ({ userID }) => {
   return (
     <ProfileView>
       <h2>Settings</h2>
-      <SimpleForm field="name" userID={ userID } />
+      <ProfileForm field="name" userID={ userID } />
     </ProfileView>
   )
 }

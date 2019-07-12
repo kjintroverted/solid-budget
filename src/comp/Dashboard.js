@@ -9,15 +9,15 @@ export default ({ userID }) => {
   let [files, setFiles] = useState();
 
   async function load(user) {
-    const home = "https://" + user.split("/")[2];
-    setHomepage(home);
-    let loadedFiles = await getAppData(home);
+    const root = "https://" + user.split("/")[2] + "/public";
+    setHomepage(root);
+    let loadedFiles = await getAppData(root);
     setFiles(loadedFiles);
   }
 
   function find(file) {
     if (!files) return
-    let info = files.find(val => val.name == file);
+    let info = files.find(val => val.name === file);
     return info ? info.url : null;
   }
 
