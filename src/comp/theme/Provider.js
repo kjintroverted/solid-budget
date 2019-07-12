@@ -1,5 +1,6 @@
 import { createMuiTheme } from '@material-ui/core/styles';
 
+// https://material.io/tools/color/#!/?view.left=0&view.right=0&primary.color=0D47A1&secondary.color=FB8C00
 export const theme = createMuiTheme({
   palette: {
     primary: {

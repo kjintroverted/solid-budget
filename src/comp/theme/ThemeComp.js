@@ -29,3 +29,5 @@ export const HeaderBar = styled.div`
     margin: 0px;
   }
 `
+
+export const Row = styled.div`display:flex`

@@ -6,6 +6,7 @@ import MenuItem from '@material-ui/core/MenuItem';
 import { Link } from 'react-router-dom'
 
 import { getField } from '../util/pods';
+const logo = require("../assets/munny_pouch.png");
 
 let HeaderNav = ({ userID, logout, login }) => {
 
@@ -25,6 +26,10 @@ let HeaderNav = ({ userID, logout, login }) => {
 
   return (
     <Header>
+
+      <Link to="/">
+        <img src={ logo } alt="logo" />
+      </Link>
       <Link to="/">
         <h3>Munny Pouch</h3>
       </Link>
@@ -67,8 +72,13 @@ const Header = styled.div`
   background: navy;
   box-shadow: gray 1px 1px 5px;
 
-  & * {
+  & button {
     margin: 0px 10px;
     color: #fff;
+  }
+
+  & img {
+    height: 40px;
+    margin: 0px 10px;
   }
 `
