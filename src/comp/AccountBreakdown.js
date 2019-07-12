@@ -91,4 +91,5 @@ export default ({ file }) => {
 
 const AccountView = styled.div`
   display: flex;
+  padding-left: 15px;
 `

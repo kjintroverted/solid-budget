@@ -11,7 +11,7 @@ export const WidgetContainer = styled.div`
   background: white;
   box-shadow: lightgray 1px 1px 5px;
   border-radius: 5px;
-  padding: 5px;
+  padding: 10px;
   display: flex;
   flex-direction: column;
 `
@@ -24,6 +24,7 @@ export const ActionBar = styled.span`
 export const HeaderBar = styled.div`
   display: flex;
   align-items: center;
+  border-bottom: lightgray solid 1px;
   h2 {
     margin: 0px;
   }
