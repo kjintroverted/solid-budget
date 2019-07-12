@@ -3,6 +3,7 @@ import styled from 'styled-components';
 
 import AccountBreakdown from './AccountBreakdown'
 import { getAppData, loadFile, saveFile } from '../util/pods';
+import { getAccount } from '../util/helper';
 import BillSchedule from './BillSchedule';
 
 export default ({ userID }) => {
@@ -45,7 +46,7 @@ export default ({ userID }) => {
           </div>
 
           <div>
-            <BillSchedule />
+            <BillSchedule balance={ getAccount(accounts, 'Main').balance } />
           </div>
         </Widgets>
       }
