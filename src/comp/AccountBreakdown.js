@@ -14,7 +14,6 @@ export default ({ file }) => {
   async function loadAccounts() {
     let loadedAccounts = await loadFile(file, []);
     updateAccounts(loadedAccounts);
-    console.log('accounts', loadedAccounts);
   }
 
   async function deleteAccount(i) {
@@ -35,7 +34,7 @@ export default ({ file }) => {
   }, [file]);
 
   useEffect(() => {
-    saveFile(file, accounts);
+    if (accounts) saveFile(file, accounts);
   }, [accounts])
 
   return (

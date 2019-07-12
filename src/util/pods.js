@@ -49,13 +49,15 @@ export const loadFile = async (file, initValue) => {
     return data;
   } catch (err) {
     console.error(err);
-    await solidFiles.updateFile(file, initValue)
-    console.info(file, 'not found. New file created.');
     return initValue;
   }
 }
 
 export const saveFile = async (file, data) => {
-  await solidFiles.updateFile(file, JSON.stringify(data));
-  console.info('saved:', file);
+  try {
+    await solidFiles.updateFile(file, JSON.stringify(data));
+    console.info('saved:', file);
+  } catch {
+    console.warn("save interrupted");
+  }
 } 

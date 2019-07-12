@@ -6,6 +6,7 @@ import MenuItem from '@material-ui/core/MenuItem';
 import { Link } from 'react-router-dom'
 
 import { getField } from '../util/pods';
+import { AppBar, Toolbar } from '@material-ui/core';
 const logo = require("../assets/munny_pouch.png");
 
 let HeaderNav = ({ userID, logout, login }) => {
@@ -25,60 +26,42 @@ let HeaderNav = ({ userID, logout, login }) => {
   }, [userID])
 
   return (
-    <Header>
-
-      <Link to="/">
-        <img src={ logo } alt="logo" />
-      </Link>
-      <Link to="/">
-        <h3>Munny Pouch</h3>
-      </Link>
-
-      <span className="spacer" />
-
-      <Button onClick={ event => userID ? setAnchor(event.currentTarget) : login() }>
-        { name }
-        <i className="material-icons click">person</i>
-      </Button>
-
-      <Menu
-        anchorEl={ anchor }
-        keepMounted
-        open={ Boolean(anchor) }
-        onClose={ close }
-      >
-        <Link to="/settings">
-          <MenuItem onClick={ close }>Settings</MenuItem>
+    <AppBar>
+      <Toolbar>
+        <Link to="/">
+          <Logo src={ logo } alt="logo" />
         </Link>
         <Link to="/">
-          <MenuItem onClick={ () => { logout(); close(); setName("Login"); } }>Logout</MenuItem>
+          <h3>Munny Pouch</h3>
         </Link>
-      </Menu>
-    </Header>
+
+        <span className="spacer" />
+
+        <Button style={{color: "white"}} onClick={ event => userID ? setAnchor(event.currentTarget) : login() }>
+          { name }
+          <i className="material-icons click">person</i>
+        </Button>
+
+        <Menu
+          anchorEl={ anchor }
+          keepMounted
+          open={ Boolean(anchor) }
+          onClose={ close }
+        >
+          <Link to="/settings">
+            <MenuItem onClick={ close }>Settings</MenuItem>
+          </Link>
+          <Link to="/">
+            <MenuItem onClick={ () => { logout(); close(); setName("Login"); } }>Logout</MenuItem>
+          </Link>
+        </Menu>
+      </Toolbar>
+    </AppBar>
   )
 }
 
 export default HeaderNav;
 
-const Header = styled.div`
-  position: fixed;
-  top: 0;
-  left: 0;
-  height: 50px;
-  width: 100vw;
-  display: flex;
-  align-items: center;
-  color: #fff;
-  background: navy;
-  box-shadow: gray 1px 1px 5px;
-
-  & button {
-    margin: 0px 10px;
-    color: #fff;
-  }
-
-  & img {
-    height: 40px;
-    margin: 0px 10px;
-  }
+const Logo = styled.img`
+  height: 40px;
 `
