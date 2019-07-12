@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { IconButton } from '@material-ui/core';
+import { IconButton, Input } from '@material-ui/core';
 import styled from 'styled-components';
 
 import { ActionBar, WidgetContainer, HeaderBar, Spacer } from './ThemeComp';
@@ -18,7 +18,15 @@ export default ({ file }) => {
   }
 
   async function deleteAccount(i) {
-    updateAccounts([...accounts.slice(0, i), ...accounts.slice(i+1)]);
+    updateAccounts([...accounts.slice(0, i), ...accounts.slice(i + 1)]);
+  }
+
+  async function updateBalance(i, balance) {
+    updateAccounts([
+      ...accounts.slice(0, i),
+      { ...accounts[i], balance },
+      ...accounts.slice(i + 1)
+    ]);
   }
 
   useEffect(() => {
@@ -54,7 +62,11 @@ export default ({ file }) => {
           <AccountView key={ `account-${ i }` }>
             <p>{ acc.name } ({ acc.label })</p>
             <Spacer />
-            <p>{ acc.balance }</p>
+            <Input
+              type="number"
+              value={ acc.balance }
+              onChange={ e => updateBalance(i, e.target.value) }
+            />
             { isEditing && // DELETE BUTTON
               <IconButton color='secondary' onClick={ () => deleteAccount(i) }>
                 <i className="material-icons">delete</i>
