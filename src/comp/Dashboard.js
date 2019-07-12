@@ -27,7 +27,6 @@ export default ({ userID }) => {
 
   return (
     <>
-      <h3>Budget info from { homepage }</h3>
       { files &&
         <Widgets>
           <AccountBreakdown file={ find('accounts') || homepage + '/munny/accounts.json' } />
