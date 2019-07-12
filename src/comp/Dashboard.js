@@ -57,6 +57,6 @@ const Widgets = styled.div`
   width: 100vw;
   display: grid;
   justify-content: center;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 540px));
+  grid-template-columns: repeat(auto-fit, minmax(300px, 540px));
   grid-gap: 10px;
 `
