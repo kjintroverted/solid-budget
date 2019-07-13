@@ -32,5 +32,7 @@ export const Row = styled.div`display:flex`;
 
 export const IndentRow = styled.div`
   display: flex;
+  align-items: flex-start;
   padding-left: 15px;
+  border-bottom: whitesmoke solid 1px;
 `

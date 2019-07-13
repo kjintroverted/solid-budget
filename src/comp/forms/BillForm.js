@@ -38,7 +38,7 @@ export default ({ onSubmit }) => {
         label="Payment"
         onChange={ handleChange('payment') } />
 
-      <FormControl error={ error }>
+      <FormControl error={ !!error }>
         <TextField
           variant="outlined"
           type="number"

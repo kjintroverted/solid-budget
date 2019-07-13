@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { WidgetContainer, HeaderBar, ActionBar, Spacer, IndentRow } from './theme/ThemeComp';
 import { IconButton } from '@material-ui/core';
 import BillForm from './forms/BillForm';
+import styled from 'styled-components';
 
 export default ({ data, balance, save }) => {
   let [isAdding, setAdding] = useState(false);
@@ -21,6 +22,8 @@ export default ({ data, balance, save }) => {
     updateBills(data)
   }, [data]);
 
+  let now = new Date();
+
   return (
     <WidgetContainer>
       <HeaderBar>
@@ -36,24 +39,31 @@ export default ({ data, balance, save }) => {
         </ActionBar>
       </HeaderBar>
 
-      <p>{ balance ? `Starting budget: ${ balance }` : "Missing account info. Please add a 'Main' account." }</p>
-
       { (!bills || !bills.length) && <p>No bills to track.</p> }
 
       {
-        (bills && bills.length) &&
-        bills.map((bill, i) => (
-          <IndentRow key={ `account-${ i }` }>
-            <p>{ bill.title }</p>
-            <Spacer />
-            <p>{ bill.payment }</p>
-            { isEditing && // DELETE BUTTON
-              <IconButton color='secondary' onClick={ () => deleteBill(i) }>
-                <i className="material-icons">delete</i>
-              </IconButton>
-            }
-          </IndentRow>
-        ))
+        bills &&
+        bills.map((bill, i) => {
+          if (bill.months && bill.months.indexOf(now.getMonth() + 1) >= 0) return;
+          let unpaid = bill.date >= now.getDate();
+          return (
+            <IndentRow key={ `bill-${ i }` }>
+              <DateText>{ now.getMonth() + 1 }/{ bill.date }</DateText>
+              <p>{ bill.title }</p>
+              <Spacer />
+              <Column>
+                <p>{ bill.payment }</p>
+                <p>{ balance }</p>
+              </Column>
+              { isEditing && // DELETE BUTTON
+                <IconButton color='secondary' onClick={ () => deleteBill(i) }>
+                  <i className="material-icons">delete</i>
+                </IconButton>
+              }
+            </IndentRow>
+          )
+        }
+        )
       }
 
       { // ADDING NEW BILL
@@ -69,3 +79,15 @@ export default ({ data, balance, save }) => {
     </WidgetContainer>
   )
 }
+
+const DateText = styled.p`
+  margin-right: 5px;
+  opacity: .6;
+  font-size: .5em;
+`
+
+const Column = styled.span`
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+`
