@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { IconButton, Input } from '@material-ui/core';
 import styled from 'styled-components';
 
-import { ActionBar, WidgetContainer, HeaderBar, Spacer } from './theme/ThemeComp';
+import { ActionBar, WidgetContainer, HeaderBar, Spacer, IndentRow } from './theme/ThemeComp';
 import AccountForm from './forms/AccountForm';
 
 export default ({ data, save }) => {
@@ -51,7 +51,7 @@ export default ({ data, save }) => {
       {/* MAIN ACCOUNT DISPLAY */ }
       { accounts &&
         accounts.map((acc, i) => (
-          <AccountView key={ `account-${ i }` }>
+          <IndentRow key={ `account-${ i }` }>
             <p>{ acc.name } ({ acc.label })</p>
             <Spacer />
             <Input
@@ -64,7 +64,7 @@ export default ({ data, save }) => {
                 <i className="material-icons">delete</i>
               </IconButton>
             }
-          </AccountView>
+          </IndentRow>
         ))
       }
 
@@ -80,8 +80,3 @@ export default ({ data, save }) => {
     </WidgetContainer>
   )
 }
-
-const AccountView = styled.div`
-  display: flex;
-  padding-left: 15px;
-`

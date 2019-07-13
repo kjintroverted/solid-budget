@@ -28,4 +28,9 @@ export const HeaderBar = styled.div`
   }
 `
 
-export const Row = styled.div`display:flex`
+export const Row = styled.div`display:flex`;
+
+export const IndentRow = styled.div`
+  display: flex;
+  padding-left: 15px;
+`

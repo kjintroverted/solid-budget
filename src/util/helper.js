@@ -1,3 +1,5 @@
 export function getAccount(accounts, label) {
-  return accounts && label ? accounts.find(val => val.label === label) : {};
+  if (!accounts || !label) return {};
+  let account = accounts.find(val => val.label === label);
+  return account || {};
 }

@@ -10,6 +10,7 @@ export default ({ userID }) => {
   let [homepage, setHomepage] = useState();
   let [files, setFiles] = useState();
   let [accounts, setAccounts] = useState(null);
+  let [bills, setBills] = useState(null);
 
   async function load(user) {
     const root = "https://" + user.split("/")[2] + "/public";
@@ -20,6 +21,9 @@ export default ({ userID }) => {
 
     data = await loadFile(find('accounts') || root + '/munny/accounts.json', []);
     setAccounts(data);
+
+    data = await loadFile(find('bills') || root + '/munny/bills.json', []);
+    setBills(data);
   }
 
   function find(file) {
@@ -46,7 +50,13 @@ export default ({ userID }) => {
           </div>
 
           <div>
-            <BillSchedule balance={ getAccount(accounts, 'Main').balance } />
+            <BillSchedule
+              data={ bills }
+              balance={ getAccount(accounts, 'Main').balance }
+              save={ data => {
+                saveFile(find('bills') || homepage + '/munny/bills.json', data);
+                setBills(data);
+              } } />
           </div>
         </Widgets>
       }
