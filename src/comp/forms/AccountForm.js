@@ -6,9 +6,10 @@ export default ({ onSubmit }) => {
 
   let [account, setValues] = useState({});
 
-  function handleChange(field) {
+  function handleChange(field, numeric) {
     return event => {
-      setValues({ ...account, [field]: event.target.value })
+      let val = numeric ? +event.target.value : event.target.value;
+      setValues({ ...account, [field]: val })
     }
   }
 
@@ -40,7 +41,7 @@ export default ({ onSubmit }) => {
         variant="outlined"
         type="number"
         label="Balance"
-        onChange={ handleChange('balance') } />
+        onChange={ handleChange('balance', true) } />
 
       <IconButton onClick={ () => onSubmit(account) }>
         <i className="material-icons">check</i>

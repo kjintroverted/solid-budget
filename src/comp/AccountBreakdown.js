@@ -57,7 +57,7 @@ export default ({ data, save }) => {
             <Input
               type="number"
               value={ acc.balance }
-              onChange={ e => updateBalance(i, e.target.value) }
+              onChange={ e => updateBalance(i, +e.target.value) }
             />
             { isEditing && // DELETE BUTTON
               <IconButton color='secondary' onClick={ () => deleteAccount(i) }>
