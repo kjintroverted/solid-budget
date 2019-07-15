@@ -34,5 +34,7 @@ export const IndentRow = styled.div`
   display: flex;
   align-items: flex-start;
   padding-left: 15px;
+  padding-right: 10px;
+  /* border-radius: 5px; */
   border-bottom: whitesmoke solid 1px;
 `

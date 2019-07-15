@@ -18,9 +18,10 @@ const Settings = ({ userID }) => {
     updateSettings(data);
   }
 
-  function setValue(field) {
+  function setValue(field, numeric) {
     return event => {
-      updateSettings({ ...settings, [field]: event.target.value })
+      let val = numeric ? +event.target.value : event.target.value;
+      updateSettings({ ...settings, [field]: val })
     }
   }
 
@@ -42,7 +43,7 @@ const Settings = ({ userID }) => {
         <>
           <TextField variant="outlined" label="Paycheck" type="number"
             value={ settings.paycheck || 0 }
-            onChange={ setValue('paycheck') } />
+            onChange={ setValue('paycheck', true) } />
           <TextField variant="outlined" label="Past Pay Date" type="date"
             style={ { marginTop: '10px' } }
             value={ settings.payDate || "2019-01-01" }

@@ -3,6 +3,8 @@ import { WidgetContainer, HeaderBar, ActionBar, Spacer, IndentRow } from './them
 import { IconButton } from '@material-ui/core';
 import BillForm from './forms/BillForm';
 import styled from 'styled-components';
+import { theme } from './theme/Provider';
+import { calculateBillsTil } from '../util/helper';
 
 export default ({ data, balance, settings, save }) => {
   let [isAdding, setAdding] = useState(false);
@@ -24,6 +26,12 @@ export default ({ data, balance, settings, save }) => {
     setOverrides([...overrides, i]);
   }
 
+  function getNextPayDate(s) {
+    let base = new Date(s);
+    let dayDiff = Math.floor((now.getTime() - base.getTime()) / 86400000) % 14;
+    return now.getDate() + 14 - dayDiff;
+  }
+
   useEffect(() => {
     if (bills) save(bills);
   }, [bills]);
@@ -33,6 +41,85 @@ export default ({ data, balance, settings, save }) => {
   }, [data]);
 
   let now = new Date();
+
+  let payDate;
+  function createBillRows() {
+
+    payDate = getNextPayDate(settings.payDate);
+    let billRows = bills.map((bill, i) => {
+      if (bill.months && bill.months.indexOf(now.getMonth() + 1) < 0) return;
+      let paid = bill.date < now.getDate();
+      let payday = bill.date > payDate;
+      if (overrides.indexOf(i) >= 0) paid = !paid;
+
+      let paydayRow;
+      if (payday) {
+        balance += +settings.paycheck;
+        paydayRow =
+          <IndentRow key={ `payday-${ payDate }` }
+            style={ { background: theme.palette.primary.main, color: theme.palette.primary.contrastText } }>
+            <DateText>{ now.getMonth() + 1 }/{ payDate }</DateText>
+            <p>Payday</p>
+            <Spacer />
+            <p>{ balance }</p>
+          </IndentRow>
+        payDate += 14;
+      }
+
+      if (!paid) balance -= bill.payment;
+
+      return (
+        <>
+          { paydayRow }
+          <IndentRow key={ `billrow-${ i }` }
+            className={ paid ? 'inactive clickable' : 'clickable' }
+            onClick={ () => toggleOverride(i)
+            }
+          >
+            <DateText>{ now.getMonth() + 1 }/{ bill.date }</DateText>
+            <p>{ bill.title }</p>
+            <Spacer />
+            <Column>
+              <Debit>({ bill.payment })</Debit>
+              { !paid && <p>{ balance }</p> }
+            </Column>
+            { isEditing && // DELETE BUTTON
+              <IconButton color='secondary' onClick={ () => deleteBill(i) }>
+                <i className="material-icons">delete</i>
+              </IconButton>
+            }
+          </IndentRow >
+        </>
+      )
+    }
+    )
+    let nextPayDate = new Date(now.getTime());
+    nextPayDate.setDate(payDate);
+    payDate = nextPayDate.getDate();
+    if (payDate > 28) {
+      balance += settings.paycheck;
+      billRows.push(
+        <IndentRow key={ `payday-${ payDate }` }
+          style={ { background: theme.palette.primary.main, color: theme.palette.primary.contrastText } }>
+          <DateText>{ now.getMonth() + 1 }/{ payDate }</DateText>
+          <p>Payday</p>
+          <Spacer />
+          <p>{ balance }</p>
+        </IndentRow>
+      )
+      nextPayDate.setDate(payDate + 14);
+    }
+
+    let summary =
+      <Info>
+        <i>Next payday: <strong>{ nextPayDate.getMonth() + 1 }/{ nextPayDate.getDate() }</strong></i>
+        <i>Maximum available funds: <strong>{ balance - calculateBillsTil(bills, nextPayDate.getDate()) }</strong></i>
+      </Info>
+
+    billRows.push(summary);
+
+    return billRows;
+  }
 
   return (
     <WidgetContainer>
@@ -63,34 +150,8 @@ export default ({ data, balance, settings, save }) => {
       }
 
       {
-        bills &&
-        bills.map((bill, i) => {
-          if (bill.months && bill.months.indexOf(now.getMonth() + 1) >= 0) return;
-          let paid = bill.date < now.getDate();
-          if (overrides.indexOf(i) >= 0) paid = !paid;
-          if (!paid) balance -= bill.payment;
-          return (
-            <IndentRow
-              key={ `bill-${ i }` }
-              className={ paid ? 'inactive clickable' : 'clickable' }
-              onClick={ () => toggleOverride(i) }
-            >
-              <DateText>{ now.getMonth() + 1 }/{ bill.date }</DateText>
-              <p>{ bill.title }</p>
-              <Spacer />
-              <Column>
-                <Debit>({ bill.payment })</Debit>
-                { !paid && <p>{ balance }</p> }
-              </Column>
-              { isEditing && // DELETE BUTTON
-                <IconButton color='secondary' onClick={ () => deleteBill(i) }>
-                  <i className="material-icons">delete</i>
-                </IconButton>
-              }
-            </IndentRow>
-          )
-        }
-        )
+        bills && settings &&
+        createBillRows()
       }
     </WidgetContainer>
   )
@@ -109,4 +170,13 @@ const Column = styled.span`
 
 const Debit = styled.p`
   color: red;
+`
+
+const Info = styled.div`
+  display: flex;
+  flex-direction: column;
+  opacity: .5;
+  & * {
+    margin: 10px 0px;
+  }
 `

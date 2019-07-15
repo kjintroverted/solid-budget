@@ -7,9 +7,9 @@ export default ({ onSubmit }) => {
   let [bill, setValues] = useState({});
   let [error, setError] = useState(null);
 
-  function handleChange(field) {
+  function handleChange(field, numeric) {
     return event => {
-      let val = event.target.value;
+      let val = numeric ? +event.target.value : event.target.value;
       if (field === 'date') {
         if (val > 28) {
           setError("Must be less than 28")
@@ -36,7 +36,7 @@ export default ({ onSubmit }) => {
         variant="outlined"
         type="number"
         label="Payment"
-        onChange={ handleChange('payment') } />
+        onChange={ handleChange('payment', true) } />
 
       <FormControl error={ !!error }>
         <TextField
