@@ -45,15 +45,16 @@ export default ({ data, balance, save }) => {
         bills &&
         bills.map((bill, i) => {
           if (bill.months && bill.months.indexOf(now.getMonth() + 1) >= 0) return;
-          let unpaid = bill.date >= now.getDate();
+          let paid = bill.date < now.getDate();
+          if (!paid) balance -= bill.payment;
           return (
-            <IndentRow key={ `bill-${ i }` }>
+            <IndentRow key={ `bill-${ i }` } className={ paid ? 'inactive' : '' }>
               <DateText>{ now.getMonth() + 1 }/{ bill.date }</DateText>
               <p>{ bill.title }</p>
               <Spacer />
               <Column>
-                <p>{ bill.payment }</p>
-                <p>{ balance }</p>
+                <Debit>({ bill.payment })</Debit>
+                { !paid && <p>{ balance }</p> }
               </Column>
               { isEditing && // DELETE BUTTON
                 <IconButton color='secondary' onClick={ () => deleteBill(i) }>
@@ -82,12 +83,15 @@ export default ({ data, balance, save }) => {
 
 const DateText = styled.p`
   margin-right: 5px;
-  opacity: .6;
-  font-size: .5em;
+  opacity: .3;
 `
 
 const Column = styled.span`
   display: flex;
   flex-direction: column;
   align-items: flex-end;
+`
+
+const Debit = styled.p`
+  color: red;
 `
