@@ -33,3 +33,7 @@ img {
 .inactive {
   opacity: .5;
 }
+
+.clickable {
+  cursor: pointer;
+}

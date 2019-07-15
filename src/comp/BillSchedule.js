@@ -7,11 +7,21 @@ import styled from 'styled-components';
 export default ({ data, balance, save }) => {
   let [isAdding, setAdding] = useState(false);
   let [isEditing, setEditing] = useState(false);
+  let [overrides, setOverrides] = useState([]);
 
   let [bills, updateBills] = useState(data);
 
   async function deleteBill(i) {
     updateBills([...bills.slice(0, i), ...bills.slice(i + 1)]);
+  }
+
+  function toggleOverride(i) {
+    let index = overrides.indexOf(i);
+    if (index >= 0) {
+      setOverrides([...overrides.slice(0, index), ...overrides.slice(index + 1)]);
+      return;
+    }
+    setOverrides([...overrides, i]);
   }
 
   useEffect(() => {
@@ -57,9 +67,14 @@ export default ({ data, balance, save }) => {
         bills.map((bill, i) => {
           if (bill.months && bill.months.indexOf(now.getMonth() + 1) >= 0) return;
           let paid = bill.date < now.getDate();
+          if (overrides.indexOf(i) >= 0) paid = !paid;
           if (!paid) balance -= bill.payment;
           return (
-            <IndentRow key={ `bill-${ i }` } className={ paid ? 'inactive' : '' }>
+            <IndentRow
+              key={ `bill-${ i }` }
+              className={ paid ? 'inactive clickable' : 'clickable' }
+              onClick={ () => toggleOverride(i) }
+            >
               <DateText>{ now.getMonth() + 1 }/{ bill.date }</DateText>
               <p>{ bill.title }</p>
               <Spacer />
