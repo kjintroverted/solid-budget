@@ -41,6 +41,17 @@ export default ({ data, balance, save }) => {
 
       { (!bills || !bills.length) && <p>No bills to track.</p> }
 
+      { // ADDING NEW BILL
+        isAdding &&
+        <BillForm
+          onSubmit={
+            data => {
+              updateBills([...bills, data].sort((a, b) => a.date - b.date));
+              setAdding(false);
+            }
+          } />
+      }
+
       {
         bills &&
         bills.map((bill, i) => {
@@ -65,17 +76,6 @@ export default ({ data, balance, save }) => {
           )
         }
         )
-      }
-
-      { // ADDING NEW BILL
-        isAdding &&
-        <BillForm
-          onSubmit={
-            data => {
-              updateBills([...bills, data]);
-              setAdding(false);
-            }
-          } />
       }
     </WidgetContainer>
   )
