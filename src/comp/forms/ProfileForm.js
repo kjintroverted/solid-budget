@@ -24,6 +24,7 @@ const ProfileForm = ({ userID, field }) => {
   return (
     <form onSubmit={ e => updateField(e, value) }>
       <TextField
+        variant="outlined"
         id={ field }
         label={ field }
         value={ value || "" }

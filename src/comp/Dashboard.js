@@ -11,6 +11,7 @@ export default ({ userID }) => {
   let [files, setFiles] = useState();
   let [accounts, setAccounts] = useState(null);
   let [bills, setBills] = useState(null);
+  let [settings, setSettings] = useState(null);
 
   async function load(user) {
     const root = "https://" + user.split("/")[2] + "/public";
@@ -18,6 +19,9 @@ export default ({ userID }) => {
     let loadedFiles = await getAppData(root);
     setFiles(loadedFiles);
     let data;
+
+    data = await loadFile(root + '/munny/settings.json', []);
+    setSettings(data);
 
     data = await loadFile(find('accounts') || root + '/munny/accounts.json', []);
     setAccounts(data);
@@ -53,6 +57,7 @@ export default ({ userID }) => {
             <BillSchedule
               data={ bills }
               balance={ getAccount(accounts, 'Main').balance }
+              settings={ settings }
               save={ data => {
                 saveFile(find('bills') || homepage + '/munny/bills.json', data);
                 setBills(data);

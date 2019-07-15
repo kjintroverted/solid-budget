@@ -4,7 +4,7 @@ import { IconButton } from '@material-ui/core';
 import BillForm from './forms/BillForm';
 import styled from 'styled-components';
 
-export default ({ data, balance, save }) => {
+export default ({ data, balance, settings, save }) => {
   let [isAdding, setAdding] = useState(false);
   let [isEditing, setEditing] = useState(false);
   let [overrides, setOverrides] = useState([]);
