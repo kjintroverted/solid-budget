@@ -115,7 +115,7 @@ export default ({ data, balance, settings, save }) => {
     let summary =
       <Info>
         <i>Next payday: <strong>{ nextPayDate.getMonth() + 1 }/{ nextPayDate.getDate() }</strong></i>
-        <i>Maximum available funds: <strong>{ balance - calculateBillsTil(bills, nextPayDate.getDate()) }</strong></i>
+        <i>Maximum available funds: <strong>{ balance - calculateBillsTil(bills, nextPayDate.getMonth(), nextPayDate.getDate()) }</strong></i>
       </Info>
 
     billRows.push(summary);

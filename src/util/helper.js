@@ -4,6 +4,6 @@ export function getAccount(accounts, label) {
   return account || {};
 }
 
-export function calculateBillsTil(bills, date) {
-  return bills.reduce((acc, bill) => bill.date < date ? acc + +bill.payment : acc, 0);
+export function calculateBillsTil(bills, month, date) {
+  return bills.reduce((acc, bill) => (!bill.months || bill.months.indexOf(month) != -1) && bill.date < date ? acc + +bill.payment : acc, 0);
 }
