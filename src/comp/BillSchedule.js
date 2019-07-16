@@ -4,7 +4,7 @@ import { IconButton } from '@material-ui/core';
 import BillForm from './forms/BillForm';
 import styled from 'styled-components';
 import { theme } from './theme/Provider';
-import { calculateBillsTil } from '../util/helper';
+import { calculateBillsTil, getNextPayDate } from '../util/helper';
 
 export default ({ data, balance, settings, save }) => {
   let [isAdding, setAdding] = useState(false);
@@ -26,12 +26,6 @@ export default ({ data, balance, settings, save }) => {
     setOverrides([...overrides, i]);
   }
 
-  function getNextPayDate(s) {
-    let base = new Date(s);
-    let dayDiff = Math.floor((now.getTime() - base.getTime()) / 86400000) % 14;
-    return now.getDate() + 14 - dayDiff;
-  }
-
   useEffect(() => {
     if (bills) save(bills);
   }, [bills]);
@@ -45,7 +39,7 @@ export default ({ data, balance, settings, save }) => {
   let payDate;
   // BUILD BILL INFO ROWS
   function createBillRows() {
-    payDate = getNextPayDate(settings.payDate);
+    payDate = getNextPayDate(new Date(settings.payDate), now);
     let billRows = bills.map((bill, i) => { // MAIN BILL READOUT
       if (bill.months && bill.months.indexOf((now.getMonth() + 1) + "") < 0) return;
       let paid = bill.date < now.getDate();

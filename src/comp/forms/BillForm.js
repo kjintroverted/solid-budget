@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { TextField, IconButton, FormControl, FormHelperText, FormControlLabel, Checkbox } from '@material-ui/core';
 import styled from 'styled-components';
 
+import { months } from '../../util/helper'
+
 export default ({ onSubmit }) => {
 
   let [bill, setValues] = useState({});
@@ -103,21 +105,6 @@ export default ({ onSubmit }) => {
     </>
   )
 }
-
-const months = [
-  "January",
-  "February",
-  "March",
-  "April",
-  "May",
-  "June",
-  "July",
-  "August",
-  "September",
-  "October",
-  "November",
-  "December"
-]
 
 const Form = styled.div`
     display: flex;

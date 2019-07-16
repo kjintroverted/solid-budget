@@ -5,6 +5,7 @@ import AccountBreakdown from './AccountBreakdown'
 import { getAppData, loadFile, saveFile } from '../util/pods';
 import { getAccount } from '../util/helper';
 import BillSchedule from './BillSchedule';
+import YearOverview from './YearOverview';
 
 export default ({ userID }) => {
   let [homepage, setHomepage] = useState();
@@ -63,6 +64,10 @@ export default ({ userID }) => {
                 setBills(data);
               } } />
           </div>
+
+          <div>
+            <YearOverview { ...{ bills, settings } } />
+          </div>
         </Widgets>
       }
     </>
@@ -70,9 +75,9 @@ export default ({ userID }) => {
 }
 
 const Widgets = styled.div`
-  width: 100vw;
-  display: grid;
-  justify-content: center;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 540px));
-  grid-gap: 10px;
-`
+        width: 100vw;
+        display: grid;
+        justify-content: center;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 540px));
+        grid-gap: 10px;
+      `
