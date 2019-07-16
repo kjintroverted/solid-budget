@@ -43,26 +43,28 @@ export default ({ data, balance, settings, save }) => {
   let now = new Date();
 
   let payDate;
+  // BUILD BILL INFO ROWS
   function createBillRows() {
-
     payDate = getNextPayDate(settings.payDate);
-    let billRows = bills.map((bill, i) => {
+    let billRows = bills.map((bill, i) => { // MAIN BILL READOUT
       if (bill.months && bill.months.indexOf(now.getMonth() + 1) < 0) return;
       let paid = bill.date < now.getDate();
-      let payday = bill.date > payDate;
+      let payday = bill.date >= payDate;
       if (overrides.indexOf(i) >= 0) paid = !paid;
 
       let paydayRow;
-      if (payday) {
-        balance += +settings.paycheck;
-        paydayRow =
-          <IndentRow key={ `payday-${ payDate }` }
-            style={ { background: theme.palette.primary.main, color: theme.palette.primary.contrastText } }>
-            <DateText>{ now.getMonth() + 1 }/{ payDate }</DateText>
-            <p>Payday</p>
-            <Spacer />
-            <p>{ balance }</p>
-          </IndentRow>
+      if (payday) { // ADDS A PRE-ROW FOR PAYDAY INFO
+        if (now.getDate() < payDate) {
+          balance += +settings.paycheck;
+          paydayRow =
+            <IndentRow key={ `payday-${ payDate }` }
+              style={ { background: theme.palette.primary.light, color: theme.palette.primary.contrastText } }>
+              <DateText>{ now.getMonth() + 1 }/{ payDate }</DateText>
+              <p>Payday</p>
+              <Spacer />
+              <p>{ balance }</p>
+            </IndentRow>
+        }
         payDate += 14;
       }
 
@@ -100,7 +102,7 @@ export default ({ data, balance, settings, save }) => {
       balance += settings.paycheck;
       billRows.push(
         <IndentRow key={ `payday-${ payDate }` }
-          style={ { background: theme.palette.primary.main, color: theme.palette.primary.contrastText } }>
+          style={ { background: theme.palette.primary.light, color: theme.palette.primary.contrastText } }>
           <DateText>{ now.getMonth() + 1 }/{ payDate }</DateText>
           <p>Payday</p>
           <Spacer />
