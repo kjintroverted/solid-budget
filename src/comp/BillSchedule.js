@@ -47,7 +47,7 @@ export default ({ data, balance, settings, save }) => {
   function createBillRows() {
     payDate = getNextPayDate(settings.payDate);
     let billRows = bills.map((bill, i) => { // MAIN BILL READOUT
-      if (bill.months && bill.months.indexOf(now.getMonth() + 1) < 0) return;
+      if (bill.months && bill.months.indexOf((now.getMonth() + 1) + "") < 0) return;
       let paid = bill.date < now.getDate();
       let payday = bill.date >= payDate;
       if (overrides.indexOf(i) >= 0) paid = !paid;

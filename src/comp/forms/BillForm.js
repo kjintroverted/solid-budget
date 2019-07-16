@@ -29,6 +29,7 @@ export default ({ onSubmit }) => {
   function toggle(e) {
     let monthArr = bill.months || [];
     let { value } = e.target;
+    value = +value;
     let i = monthArr.indexOf(value);
 
     if (i >= 0) {
@@ -87,8 +88,8 @@ export default ({ onSubmit }) => {
               <FormControlLabel
                 control={
                   <Checkbox
-                    checked={ bill.months && bill.months.indexOf("" + ++i) != -1 }
-                    value={ "" + i }
+                    checked={ bill.months && bill.months.indexOf(i + 1) != -1 }
+                    value={ i + 1 }
                     onChange={ toggle }
                     color="primary"
                   />
