@@ -42,7 +42,6 @@ export function totalCredit(paycheck, payDate, month, year) {
 
   let income = 0;
   while (date.getMonth() + 1 === month) {
-    console.log(date.getMonth() + 1, date.getDate());
     income += paycheck;
     payDate += 14;
     date.setDate(payDate);
