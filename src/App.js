@@ -54,4 +54,5 @@ const Content = styled.div`
         flex-direction: column;
         align-items: center;
         margin-top: 80px;
+        margin-bottom: 20px;
 `
