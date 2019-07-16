@@ -126,7 +126,7 @@ export default ({ data, balance, settings, save }) => {
   return (
     <WidgetContainer>
       <HeaderBar>
-        <h2>Schedule</h2>
+        <h2>Bill Planning</h2>
         <Spacer />
         <ActionBar>
           <IconButton onClick={ () => setAdding(!isAdding) }>
