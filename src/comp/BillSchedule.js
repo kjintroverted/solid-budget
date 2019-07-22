@@ -65,9 +65,9 @@ export default ({ data, balance, settings, save }) => {
       if (!paid) balance -= bill.payment;
 
       return (
-        <>
+        <div key={ `billrow-${ i }` }>
           { paydayRow }
-          <IndentRow key={ `billrow-${ i }` }
+          <IndentRow
             className={ paid ? 'inactive clickable' : 'clickable' }
             onClick={ () => toggleOverride(i)
             }
@@ -85,7 +85,7 @@ export default ({ data, balance, settings, save }) => {
               </IconButton>
             }
           </IndentRow >
-        </>
+        </div>
       )
     }
     )
@@ -107,7 +107,7 @@ export default ({ data, balance, settings, save }) => {
     }
 
     let summary =
-      <Info>
+      <Info key="summary">
         <i>Next payday: <strong>{ nextPayDate.getMonth() + 1 }/{ nextPayDate.getDate() }</strong></i>
         <i>Maximum available funds: <strong>{ balance - calculateBillsTil(bills, nextPayDate.getMonth(), nextPayDate.getDate()) }</strong></i>
       </Info>

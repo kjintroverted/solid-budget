@@ -1,6 +1,7 @@
 import React from 'react';
+import styled from 'styled-components';
 import { WidgetContainer, HeaderBar, Row, Spacer } from './theme/ThemeComp';
-import { months, totalCredit } from '../util/helper';
+import { months, totalCredit, totalDebit } from '../util/helper';
 import { Divider } from '@material-ui/core';
 
 export default ({ bills, settings }) => {
@@ -11,7 +12,7 @@ export default ({ bills, settings }) => {
     let views = [];
     do {
       views.push(
-        <>
+        <div key={ `month-${ month }` }>
           <Row>
             <h3>{ months[month - 1] }</h3>
           </Row>
@@ -20,8 +21,13 @@ export default ({ bills, settings }) => {
             <Spacer />
             <p>{ totalCredit(settings.paycheck, new Date(settings.payDate), month, year) }</p>
           </Row>
+          <Row>
+            <p>Debit</p>
+            <Spacer />
+            <Debit>({ totalDebit(bills, month) })</Debit>
+          </Row>
           <Divider />
-        </>
+        </div>
       );
       ([month, year] = nextMonth(month, year));
     } while (month != now.getMonth() + 1)
@@ -37,6 +43,10 @@ export default ({ bills, settings }) => {
     </WidgetContainer>
   )
 }
+
+const Debit = styled.p`
+  color: red;
+`
 
 function nextMonth(m, y) {
   return ++m > 12 ? [1, y + 1] : [m, y];
