@@ -1,8 +1,16 @@
 import React from 'react';
-import { WidgetContainer, HeaderBar, Spacer, ActionBar } from './theme/ThemeComp';
-import { IconButton } from '@material-ui/core';
+import { WidgetContainer, HeaderBar, Spacer, ActionBar, Row } from './theme/ThemeComp';
+import { IconButton, TextField } from '@material-ui/core';
 
 export default ({ bucket, update, onDelete }) => {
+
+  function handleChange(field, numeric) {
+    return e => {
+      let val = numeric ? +e.target.value : e.target.value;
+      update({ ...bucket, [field]: val });
+    }
+  }
+
   return (
     <WidgetContainer>
       <HeaderBar>
@@ -17,6 +25,10 @@ export default ({ bucket, update, onDelete }) => {
           </IconButton>
         </ActionBar>
       </HeaderBar>
+      <Row>
+        <Spacer />
+        <TextField type="number" value={ bucket.value || 0 } onChange={ handleChange('value', true) } />
+      </Row>
     </WidgetContainer>
   )
 }
