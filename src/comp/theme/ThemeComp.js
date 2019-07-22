@@ -28,13 +28,21 @@ export const HeaderBar = styled.div`
   }
 `
 
-export const Row = styled.div`display:flex`;
+export const Row = styled.div`display:flex;`;
 
 export const IndentRow = styled.div`
   display: flex;
   align-items: flex-start;
   padding-left: 15px;
   padding-right: 10px;
-  /* border-radius: 5px; */
   border-bottom: whitesmoke solid 1px;
+`
+
+export const Info = styled.div`
+  display: flex;
+  flex-direction: column;
+  opacity: .5;
+  & * {
+    margin: 5px 0px;
+  }
 `

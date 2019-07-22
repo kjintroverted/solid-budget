@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { WidgetContainer, HeaderBar, ActionBar, Spacer, IndentRow } from './theme/ThemeComp';
+import { WidgetContainer, HeaderBar, ActionBar, Spacer, IndentRow, Info } from './theme/ThemeComp';
 import { IconButton } from '@material-ui/core';
 import BillForm from './forms/BillForm';
 import styled from 'styled-components';
@@ -166,13 +166,4 @@ const Column = styled.span`
 
 const Debit = styled.p`
   color: red;
-`
-
-const Info = styled.div`
-  display: flex;
-  flex-direction: column;
-  opacity: .5;
-  & * {
-    margin: 10px 0px;
-  }
 `
