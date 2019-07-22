@@ -60,7 +60,13 @@ export default ({ userID }) => {
           </div>
 
           <div>
-            <BucketView bucketList={ buckets } />
+            <BucketView
+              bucketList={ buckets }
+              accountList={ accounts }
+              save={ data => {
+                saveFile(find('buckets') || homepage + '/munny/buckets.json', data);
+                setBuckets(data);
+              } } />
           </div>
 
           <div>

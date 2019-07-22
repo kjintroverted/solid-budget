@@ -30,6 +30,11 @@ export const HeaderBar = styled.div`
 
 export const Row = styled.div`display:flex;`;
 
+export const RowCenter = styled.div`
+  display: flex;
+  align-items: center;
+`
+
 export const IndentRow = styled.div`
   display: flex;
   align-items: flex-start;
@@ -51,4 +56,5 @@ export const TopAnchor = styled.div`
   position: absolute;
   top: -1em;
   right: 0em;
+  z-index: 99;
 `

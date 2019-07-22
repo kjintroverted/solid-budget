@@ -48,7 +48,7 @@ export const loadFile = async (file, initValue) => {
     const data = await resp.json();
     return data;
   } catch (err) {
-    console.error(err);
+    console.error('CAUGHT', err);
     return initValue;
   }
 }
