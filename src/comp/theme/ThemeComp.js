@@ -46,3 +46,9 @@ export const Info = styled.div`
     margin: 5px 0px;
   }
 `
+
+export const TopAnchor = styled.div`
+  position: absolute;
+  top: -1em;
+  right: 0em;
+`

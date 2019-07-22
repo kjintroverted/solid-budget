@@ -6,13 +6,15 @@ import { getAppData, loadFile, saveFile } from '../util/pods';
 import { getAccount } from '../util/helper';
 import BillSchedule from './BillSchedule';
 import YearOverview from './YearOverview';
+import BucketView from './BucketView';
 
 export default ({ userID }) => {
   let [homepage, setHomepage] = useState();
   let [files, setFiles] = useState();
+  let [settings, setSettings] = useState(null);
   let [accounts, setAccounts] = useState(null);
   let [bills, setBills] = useState(null);
-  let [settings, setSettings] = useState(null);
+  let [buckets, setBuckets] = useState(null);
 
   async function load(user) {
     const root = "https://" + user.split("/")[2] + "/public";
@@ -29,6 +31,9 @@ export default ({ userID }) => {
 
     data = await loadFile(find('bills') || root + '/munny/bills.json', []);
     setBills(data);
+
+    data = await loadFile(find('buckets') || root + '/munny/buckets.json', []);
+    setBuckets(data);
   }
 
   function find(file) {
@@ -55,6 +60,10 @@ export default ({ userID }) => {
           </div>
 
           <div>
+            <BucketView bucketList={ buckets } />
+          </div>
+
+          <div>
             <BillSchedule
               data={ bills }
               balance={ getAccount(accounts, 'Main').balance }
@@ -78,6 +87,6 @@ const Widgets = styled.div`
         width: 100vw;
         display: grid;
         justify-content: center;
-        grid-template-columns: repeat(auto-fit, minmax(300px, 540px));
+        grid-template-columns: repeat(auto-fit, minmax(300px, 500px));
         grid-gap: 10px;
       `
