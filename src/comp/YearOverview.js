@@ -6,6 +6,19 @@ import { Divider } from '@material-ui/core';
 
 export default ({ bills, settings }) => {
 
+  function getExtraBills(month) {
+    return bills.reduce((arr, bill) => {
+      if (!bill.months || bill.months.indexOf(month) === -1) return arr;
+      return [...arr, (
+        <IndentRow key={ `extra-bill-${ bill.title }` }>
+          <Debit>{ bill.title }</Debit>
+          <Spacer />
+          <Debit>{ bill.payment }</Debit>
+        </IndentRow>
+      )]
+    }, [])
+  }
+
   function createMonthViews() {
     let now = new Date();
     let [month, year] = nextMonth(now.getMonth() + 1, now.getFullYear());
@@ -35,16 +48,7 @@ export default ({ bills, settings }) => {
             <Debit>({ debit })</Debit>
           </Row>
           {
-            bills.map(bill => {
-              if (!bill.months || bill.months.indexOf(month) === -1) return;
-              return (
-                <IndentRow key={ `extra-bill-${ bill.title }` }>
-                  <Debit>{ bill.title }</Debit>
-                  <Spacer />
-                  <Debit>{ bill.payment }</Debit>
-                </IndentRow>
-              )
-            })
+            getExtraBills(month)
           }
           <Divider />
         </MonthView>
