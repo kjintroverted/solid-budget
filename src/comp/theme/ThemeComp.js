@@ -12,6 +12,7 @@ export const WidgetContainer = styled.div`
   padding: 10px;
   display: flex;
   flex-direction: column;
+  margin: 10px 0px;
 `
 
 export const ActionBar = styled.span`

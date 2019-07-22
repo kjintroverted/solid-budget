@@ -17,7 +17,7 @@ export default ({ bucket, update, onDelete }) => {
         <h2>{ bucket.name } Bucket</h2>
         <Spacer />
         <ActionBar>
-          <IconButton onClick={ () => update({ ...bucket, favorite: !bucket.favorite }) }>
+          <IconButton color="primary" onClick={ () => update({ ...bucket, favorite: !bucket.favorite }) }>
             <i className="material-icons">{ bucket.favorite ? 'star' : 'star_border' }</i>
           </IconButton>
           <IconButton onClick={ onDelete } >

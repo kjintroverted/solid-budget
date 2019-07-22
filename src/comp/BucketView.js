@@ -34,6 +34,13 @@ export default ({ bucketList, accountList, save }) => {
 
   useEffect(() => {
     if (!buckets) return;
+    buckets.sort((a, b) => {
+      if (a.favorite) {
+        if (!b.favorite) return -1;
+        return 0;
+      }
+      if (b.favorite) return 1;
+    })
     save(buckets);
   }, [buckets])
 
