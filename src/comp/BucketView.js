@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
-import { TopAnchor } from './theme/ThemeComp';
+import { Column, HeaderBar, Spacer } from './theme/ThemeComp';
 import { Fab } from '@material-ui/core';
 import BucketForm from './forms/BucketForm';
 import Bucket from './Bucket';
@@ -50,14 +50,19 @@ export default ({ bucketList, accountList, save }) => {
 
   return (
     <BucketContainer>
-      <TopAnchor>
+      <HeaderBar>
+        <Column>
+          <h2>Buckets</h2>
+          <p>Money set aside for a purpose.</p>
+        </Column>
+        <Spacer />
         <Fab onClick={ () => setAdding(!isAdding) }
           color="secondary" size="small"
           style={ { color: 'white' } }
         >
           <i className="material-icons">{ isAdding ? 'close' : 'add' }</i>
         </Fab>
-      </TopAnchor>
+      </HeaderBar>
       {
         isAdding &&
         <BucketForm submit={ addBucket } labels={ getAccountLabels() } />
