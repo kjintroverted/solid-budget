@@ -1,9 +1,8 @@
 import React from 'react';
-import { WidgetContainer, HeaderBar, Spacer, ActionBar, Row } from './theme/ThemeComp';
+import { WidgetContainer, HeaderBar, Spacer, ActionBar, Row, Column } from './theme/ThemeComp';
 import { IconButton, TextField } from '@material-ui/core';
 
 export default ({ bucket, update, onDelete }) => {
-
   function handleChange(field, numeric) {
     return e => {
       let val = numeric ? +e.target.value : e.target.value;
@@ -14,7 +13,10 @@ export default ({ bucket, update, onDelete }) => {
   return (
     <WidgetContainer>
       <HeaderBar>
-        <h2>{ bucket.name } Bucket</h2>
+        <Column>
+          <h2>{ bucket.name }</h2>
+          <p>{ bucket.label }</p>
+        </Column>
         <Spacer />
         <ActionBar>
           <IconButton color="primary" onClick={ () => update({ ...bucket, favorite: !bucket.favorite }) }>

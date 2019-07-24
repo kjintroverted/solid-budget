@@ -9,6 +9,7 @@ import HeaderNav from './comp/Header';
 import Settings from './comp/Settings';
 import Dashboard from './comp/Dashboard';
 import { theme } from './comp/theme/Provider';
+import AddPayment from './comp/api/AddPayment';
 
 function App() {
 
@@ -40,6 +41,7 @@ function App() {
           <Content>
             <Route path="/" exact render={ () => <Dashboard userID={ user } /> } />
             <Route path="/settings/" render={ () => <Settings userID={ user } /> } />
+            <Route path="/api/payment/" component={ AddPayment } />
           </Content>
         </div>
       </ThemeProvider>

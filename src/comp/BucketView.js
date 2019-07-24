@@ -16,7 +16,7 @@ export default ({ bucketList, accountList, save }) => {
 
   function addBucket(data) {
     data = { ...data, value: 0, debits: [] };
-    updateBuckets([...buckets, data]);
+    updateBuckets([data, ...buckets]);
     setAdding(false);
   }
 
@@ -64,7 +64,7 @@ export default ({ bucketList, accountList, save }) => {
       }
       {
         buckets &&
-        buckets.map((b, i) => <Bucket bucket={ b } update={ updateBucket(i) } onDelete={ deleteBucket(i) } />)
+        buckets.map((b, i) => <Bucket key={ `bucket-${ b.name }` } bucket={ b } update={ updateBucket(i) } onDelete={ deleteBucket(i) } />)
       }
     </BucketContainer>
   )

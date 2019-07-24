@@ -24,12 +24,16 @@ export const HeaderBar = styled.div`
   display: flex;
   align-items: center;
   border-bottom: lightgray solid 1px;
-  h2 {
+  h2, p {
     margin: 0px;
   }
 `
 
 export const Row = styled.div`display:flex;`;
+export const Column = styled.div`
+  display:flex;
+  flex-direction: column;
+`
 
 export const RowCenter = styled.div`
   display: flex;
