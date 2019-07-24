@@ -56,3 +56,7 @@ export function round(num, places) {
   x = Math.floor(x);
   return x / factor;
 }
+
+export function deepEquals(obj1, obj2) {
+  return JSON.stringify(obj1) === JSON.stringify(obj2);
+}

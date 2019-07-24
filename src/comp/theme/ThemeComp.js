@@ -43,7 +43,7 @@ export const RowCenter = styled.div`
 
 export const IndentRow = styled.div`
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   padding-left: 15px;
   padding-right: 10px;
   border-bottom: whitesmoke solid 1px;
@@ -58,9 +58,9 @@ export const Info = styled.div`
   }
 `
 
-export const TopAnchor = styled.div`
-  position: absolute;
-  top: -1em;
-  right: 0em;
+export const BottomAnchor = styled.div`
+  position: fixed;
+  bottom: .5em;
+  right: .5em;
   z-index: 99;
 `

@@ -89,7 +89,7 @@ export default ({ data, buckets, save }) => {
               </IndentRow>
               { show.indexOf(i) !== -1 && !!allocatedBuckets.length &&
                 <>
-                  <IndentRow><p><strong>Total Allocated</strong></p><Spacer /><p><strong>{ allocatedValue }</strong></p></IndentRow>
+                  <IndentRow><p><strong>Unallocated</strong></p><Spacer /><p><strong>{ acc.balance - allocatedValue }</strong></p></IndentRow>
                   { allocatedBuckets.map(bucket => <IndentRow><p>{ bucket.name }</p><Spacer /><p>{ bucket.value }</p></IndentRow>) }
                 </>
               }

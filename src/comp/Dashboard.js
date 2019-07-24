@@ -3,10 +3,12 @@ import styled from 'styled-components';
 
 import AccountBreakdown from './AccountBreakdown'
 import { getAppData, loadFile, saveFile } from '../util/pods';
-import { getAccount } from '../util/helper';
+import { getAccount, deepEquals } from '../util/helper';
 import BillSchedule from './BillSchedule';
 import YearOverview from './YearOverview';
 import BucketView from './BucketView';
+import { BottomAnchor } from './theme/ThemeComp';
+import { Fab } from '@material-ui/core';
 
 export default ({ userID }) => {
   let [homepage, setHomepage] = useState();
@@ -15,6 +17,10 @@ export default ({ userID }) => {
   let [accounts, setAccounts] = useState(null);
   let [bills, setBills] = useState(null);
   let [buckets, setBuckets] = useState(null);
+  let [accountBase, setAccountBase] = useState(null);
+  let [billBase, setBillBase] = useState(null);
+  let [bucketBase, setBucketBase] = useState(null);
+  let [isDirty, setDirty] = useState(false);
 
   async function load(user) {
     const root = "https://" + user.split("/")[2] + "/public";
@@ -27,12 +33,15 @@ export default ({ userID }) => {
     setSettings(data);
 
     data = await loadFile(find('accounts') || root + '/munny/accounts.json', []);
+    setAccountBase(data);
     setAccounts(data);
 
     data = await loadFile(find('bills') || root + '/munny/bills.json', []);
+    setBillBase(data);
     setBills(data);
 
     data = await loadFile(find('buckets') || root + '/munny/buckets.json', []);
+    setBucketBase(data);
     setBuckets(data);
   }
 
@@ -42,9 +51,25 @@ export default ({ userID }) => {
     return info ? info.url : null;
   }
 
+  async function save() {
+    saveFile(find('accounts') || homepage + '/munny/accounts.json', accounts);
+    setAccountBase(accounts);
+    saveFile(find('buckets') || homepage + '/munny/buckets.json', buckets);
+    setBucketBase(buckets);
+    saveFile(find('bills') || homepage + '/munny/bills.json', bills);
+    setBillBase(bills);
+  }
+
   useEffect(() => {
     if (userID) load(userID);
   }, [userID]);
+
+  useEffect(() => {
+    setDirty(
+      !deepEquals(accountBase, accounts)
+      || !deepEquals(billBase, bills)
+      || !deepEquals(bucketBase, buckets));
+  }, [accounts, bills, buckets, accountBase, billBase, bucketBase]);
 
   return (
     <>
@@ -54,20 +79,14 @@ export default ({ userID }) => {
             <AccountBreakdown
               data={ accounts }
               buckets={ buckets }
-              save={ data => {
-                saveFile(find('accounts') || homepage + '/munny/accounts.json', data);
-                setAccounts(data);
-              } } />
+              save={ setAccounts } />
           </div>
 
           <div>
             <BucketView
               bucketList={ buckets }
               accountList={ accounts }
-              save={ data => {
-                saveFile(find('buckets') || homepage + '/munny/buckets.json', data);
-                setBuckets(data);
-              } } />
+              save={ setBuckets } />
           </div>
 
           <div>
@@ -75,16 +94,21 @@ export default ({ userID }) => {
               data={ bills }
               balance={ getAccount(accounts, 'Main').balance }
               settings={ settings }
-              save={ data => {
-                saveFile(find('bills') || homepage + '/munny/bills.json', data);
-                setBills(data);
-              } } />
+              save={ setBills } />
           </div>
 
           <div>
             <YearOverview { ...{ bills, settings } } />
           </div>
         </Widgets>
+      }
+      {
+        isDirty &&
+        <BottomAnchor>
+          <Fab color="secondary" onClick={ save }>
+            <i className="material-icons">save</i>
+          </Fab>
+        </BottomAnchor>
       }
     </>
   )
