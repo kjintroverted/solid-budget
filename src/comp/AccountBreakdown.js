@@ -70,8 +70,14 @@ export default ({ data, buckets, save }) => {
           let allocatedValue = totalValue(allocatedBuckets);
           return (
             <Column key={ `account-${ i }` }>
-              <IndentRow className="clickable" onClick={ () => toggleShow(i) }>
+              <IndentRow>
                 <h3>{ acc.name } ({ acc.label })</h3>
+                {
+                  !!allocatedBuckets.length &&
+                  <IconButton onClick={ () => toggleShow(i) } size="small">
+                    <i className="material-icons">{ show.indexOf(i) !== -1 ? 'arrow_drop_up' : 'arrow_drop_down' }</i>
+                  </IconButton>
+                }
                 <Spacer />
                 <Badge color="secondary"
                   badgeContent={ acc.balance - allocatedValue } invisible={ allocatedValue <= acc.balance }>
