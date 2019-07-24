@@ -105,7 +105,8 @@ export default ({ userID }) => {
       {
         isDirty &&
         <BottomAnchor>
-          <Fab color="secondary" onClick={ save }>
+          <Fab color="secondary" style={ { color: 'white' } }
+            onClick={ save }>
             <i className="material-icons">save</i>
           </Fab>
         </BottomAnchor>
