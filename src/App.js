@@ -57,4 +57,5 @@ const Content = styled.div`
         align-items: center;
         margin-top: 80px;
         margin-bottom: 20px;
+        padding: 0px 5px;
 `

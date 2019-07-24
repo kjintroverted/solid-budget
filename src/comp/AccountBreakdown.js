@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { IconButton, Input } from '@material-ui/core';
-import styled from 'styled-components';
 
-import { ActionBar, WidgetContainer, HeaderBar, Spacer, IndentRow } from './theme/ThemeComp';
+import { ActionBar, WidgetContainer, HeaderBar, Spacer, IndentRow, Column } from './theme/ThemeComp';
 import AccountForm from './forms/AccountForm';
 
-export default ({ data, save }) => {
+export default ({ data, buckets, save }) => {
   let [accounts, updateAccounts] = useState(data);
   let [isAdding, setAdding] = useState(false);
   let [isEditing, setEditing] = useState(false);
+  let [show, updateShow] = useState([]);
 
   async function deleteAccount(i) {
     updateAccounts([...accounts.slice(0, i), ...accounts.slice(i + 1)]);
@@ -20,6 +20,21 @@ export default ({ data, save }) => {
       { ...accounts[i], balance },
       ...accounts.slice(i + 1)
     ]);
+  }
+
+  function getBuckets(label) {
+    if (!buckets) return []
+    return buckets.filter(b => b.label === label);
+  }
+
+  function totalValue(arr) {
+    return arr.reduce((acc, { value }) => acc + value, 0)
+  }
+
+  function toggleShow(i) {
+    let index = show.indexOf(i);
+    if (index === -1) updateShow([...show, i])
+    else updateShow([...show.slice(0, index), ...show.slice(index + 1)])
   }
 
   useEffect(() => {
@@ -51,20 +66,28 @@ export default ({ data, save }) => {
       {/* MAIN ACCOUNT DISPLAY */ }
       { accounts &&
         accounts.map((acc, i) => (
-          <IndentRow key={ `account-${ i }` }>
-            <p>{ acc.name } ({ acc.label })</p>
-            <Spacer />
-            <Input
-              type="number"
-              value={ acc.balance }
-              onChange={ e => updateBalance(i, +e.target.value) }
-            />
-            { isEditing && // DELETE BUTTON
-              <IconButton color='secondary' onClick={ () => deleteAccount(i) }>
-                <i className="material-icons">delete</i>
-              </IconButton>
+          <Column key={ `account-${ i }` }>
+            <IndentRow className="clickable" onClick={ () => toggleShow(i) }>
+              <h3>{ acc.name } ({ acc.label })</h3>
+              <Spacer />
+              <Input
+                type="number"
+                value={ acc.balance }
+                onChange={ e => updateBalance(i, +e.target.value) }
+              />
+              { isEditing && // DELETE BUTTON
+                <IconButton color='secondary' onClick={ () => deleteAccount(i) }>
+                  <i className="material-icons">delete</i>
+                </IconButton>
+              }
+            </IndentRow>
+            { show.indexOf(i) !== -1 && !!getBuckets(acc.label).length &&
+              <>
+                <IndentRow><p><strong>Total Allocated</strong></p><Spacer /><p><strong>{ totalValue(getBuckets(acc.label)) }</strong></p></IndentRow>
+                { getBuckets(acc.label).map(bucket => <IndentRow><p>{ bucket.name }</p><Spacer /><p>{ bucket.value }</p></IndentRow>) }
+              </>
             }
-          </IndentRow>
+          </Column>
         ))
       }
 

@@ -53,6 +53,7 @@ export default ({ userID }) => {
           <div>
             <AccountBreakdown
               data={ accounts }
+              buckets={ buckets }
               save={ data => {
                 saveFile(find('accounts') || homepage + '/munny/accounts.json', data);
                 setAccounts(data);
