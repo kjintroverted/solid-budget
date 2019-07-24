@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { IconButton, Input } from '@material-ui/core';
+import { IconButton, Input, Badge } from '@material-ui/core';
 
 import { ActionBar, WidgetContainer, HeaderBar, Spacer, IndentRow, Column } from './theme/ThemeComp';
 import AccountForm from './forms/AccountForm';
@@ -65,30 +65,37 @@ export default ({ data, buckets, save }) => {
 
       {/* MAIN ACCOUNT DISPLAY */ }
       { accounts &&
-        accounts.map((acc, i) => (
-          <Column key={ `account-${ i }` }>
-            <IndentRow className="clickable" onClick={ () => toggleShow(i) }>
-              <h3>{ acc.name } ({ acc.label })</h3>
-              <Spacer />
-              <Input
-                type="number"
-                value={ acc.balance }
-                onChange={ e => updateBalance(i, +e.target.value) }
-              />
-              { isEditing && // DELETE BUTTON
-                <IconButton color='secondary' onClick={ () => deleteAccount(i) }>
-                  <i className="material-icons">delete</i>
-                </IconButton>
+        accounts.map((acc, i) => {
+          let allocatedBuckets = getBuckets(acc.label);
+          let allocatedValue = totalValue(allocatedBuckets);
+          return (
+            <Column key={ `account-${ i }` }>
+              <IndentRow className="clickable" onClick={ () => toggleShow(i) }>
+                <h3>{ acc.name } ({ acc.label })</h3>
+                <Spacer />
+                <Badge color="secondary"
+                  badgeContent={ acc.balance - allocatedValue } invisible={ allocatedValue <= acc.balance }>
+                  <Input
+                    type="number"
+                    value={ acc.balance }
+                    onChange={ e => updateBalance(i, +e.target.value) }
+                  />
+                </Badge>
+                { isEditing && // DELETE BUTTON
+                  <IconButton color='secondary' onClick={ () => deleteAccount(i) }>
+                    <i className="material-icons">delete</i>
+                  </IconButton>
+                }
+              </IndentRow>
+              { show.indexOf(i) !== -1 && !!allocatedBuckets.length &&
+                <>
+                  <IndentRow><p><strong>Total Allocated</strong></p><Spacer /><p><strong>{ allocatedValue }</strong></p></IndentRow>
+                  { allocatedBuckets.map(bucket => <IndentRow><p>{ bucket.name }</p><Spacer /><p>{ bucket.value }</p></IndentRow>) }
+                </>
               }
-            </IndentRow>
-            { show.indexOf(i) !== -1 && !!getBuckets(acc.label).length &&
-              <>
-                <IndentRow><p><strong>Total Allocated</strong></p><Spacer /><p><strong>{ totalValue(getBuckets(acc.label)) }</strong></p></IndentRow>
-                { getBuckets(acc.label).map(bucket => <IndentRow><p>{ bucket.name }</p><Spacer /><p>{ bucket.value }</p></IndentRow>) }
-              </>
-            }
-          </Column>
-        ))
+            </Column>
+          )
+        })
       }
 
       {/* DISPLAY FORM FOR NEW ACCOUNT */ }
