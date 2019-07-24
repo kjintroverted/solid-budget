@@ -15,6 +15,11 @@ function App() {
 
   let [user, setUser] = useState();
 
+  async function getCurrentUser() {
+    let session = await auth.currentSession()
+    setUser(!session ? null : session.webId);
+  }
+
   async function login() {
     let session = await auth.currentSession();
     let popupUri = 'https://solid.community/common/popup.html';
@@ -32,6 +37,8 @@ function App() {
   useEffect(() => {
     if (!user) login()
   }, [user])
+
+  useEffect(getCurrentUser, []);
 
   return (
     <Router>
