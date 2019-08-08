@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
-import auth from 'solid-auth-client';
 import { BrowserRouter as Router, Route } from 'react-router-dom';
 import { ThemeProvider } from '@material-ui/styles';
 
@@ -11,26 +10,35 @@ import Dashboard from './comp/Dashboard';
 import { theme } from './comp/theme/Provider';
 import AddPayment from './comp/api/AddPayment';
 
+const solidClient = require('solid-file-client');
+
 function App() {
 
   let [user, setUser] = useState(null);
 
   async function getCurrentUser() {
-    let session = await auth.currentSession()
+    let session;
+    try {
+      session = await solidClient.checkSession()
+    } catch {
+      console.log("No current session.");
+    }
     setUser(!session ? null : session.webId);
   }
 
   async function login() {
-    let session = await auth.currentSession();
-    let popupUri = 'https://solid.community/common/popup.html';
-    if (!session)
-      session = await auth.popupLogin({ popupUri });
-    console.info("Welcome,", session.webId);
-    setUser(session.webId)
+    let webId
+    try {
+      ({ webId } = await solidClient.checkSession());
+    } catch {
+      webId = await solidClient.popupLogin();
+    }
+    console.info("Welcome,", webId);
+    setUser(webId)
   }
 
   async function logout() {
-    await auth.logout();
+    await solidClient.logout();
     setUser(null);
   }
 
