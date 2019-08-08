@@ -12,14 +12,14 @@ const ProfileForm = ({ userID, field }) => {
     setValue(value);
   }
 
+  async function loadUser() {
+    const rec = await getField(userID, field);
+    if (rec) setValue(rec.value);
+    else setValue("")
+  }
+
   // GET USER STORE ON LOAD
-  useEffect(() => {
-    (async function loadUser() {
-      const rec = await getField(userID, field);
-      if (rec) setValue(rec.value);
-      else setValue("")
-    }())
-  }, []);
+  useEffect(loadUser, [userID]);
 
   return (
     <form onSubmit={ e => updateField(e, value) }>

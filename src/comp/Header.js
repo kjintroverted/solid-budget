@@ -16,13 +16,13 @@ let HeaderNav = ({ userID, logout, login }) => {
 
   let close = () => setAnchor(null);
 
+  async function getName() {
+    const rec = await getField(userID, "name");
+    if (rec) setName(rec.value);
+  }
+
   useEffect(() => {
-    if (userID) {
-      (async function getName() {
-        const rec = await getField(userID, "name");
-        if (rec) setName(rec.value);
-      }())
-    }
+    if (userID) getName();
   }, [userID])
 
   return (

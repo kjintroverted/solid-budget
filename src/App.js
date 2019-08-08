@@ -13,7 +13,7 @@ import AddPayment from './comp/api/AddPayment';
 
 function App() {
 
-  let [user, setUser] = useState();
+  let [user, setUser] = useState(null);
 
   async function getCurrentUser() {
     let session = await auth.currentSession()
