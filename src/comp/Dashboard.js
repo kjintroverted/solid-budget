@@ -1,112 +1,49 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
+import { withWebId } from '@inrupt/solid-react-components';
 
 import AccountBreakdown from './AccountBreakdown'
-import { getAppData, loadFile, saveFile } from '../util/pods';
-import { getAccount, deepEquals } from '../util/helper';
 import BillSchedule from './BillSchedule';
 import YearOverview from './YearOverview';
 import BucketView from './BucketView';
 import { BottomAnchor } from './theme/ThemeComp';
 import { Fab } from '@material-ui/core';
 
-export default ({ userID }) => {
-  let [homepage, setHomepage] = useState();
-  let [files, setFiles] = useState();
-  let [settings, setSettings] = useState(null);
-  let [accounts, setAccounts] = useState(null);
-  let [bills, setBills] = useState(null);
-  let [buckets, setBuckets] = useState(null);
-  let [accountBase, setAccountBase] = useState(null);
-  let [billBase, setBillBase] = useState(null);
-  let [bucketBase, setBucketBase] = useState(null);
-  let [isDirty, setDirty] = useState(false);
+const Dashboard = ({ webId }) => {
 
-  async function load(user) {
-    const root = "https://" + user.split("/")[2] + "/public";
-    setHomepage(root);
-    let loadedFiles = await getAppData(root);
-    setFiles(loadedFiles);
-    let data;
+  async function load() {
 
-    data = await loadFile(root + '/munny/settings.json', []);
-    setSettings(data);
-
-    data = await loadFile(find('accounts') || root + '/munny/accounts.json', []);
-    setAccountBase(data);
-    setAccounts(data);
-
-    data = await loadFile(find('bills') || root + '/munny/bills.json', []);
-    setBillBase(data);
-    setBills(data);
-
-    data = await loadFile(find('buckets') || root + '/munny/buckets.json', []);
-    setBucketBase(data);
-    setBuckets(data);
-  }
-
-  function find(file) {
-    if (!files) return
-    let info = files.find(val => val.name === file);
-    return info ? info.url : null;
-  }
-
-  async function save() {
-    saveFile(find('accounts') || homepage + '/munny/accounts.json', accounts);
-    setAccountBase(accounts);
-    saveFile(find('buckets') || homepage + '/munny/buckets.json', buckets);
-    setBucketBase(buckets);
-    saveFile(find('bills') || homepage + '/munny/bills.json', bills);
-    setBillBase(bills);
   }
 
   useEffect(() => {
-    if (userID) load(userID);
-  }, [userID]);
-
-  useEffect(() => {
-    setDirty(
-      !deepEquals(accountBase, accounts)
-      || !deepEquals(billBase, bills)
-      || !deepEquals(bucketBase, buckets));
-  }, [accounts, bills, buckets, accountBase, billBase, bucketBase]);
+    if (webId) load(webId);
+  }, [webId]);
 
   return (
     <>
-      { files &&
+      { false &&
         <Widgets>
           <div>
-            <AccountBreakdown
-              data={ accounts }
-              buckets={ buckets }
-              save={ setAccounts } />
+            <AccountBreakdown />
           </div>
 
           <div>
-            <BucketView
-              bucketList={ buckets }
-              accountList={ accounts }
-              save={ setBuckets } />
+            <BucketView />
           </div>
 
           <div>
-            <BillSchedule
-              data={ bills }
-              balance={ getAccount(accounts, 'Main').balance }
-              settings={ settings }
-              save={ setBills } />
+            <BillSchedule />
           </div>
 
           <div>
-            <YearOverview { ...{ bills, settings } } />
+            <YearOverview />
           </div>
         </Widgets>
       }
       {
-        isDirty &&
+        false &&
         <BottomAnchor>
-          <Fab color="secondary" style={ { color: 'white' } }
-            onClick={ save }>
+          <Fab color="secondary" style={ { color: 'white' } } >
             <i className="material-icons">save</i>
           </Fab>
         </BottomAnchor>
@@ -114,6 +51,8 @@ export default ({ userID }) => {
     </>
   )
 }
+
+export default withWebId(Dashboard);
 
 const Widgets = styled.div`
         width: 100vw;

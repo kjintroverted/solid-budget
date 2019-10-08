@@ -6,10 +6,8 @@ import { withWebId } from '@inrupt/solid-react-components';
 
 import './App.css';
 import HeaderNav from './comp/Header';
-import Settings from './comp/Settings';
 import Dashboard from './comp/Dashboard';
 import { theme } from './comp/theme/Provider';
-import AddPayment from './comp/api/AddPayment';
 import Login from './comp/Login';
 
 function App({ webId }) {
@@ -23,8 +21,6 @@ function App({ webId }) {
             { !webId ?
               <Route path="/" exact render={ () => <Login /> } /> :
               <Route path="/" exact render={ () => <Dashboard /> } /> }
-            <Route path="/settings/" render={ () => <Settings /> } />
-            <Route path="/api/payment/" component={ AddPayment } />
           </Content>
         </div>
       </ThemeProvider>

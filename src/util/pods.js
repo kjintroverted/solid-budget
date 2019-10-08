@@ -1,63 +1,128 @@
-import rdf from 'rdflib';
-const solidFiles = require('solid-file-client');
+import data from '@solid/query-ldflex';
+import auth from 'solid-auth-client';
 
-const VCARD = rdf.Namespace("http://www.w3.org/2006/vcard/ns#")
-const store = new rdf.IndexedFormula;
-const fetcher = new rdf.Fetcher(store);
-const updater = new rdf.UpdateManager(store);
+const appPath = 'public/munnypouch/';
 
-export const getField = async (userID, field) => {
-  const userStore = store.sym(userID);
-  const profile = userStore.doc();
-  await fetcher.load(profile);
-  return store.any(userStore, VCARD(field));
-}
+/**
+ * Creates a valid string that represents the application path. This is the
+ * default value if no storage predicate is discovered
+ * @param webId
+ * @param path
+ * @returns {*}
+ */
+export const buildPathFromWebId = (webId, path) => {
+  if (!webId) return false;
+  const domain = new URL(webId).origin;
+  return `${ domain }/${ path }`;
+};
 
-export const setField = async (userID, field, value) => {
-  const userStore = store.sym(userID);
-  const profile = userStore.doc();
-  const ins = rdf.st(userStore, VCARD(field), value, profile);
-  const del = store.statementsMatching(userStore, VCARD(field), null, profile);
+/**
+ * Helper function to check for the user's pod storage value. If it doesn't exist, we assume root of the pod
+ * @returns {Promise<string>}
+ */
+export const getAppStoragePath = async webId => {
+  const podStoragePath = await data[webId].storage;
+  let podStoragePathValue =
+    podStoragePath && podStoragePath.value.trim().length > 0 ? podStoragePath.value : '';
 
-  updater.update(del, ins, (uri, ok) => {
-    if (!ok) console.error("Failed update.", uri);
-  })
-}
-
-export const initAppFolder = async (homepage) => {
-  await solidFiles.createFolder(homepage + "/munny")
-  console.info("Munny pouch initialized.");
-  return [];
-}
-
-export const getAppData = async (homepage) => {
-  let files;
-  try {
-    const folder = await solidFiles.readFolder(homepage + "/munny")
-    files = folder.files;
-  } catch {
-    console.info("No munny pouch found.");
-    files = await initAppFolder(homepage);
+  // Make sure that the path ends in a / so it is recognized as a folder path
+  if (podStoragePathValue && !podStoragePathValue.endsWith('/')) {
+    podStoragePathValue = `${ podStoragePathValue }/`;
   }
-  return files;
-}
 
-export const loadFile = async (file, initValue) => {
-  try {
-    const resp = await fetch(file);
-    const data = await resp.json();
-    return data;
-  } catch (err) {
-    console.error('CAUGHT', err);
-    return initValue;
+  // If there is no storage value from the pod, use webId as the backup, and append the application path from env
+  if (!podStoragePathValue || podStoragePathValue.trim().length === 0) {
+    return buildPathFromWebId(webId, appPath);
   }
-}
 
-export const saveFile = async (file, data) => {
+  return `${ podStoragePathValue }${ appPath }`;
+};
+
+// Internal helpers
+export const documentExists = async documentUri =>
+  auth.fetch(documentUri, {
+    headers: {
+      'Content-Type': 'text/turtle'
+    }
+  });
+
+const createDoc = async (documentUri, options) => {
   try {
-    await solidFiles.updateFile(file, JSON.stringify(data));
-    console.info('saved:', file);
-  } catch {
-    console.warn("save interrupted");
+    return await auth.fetch(documentUri, options);
+  } catch (e) {
+    throw e;
   }
-} 
+};
+
+export const createDocument = async (documentUri, body = '') => {
+  try {
+    const options = {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'text/turtle'
+      },
+      body
+    };
+    return await createDoc(documentUri, options);
+  } catch (e) {
+    throw e;
+  }
+};
+
+// Delete file from storage
+export const deleteFile = async url => {
+  try {
+    return await auth.fetch(url, { method: 'DELETE' });
+  } catch (e) {
+    throw e;
+  }
+};
+
+// Create new document
+export const createNonExistentDocument = async (documentUri, body = '') => {
+  try {
+    const result = await documentExists(documentUri);
+
+    return result.status === 404 ? createDocument(documentUri, body) : null;
+  } catch (e) {
+    throw e;
+  }
+};
+
+// Loads document
+export const fetchLdflexDocument = async documentUri => {
+  try {
+    const result = await documentExists(documentUri);
+    if (result.status === 404) return null;
+    const document = await data[documentUri];
+    return document;
+  } catch (e) {
+    throw e;
+  }
+};
+
+// Checks if storage exists
+export const folderExists = async folderPath => {
+  const result = await auth.fetch(folderPath);
+  return result.status === 403 || result.status === 200;
+};
+
+// Creates storage path
+export const createContainer = async folderPath => {
+  try {
+    const existContainer = await folderExists(folderPath);
+    const data = `${ folderPath }data.json`;
+    if (existContainer) return folderPath;
+
+    await createDoc(data, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    });
+
+    return folderPath;
+  } catch (error) {
+    throw new Error(error);
+  }
+};
