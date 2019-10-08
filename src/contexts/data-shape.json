@@ -1,0 +1,14 @@
+{
+  {
+    "@context": {
+      "foaf": "http://xmlns.com/foaf/0.1/"
+    },
+    "shape": [
+      {
+        "prefix": "foaf",
+        "predicate": "account"
+      }
+    ]
+  }
+  
+}
