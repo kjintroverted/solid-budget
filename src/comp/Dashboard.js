@@ -8,13 +8,30 @@ import YearOverview from './YearOverview';
 import BucketView from './BucketView';
 import { BottomAnchor } from './theme/ThemeComp';
 import { Fab } from '@material-ui/core';
-import { getAppStoragePath, getDataPath, fetchDocument } from '../util/pods';
+import { getAppStoragePath, initializeStorage, fetchDocument, createNonExistentDocument } from '../util/pods';
+import accountShape from '../contexts/account-shape.json';
 
 const Dashboard = ({ webId }) => {
 
+  const [accountFolder, setAccountFolder] = useState("");
+
   async function load() {
     const storage = await getAppStoragePath(webId);
-    const dataPath = await getDataPath(storage);
+    setAccountFolder(`${ storage }accounts/`);
+  }
+
+  async function save(shape, data) {
+    data.forEach(async datum => {
+      let doc = await fetchDocument(datum.uri);
+      if (!doc) {
+        await createNonExistentDocument(datum.uri);
+        doc = await fetchDocument(datum.uri);
+      }
+      shape.shape.forEach(async ({ prefix, predicate, alias }) => {
+        const object = datum[alias || predicate];
+        await doc[`${ shape['@context'][prefix] }${ predicate }`].add(object + '');
+      })
+    })
   }
 
   useEffect(() => {

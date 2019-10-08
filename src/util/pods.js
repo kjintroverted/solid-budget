@@ -64,7 +64,7 @@ export const fetchDocument = async documentUri => {
     const result = await documentExists(documentUri);
     if (result.status === 404) return null;
     const document = await data[documentUri];
-    return document.data;
+    return document;
   } catch (e) {
     throw e;
   }
@@ -77,11 +77,11 @@ export const folderExists = async folderPath => {
 };
 
 // Creates storage path
-export const getDataPath = async folderPath => {
+export const getDataPath = async (folderPath) => {
   try {
     const existContainer = await folderExists(folderPath);
     const data = `${ folderPath }data.ttl`;
-    if (existContainer) return data;
+    if (existContainer) return folderPath;
 
     await createDoc(data, {
       method: 'PUT',
@@ -90,7 +90,7 @@ export const getDataPath = async folderPath => {
       }
     });
 
-    return data;
+    return folderPath;
   } catch (error) {
     throw new Error(error);
   }
