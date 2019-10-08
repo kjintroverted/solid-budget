@@ -8,11 +8,13 @@ import YearOverview from './YearOverview';
 import BucketView from './BucketView';
 import { BottomAnchor } from './theme/ThemeComp';
 import { Fab } from '@material-ui/core';
+import { getAppStoragePath, getDataPath, fetchDocument } from '../util/pods';
 
 const Dashboard = ({ webId }) => {
 
   async function load() {
-
+    const storage = await getAppStoragePath(webId);
+    const dataPath = await getDataPath(storage);
   }
 
   useEffect(() => {

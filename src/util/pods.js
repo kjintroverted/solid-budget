@@ -38,6 +38,64 @@ export const getAppStoragePath = async webId => {
   return `${ podStoragePathValue }${ appPath }`;
 };
 
+// Delete file from storage
+export const deleteFile = async url => {
+  try {
+    return await auth.fetch(url, { method: 'DELETE' });
+  } catch (e) {
+    throw e;
+  }
+};
+
+// Create new document
+export const createNonExistentDocument = async (documentUri, body = '') => {
+  try {
+    const result = await documentExists(documentUri);
+
+    return result.status === 404 ? createDocument(documentUri, body) : null;
+  } catch (e) {
+    throw e;
+  }
+};
+
+// Loads document
+export const fetchDocument = async documentUri => {
+  try {
+    const result = await documentExists(documentUri);
+    if (result.status === 404) return null;
+    const document = await data[documentUri];
+    return document.data;
+  } catch (e) {
+    throw e;
+  }
+};
+
+// Checks if storage exists
+export const folderExists = async folderPath => {
+  const result = await auth.fetch(folderPath);
+  return result.status === 403 || result.status === 200;
+};
+
+// Creates storage path
+export const getDataPath = async folderPath => {
+  try {
+    const existContainer = await folderExists(folderPath);
+    const data = `${ folderPath }data.ttl`;
+    if (existContainer) return data;
+
+    await createDoc(data, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'text/turtle'
+      }
+    });
+
+    return data;
+  } catch (error) {
+    throw new Error(error);
+  }
+};
+
 // Internal helpers
 export const documentExists = async documentUri =>
   auth.fetch(documentUri, {
@@ -66,63 +124,5 @@ export const createDocument = async (documentUri, body = '') => {
     return await createDoc(documentUri, options);
   } catch (e) {
     throw e;
-  }
-};
-
-// Delete file from storage
-export const deleteFile = async url => {
-  try {
-    return await auth.fetch(url, { method: 'DELETE' });
-  } catch (e) {
-    throw e;
-  }
-};
-
-// Create new document
-export const createNonExistentDocument = async (documentUri, body = '') => {
-  try {
-    const result = await documentExists(documentUri);
-
-    return result.status === 404 ? createDocument(documentUri, body) : null;
-  } catch (e) {
-    throw e;
-  }
-};
-
-// Loads document
-export const fetchLdflexDocument = async documentUri => {
-  try {
-    const result = await documentExists(documentUri);
-    if (result.status === 404) return null;
-    const document = await data[documentUri];
-    return document;
-  } catch (e) {
-    throw e;
-  }
-};
-
-// Checks if storage exists
-export const folderExists = async folderPath => {
-  const result = await auth.fetch(folderPath);
-  return result.status === 403 || result.status === 200;
-};
-
-// Creates storage path
-export const createContainer = async folderPath => {
-  try {
-    const existContainer = await folderExists(folderPath);
-    const data = `${ folderPath }data.json`;
-    if (existContainer) return folderPath;
-
-    await createDoc(data, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    });
-
-    return folderPath;
-  } catch (error) {
-    throw new Error(error);
   }
 };
