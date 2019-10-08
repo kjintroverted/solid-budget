@@ -4,26 +4,27 @@ import Button from '@material-ui/core/Button';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import { Link } from 'react-router-dom'
+import { withWebId } from '@inrupt/solid-react-components';
 
-import { getField } from '../util/pods';
 import { AppBar, Toolbar } from '@material-ui/core';
+import data from '@solid/query-ldflex';
+
 const logo = require("../assets/munny_pouch.png");
 
-let HeaderNav = ({ userID, logout, login }) => {
+let HeaderNav = ({ webId, logout }) => {
 
   const [anchor, setAnchor] = React.useState();
   const [name, setName] = React.useState("Login");
 
-  let close = () => setAnchor(null);
-
   async function getName() {
-    const rec = await getField(userID, "name");
-    if (rec) setName(rec.value);
+    const user = data[webId];
+    const name = await user.vcard_fn;
+    setName(name.value);
   }
 
-  useEffect(() => {
-    if (userID) getName();
-  }, [userID])
+  useEffect(() => { if (webId) getName() }, [webId])
+
+  let close = () => setAnchor(null);
 
   return (
     <AppBar>
@@ -37,7 +38,7 @@ let HeaderNav = ({ userID, logout, login }) => {
 
         <span className="spacer" />
 
-        <Button style={ { color: "white" } } onClick={ event => userID ? setAnchor(event.currentTarget) : login() }>
+        <Button style={ { color: "white" } } onClick={ event => setAnchor(event.currentTarget) }>
           { name }
           <i className="material-icons click">person</i>
         </Button>
@@ -60,7 +61,7 @@ let HeaderNav = ({ userID, logout, login }) => {
   )
 }
 
-export default HeaderNav;
+export default withWebId(HeaderNav);
 
 const Logo = styled.img`
   height: 40px;

@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import styled from 'styled-components';
 import { BrowserRouter as Router, Route } from 'react-router-dom';
 import { ThemeProvider } from '@material-ui/styles';
+import { withWebId } from '@inrupt/solid-react-components';
 
 import './App.css';
 import HeaderNav from './comp/Header';
@@ -9,53 +10,20 @@ import Settings from './comp/Settings';
 import Dashboard from './comp/Dashboard';
 import { theme } from './comp/theme/Provider';
 import AddPayment from './comp/api/AddPayment';
+import Login from './comp/Login';
 
-const solidClient = require('solid-file-client');
-
-function App() {
-
-  let [user, setUser] = useState(null);
-
-  async function getCurrentUser() {
-    let session;
-    try {
-      session = await solidClient.checkSession()
-    } catch {
-      console.log("No current session.");
-    }
-    setUser(!session ? null : session.webId);
-  }
-
-  async function login() {
-    let webId
-    try {
-      ({ webId } = await solidClient.checkSession());
-    } catch {
-      webId = await solidClient.popupLogin();
-    }
-    console.info("Welcome,", webId);
-    setUser(webId)
-  }
-
-  async function logout() {
-    await solidClient.logout();
-    setUser(null);
-  }
-
-  useEffect(() => {
-    if (!user) login()
-  }, [user])
-
-  useEffect(getCurrentUser, []);
+function App({ webId }) {
 
   return (
     <Router>
       <ThemeProvider theme={ theme }>
         <div className="App">
-          <HeaderNav userID={ user } logout={ logout } login={ login } />
+          <HeaderNav />
           <Content>
-            <Route path="/" exact render={ () => <Dashboard userID={ user } /> } />
-            <Route path="/settings/" render={ () => <Settings userID={ user } /> } />
+            { !webId ?
+              <Route path="/" exact render={ () => <Login /> } /> :
+              <Route path="/" exact render={ () => <Dashboard /> } /> }
+            <Route path="/settings/" render={ () => <Settings /> } />
             <Route path="/api/payment/" component={ AddPayment } />
           </Content>
         </div>
@@ -64,7 +32,7 @@ function App() {
   );
 }
 
-export default App;
+export default withWebId(App);
 
 const Content = styled.div`
         display: flex;
