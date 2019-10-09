@@ -8,20 +8,32 @@ import YearOverview from './YearOverview';
 import BucketView from './BucketView';
 import { BottomAnchor } from './theme/ThemeComp';
 import { Fab } from '@material-ui/core';
-import { getAppStoragePath, initializeStorage, fetchDocument, createNonExistentDocument } from '../util/pods';
+import { getAppStoragePath, fetchDocument, createNonExistentDocument, unmarshal } from '../util/pods';
 import accountShape from '../contexts/account-shape.json';
 
 const Dashboard = ({ webId }) => {
 
   const [accountFolder, setAccountFolder] = useState("");
 
-  async function load() {
+  async function init() {
     const storage = await getAppStoragePath(webId);
     setAccountFolder(`${ storage }accounts/`);
   }
 
+  async function load(folder, shape) {
+    console.log("loading:", folder);
+    const folderDoc = await fetchDocument(folder);
+    const data = [];
+    for await (const item of folderDoc['ldp:contains']) {
+      data.push(await unmarshal(item.value, shape))
+    }
+    console.log("accounts", data);
+
+  }
+
   async function save(shape, data) {
     data.forEach(async datum => {
+      datum.uri = `${ accountFolder }${ datum.name.toLowerCase() }_${ datum.label.toLowerCase() }.ttl`;
       let doc = await fetchDocument(datum.uri);
       if (!doc) {
         await createNonExistentDocument(datum.uri);
@@ -35,30 +47,40 @@ const Dashboard = ({ webId }) => {
   }
 
   useEffect(() => {
-    if (webId) load(webId);
+    if (webId) init(webId);
   }, [webId]);
+
+  useEffect(() => {
+    if (accountFolder) load(accountFolder, accountShape);
+  }, [accountFolder]);
 
   return (
     <>
-      { false &&
-        <Widgets>
+      <Widgets>
+        { false &&
           <div>
             <AccountBreakdown />
           </div>
+        }
 
+        { false &&
           <div>
             <BucketView />
           </div>
+        }
 
+        { false &&
           <div>
             <BillSchedule />
           </div>
+        }
 
+        { false &&
           <div>
             <YearOverview />
           </div>
-        </Widgets>
-      }
+        }
+      </Widgets>
       {
         false &&
         <BottomAnchor>

@@ -3,6 +3,18 @@ import auth from 'solid-auth-client';
 
 const appPath = 'public/munnypouch/';
 
+
+
+export async function unmarshal(uri, shape) {
+  const datum = {};
+  await shape.shape.forEach(async ({ prefix, predicate, alias }) => {
+    const doc = data[uri];
+    const val = await doc[`${ shape['@context'][prefix] }${ predicate }`];
+    datum[alias || predicate] = val.value;
+  })
+  return datum;
+}
+
 /**
  * Creates a valid string that represents the application path. This is the
  * default value if no storage predicate is discovered
