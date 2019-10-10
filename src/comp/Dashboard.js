@@ -10,8 +10,11 @@ import { BottomAnchor } from './theme/ThemeComp';
 import { Fab } from '@material-ui/core';
 import { getAppStoragePath, fetchDocument, createNonExistentDocument, unmarshal } from '../util/pods';
 import accountShape from '../contexts/account-shape.js';
+import { deepEquals } from '../util/helper';
 
 const Dashboard = ({ webId }) => {
+
+  const [isDirty, setDirty] = useState(false);
 
   const [accountFolder, setAccountFolder] = useState("");
   const [accounts, setAccounts] = useState([]);
@@ -31,8 +34,15 @@ const Dashboard = ({ webId }) => {
     hooks.forEach(f => f(data));
   }
 
+  async function saveAll() {
+    console.log(accounts)
+    await save(accountShape, accounts);
+    setSavedAccounts(accounts);
+    console.log("Successfully saved");
+  }
+
   async function save(shape, data) {
-    data.forEach(async datum => {
+    return Promise.all(data.map(async datum => {
       datum.uri = `${ accountFolder }${ datum.name.toLowerCase() }_${ datum.label.toLowerCase() }.ttl`;
       let doc = await fetchDocument(datum.uri);
       if (!doc) {
@@ -42,18 +52,25 @@ const Dashboard = ({ webId }) => {
       shape.shape.forEach(async ({ prefix, predicate, alias, stringify }) => {
         const object = datum[alias || predicate];
         await doc[`${ shape['@context'][prefix] }${ predicate }`]
-          .add(stringify ? stringify(object) : object);
+          .set(stringify ? stringify(object) : object);
       })
-    })
+    }))
   }
 
+  // LOAD NEW USER
   useEffect(() => {
     if (webId) init(webId);
   }, [webId]);
 
+  // LOAD DATA WHEN FOLDER UPDATES
   useEffect(() => {
     if (accountFolder) load(accountFolder, accountShape, setAccounts, setSavedAccounts);
   }, [accountFolder]);
+
+  // CHECK FOR DIRTY FORMS ON DATA UPDATE
+  useEffect(() => {
+    setDirty(!deepEquals(savedAccounts, accounts))
+  }, [accounts, savedAccounts])
 
   return (
     <>
@@ -83,9 +100,10 @@ const Dashboard = ({ webId }) => {
         }
       </Widgets>
       {
-        false &&
+        isDirty &&
         <BottomAnchor>
-          <Fab color="secondary" style={ { color: 'white' } } >
+          <Fab color="secondary" style={ { color: 'white' } }
+            onClick={ saveAll }>
             <i className="material-icons">save</i>
           </Fab>
         </BottomAnchor>
