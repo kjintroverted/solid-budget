@@ -31,9 +31,15 @@ img {
 }
 
 .inactive {
-  opacity: .5;
+  opacity: 0.5;
 }
 
 .clickable {
   cursor: pointer;
+}
+
+button.logout {
+  border: none;
+  font-size: 1em;
+  padding: initial;
 }
