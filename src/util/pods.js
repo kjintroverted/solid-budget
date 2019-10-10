@@ -1,17 +1,18 @@
-import data from '@solid/query-ldflex';
-import auth from 'solid-auth-client';
+import data from "@solid/query-ldflex";
+import auth from "solid-auth-client";
 
-const appPath = 'public/munnypouch/';
+const appPath = "public/munnypouch/";
 
-
-
+// Gets JSON object from ttl doc
 export async function unmarshal(uri, shape) {
-  const datum = {};
-  await Promise.all(shape.shape.map(async ({ prefix, predicate, alias, parse }) => {
-    const doc = data[uri];
-    const val = await doc[`${ shape['@context'][prefix] }${ predicate }`];
-    datum[alias || predicate] = parse ? parse(val.value) : val.value;
-  }))
+  const doc = data[uri];
+  const datum = { uri };
+  await Promise.all(
+    shape.shape.map(async ({ prefix, predicate, alias, parse }) => {
+      const val = await doc[`${shape["@context"][prefix]}${predicate}`];
+      datum[alias || predicate] = parse ? parse(val.value) : val.value;
+    })
+  );
 
   return datum;
 }
@@ -26,7 +27,7 @@ export async function unmarshal(uri, shape) {
 export const buildPathFromWebId = (webId, path) => {
   if (!webId) return false;
   const domain = new URL(webId).origin;
-  return `${ domain }/${ path }`;
+  return `${domain}/${path}`;
 };
 
 /**
@@ -36,11 +37,13 @@ export const buildPathFromWebId = (webId, path) => {
 export const getAppStoragePath = async webId => {
   const podStoragePath = await data[webId].storage;
   let podStoragePathValue =
-    podStoragePath && podStoragePath.value.trim().length > 0 ? podStoragePath.value : '';
+    podStoragePath && podStoragePath.value.trim().length > 0
+      ? podStoragePath.value
+      : "";
 
   // Make sure that the path ends in a / so it is recognized as a folder path
-  if (podStoragePathValue && !podStoragePathValue.endsWith('/')) {
-    podStoragePathValue = `${ podStoragePathValue }/`;
+  if (podStoragePathValue && !podStoragePathValue.endsWith("/")) {
+    podStoragePathValue = `${podStoragePathValue}/`;
   }
 
   // If there is no storage value from the pod, use webId as the backup, and append the application path from env
@@ -48,20 +51,20 @@ export const getAppStoragePath = async webId => {
     return buildPathFromWebId(webId, appPath);
   }
 
-  return `${ podStoragePathValue }${ appPath }`;
+  return `${podStoragePathValue}${appPath}`;
 };
 
 // Delete file from storage
 export const deleteFile = async url => {
   try {
-    return await auth.fetch(url, { method: 'DELETE' });
+    return await auth.fetch(url, { method: "DELETE" });
   } catch (e) {
     throw e;
   }
 };
 
 // Create new document
-export const createNonExistentDocument = async (documentUri, body = '') => {
+export const createNonExistentDocument = async (documentUri, body = "") => {
   try {
     const result = await documentExists(documentUri);
 
@@ -90,16 +93,16 @@ export const folderExists = async folderPath => {
 };
 
 // Creates storage path
-export const getDataPath = async (folderPath) => {
+export const getDataPath = async folderPath => {
   try {
     const existContainer = await folderExists(folderPath);
-    const data = `${ folderPath }data.ttl`;
+    const data = `${folderPath}data.ttl`;
     if (existContainer) return folderPath;
 
     await createDoc(data, {
-      method: 'PUT',
+      method: "PUT",
       headers: {
-        'Content-Type': 'text/turtle'
+        "Content-Type": "text/turtle"
       }
     });
 
@@ -113,7 +116,7 @@ export const getDataPath = async (folderPath) => {
 export const documentExists = async documentUri =>
   auth.fetch(documentUri, {
     headers: {
-      'Content-Type': 'text/turtle'
+      "Content-Type": "text/turtle"
     }
   });
 
@@ -125,12 +128,12 @@ const createDoc = async (documentUri, options) => {
   }
 };
 
-export const createDocument = async (documentUri, body = '') => {
+export const createDocument = async (documentUri, body = "") => {
   try {
     const options = {
-      method: 'PUT',
+      method: "PUT",
       headers: {
-        'Content-Type': 'text/turtle'
+        "Content-Type": "text/turtle"
       },
       body
     };
