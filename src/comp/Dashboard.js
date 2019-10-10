@@ -15,24 +15,33 @@ import {
   unmarshal,
   deleteFile
 } from "../util/pods";
-import accountShape from "../contexts/account-shape.js";
+import accountShape from "../contexts/account-shape";
+import bucketShape from "../contexts/bucket-shape";
 import { deepEquals } from "../util/helper";
 
 const Dashboard = ({ webId }) => {
   const [isDirty, setDirty] = useState(false);
   const [markedDocs, markDocs] = useState([]);
 
+  // ACCOUNT TRACKING
   const [accountFolder, setAccountFolder] = useState("");
   const [accounts, setAccounts] = useState([]);
   const [savedAccounts, setSavedAccounts] = useState([]);
 
+  // BUCKET TRACKING
+  const [bucketFolder, setBucketFolder] = useState("");
+  const [buckets, setBuckets] = useState([]);
+  const [savedBuckets, setSavedBuckets] = useState([]);
+
   async function init() {
     const storage = await getAppStoragePath(webId);
     setAccountFolder(`${storage}accounts/`);
+    setBucketFolder(`${storage}buckets/`);
   }
 
   async function load(folder, shape, ...hooks) {
     const folderDoc = await fetchDocument(folder);
+    if (!folderDoc) return;
     const data = [];
     for await (const item of folderDoc["ldp:contains"]) {
       data.push(await unmarshal(item.value, shape));
@@ -42,17 +51,19 @@ const Dashboard = ({ webId }) => {
 
   async function saveAll() {
     await Promise.all([
-      save(accountShape, accounts),
+      save(accountShape, accounts, accountFolder),
+      save(bucketShape, buckets, bucketFolder),
       Promise.all(markedDocs.map(deleteFile))
     ]);
     setSavedAccounts(accounts);
+    setSavedBuckets(buckets);
     console.log("Successfully saved");
   }
 
-  async function save(shape, data) {
+  async function save(shape, data, folder) {
     return Promise.all(
       data.map(async datum => {
-        datum.uri = `${accountFolder}${datum.name.toLowerCase()}_${datum.label.toLowerCase()}.ttl`;
+        datum.uri = `${folder}${datum.name.toLowerCase()}_${datum.label.toLowerCase()}.ttl`;
         let doc = await fetchDocument(datum.uri);
         if (!doc) {
           await createNonExistentDocument(datum.uri);
@@ -82,11 +93,17 @@ const Dashboard = ({ webId }) => {
     if (accountFolder)
       load(accountFolder, accountShape, setAccounts, setSavedAccounts);
   }, [accountFolder]);
+  useEffect(() => {
+    if (bucketFolder)
+      load(bucketFolder, bucketShape, setBuckets, setSavedBuckets);
+  }, [bucketFolder]);
 
   // CHECK FOR DIRTY FORMS ON DATA UPDATE
   useEffect(() => {
-    setDirty(!deepEquals(savedAccounts, accounts));
-  }, [accounts, savedAccounts]);
+    setDirty(
+      !deepEquals(savedAccounts, accounts) || !deepEquals(savedBuckets, buckets)
+    );
+  }, [accounts, savedAccounts, buckets, savedBuckets]);
 
   return (
     <>
@@ -99,11 +116,14 @@ const Dashboard = ({ webId }) => {
           />
         </div>
 
-        {false && (
-          <div>
-            <BucketView />
-          </div>
-        )}
+        <div>
+          <BucketView
+            bucketList={buckets}
+            accountList={accounts}
+            onUpdate={setBuckets}
+            onDelete={markForDelete}
+          />
+        </div>
 
         {false && (
           <div>
