@@ -4,18 +4,18 @@ import { IconButton, Input, Badge } from '@material-ui/core';
 import { ActionBar, WidgetContainer, HeaderBar, Spacer, IndentRow, Column } from './theme/ThemeComp';
 import AccountForm from './forms/AccountForm';
 
-export default ({ data, buckets, save }) => {
-  let [accounts, updateAccounts] = useState(data);
+export default ({ data, buckets, update }) => {
+  let [accounts, setAccounts] = useState(data);
   let [isAdding, setAdding] = useState(false);
   let [isEditing, setEditing] = useState(false);
   let [show, updateShow] = useState([]);
 
   async function deleteAccount(i) {
-    updateAccounts([...accounts.slice(0, i), ...accounts.slice(i + 1)]);
+    setAccounts([...accounts.slice(0, i), ...accounts.slice(i + 1)]);
   }
 
   async function updateBalance(i, balance) {
-    updateAccounts([
+    setAccounts([
       ...accounts.slice(0, i),
       { ...accounts[i], balance },
       ...accounts.slice(i + 1)
@@ -38,11 +38,11 @@ export default ({ data, buckets, save }) => {
   }
 
   useEffect(() => {
-    if (accounts) save(accounts);
+    if (accounts) update(accounts);
   }, [accounts]);
 
   useEffect(() => {
-    updateAccounts(data);
+    setAccounts(data);
   }, [data]);
 
   return (
@@ -108,7 +108,7 @@ export default ({ data, buckets, save }) => {
       { isAdding &&
         <AccountForm
           onSubmit={ account => {
-            updateAccounts([...accounts, account]);
+            setAccounts([...accounts, account]);
             setAdding(false);
           } }
           onCancel={ () => setAdding(false) } />

@@ -14,20 +14,21 @@ import accountShape from '../contexts/account-shape.js';
 const Dashboard = ({ webId }) => {
 
   const [accountFolder, setAccountFolder] = useState("");
+  const [accounts, setAccounts] = useState([]);
+  const [savedAccounts, setSavedAccounts] = useState([]);
 
   async function init() {
     const storage = await getAppStoragePath(webId);
     setAccountFolder(`${ storage }accounts/`);
   }
 
-  async function load(folder, shape) {
-    console.log("loading:", folder);
+  async function load(folder, shape, ...hooks) {
     const folderDoc = await fetchDocument(folder);
     const data = [];
     for await (const item of folderDoc['ldp:contains']) {
       data.push(await unmarshal(item.value, shape))
     }
-    console.log("accounts", data);
+    hooks.forEach(f => f(data));
   }
 
   async function save(shape, data) {
@@ -51,15 +52,15 @@ const Dashboard = ({ webId }) => {
   }, [webId]);
 
   useEffect(() => {
-    if (accountFolder) load(accountFolder, accountShape);
+    if (accountFolder) load(accountFolder, accountShape, setAccounts, setSavedAccounts);
   }, [accountFolder]);
 
   return (
     <>
       <Widgets>
-        { false &&
+        { !!accounts.length &&
           <div>
-            <AccountBreakdown />
+            <AccountBreakdown data={ accounts } update={ setAccounts } />
           </div>
         }
 
