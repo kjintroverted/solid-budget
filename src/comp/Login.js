@@ -1,8 +1,13 @@
-import React from 'react';
-import { ProviderLogin } from '@inrupt/solid-react-components';
+import React from "react";
+import { ProviderLogin } from "@inrupt/solid-react-components";
 
 const Login = () => {
-  return <ProviderLogin />
-}
+  return (
+    <ProviderLogin
+      onError={console.error}
+      callbackUri={`${window.location.origin}`}
+    />
+  );
+};
 
 export default Login;
