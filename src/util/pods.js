@@ -7,10 +7,10 @@ const appPath = 'public/munnypouch/';
 
 export async function unmarshal(uri, shape) {
   const datum = {};
-  await shape.shape.forEach(async ({ prefix, predicate, alias }) => {
+  await shape.shape.forEach(async ({ prefix, predicate, alias, parse }) => {
     const doc = data[uri];
     const val = await doc[`${ shape['@context'][prefix] }${ predicate }`];
-    datum[alias || predicate] = val.value;
+    datum[alias || predicate] = parse ? parse(val.value) : val.value;
   })
   return datum;
 }

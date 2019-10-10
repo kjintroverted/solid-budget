@@ -9,7 +9,7 @@ import BucketView from './BucketView';
 import { BottomAnchor } from './theme/ThemeComp';
 import { Fab } from '@material-ui/core';
 import { getAppStoragePath, fetchDocument, createNonExistentDocument, unmarshal } from '../util/pods';
-import accountShape from '../contexts/account-shape.json';
+import accountShape from '../contexts/account-shape.js';
 
 const Dashboard = ({ webId }) => {
 
@@ -28,7 +28,6 @@ const Dashboard = ({ webId }) => {
       data.push(await unmarshal(item.value, shape))
     }
     console.log("accounts", data);
-
   }
 
   async function save(shape, data) {
@@ -39,9 +38,10 @@ const Dashboard = ({ webId }) => {
         await createNonExistentDocument(datum.uri);
         doc = await fetchDocument(datum.uri);
       }
-      shape.shape.forEach(async ({ prefix, predicate, alias }) => {
+      shape.shape.forEach(async ({ prefix, predicate, alias, stringify }) => {
         const object = datum[alias || predicate];
-        await doc[`${ shape['@context'][prefix] }${ predicate }`].add(object + '');
+        await doc[`${ shape['@context'][prefix] }${ predicate }`]
+          .add(stringify ? stringify(object) : object);
       })
     })
   }
