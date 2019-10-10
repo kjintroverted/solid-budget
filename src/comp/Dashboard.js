@@ -35,7 +35,6 @@ const Dashboard = ({ webId }) => {
   }
 
   async function saveAll() {
-    console.log(accounts)
     await save(accountShape, accounts);
     setSavedAccounts(accounts);
     console.log("Successfully saved");
