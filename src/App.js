@@ -8,7 +8,6 @@ import "./App.css";
 import HeaderNav from "./comp/Header";
 import Dashboard from "./comp/Dashboard";
 import { theme } from "./comp/theme/Provider";
-import Login from "./comp/Login";
 
 function App({ webId }) {
   console.log("Hello", webId);
@@ -19,11 +18,7 @@ function App({ webId }) {
         <div className='App'>
           <HeaderNav />
           <Content>
-            { !webId ? (
-              <Route path='/' exact render={ () => <Login /> } />
-            ) : (
-                <Route path='/' exact render={ () => <Dashboard settings={ { "paycheck": 2600, "payDate": "2019-07-05" } } /> } />
-              ) }
+            <Route path='/' exact render={ () => <Dashboard settings={ { "paycheck": 2600, "payDate": "2019-07-05" } } /> } />
           </Content>
         </div>
       </ThemeProvider>

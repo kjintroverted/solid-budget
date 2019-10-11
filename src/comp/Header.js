@@ -8,10 +8,11 @@ import { withWebId, LogoutButton } from "@inrupt/solid-react-components";
 
 import { AppBar, Toolbar } from "@material-ui/core";
 import data from "@solid/query-ldflex";
+import { popupLogin } from '../util/pods'
 
 const logo = require("../assets/munny_pouch.png");
 
-let HeaderNav = ({ webId, logout }) => {
+let HeaderNav = ({ webId }) => {
   const [anchor, setAnchor] = React.useState();
   const [name, setName] = React.useState("Login");
 
@@ -31,7 +32,7 @@ let HeaderNav = ({ webId, logout }) => {
     <AppBar>
       <Toolbar>
         <Link to='/'>
-          <Logo src={logo} alt='logo' />
+          <Logo src={ logo } alt='logo' />
         </Link>
         <Link to='/'>
           <h3>Munny Pouch</h3>
@@ -40,21 +41,21 @@ let HeaderNav = ({ webId, logout }) => {
         <span className='spacer' />
 
         <Button
-          style={{ color: "white" }}
-          onClick={event => setAnchor(event.currentTarget)}
+          style={ { color: "white" } }
+          onClick={ webId ? event => setAnchor(event.currentTarget) : popupLogin }
         >
-          {name}
+          { name }
           <i className='material-icons click'>person</i>
         </Button>
 
         <Menu
-          anchorEl={anchor}
+          anchorEl={ anchor }
           keepMounted
-          open={Boolean(anchor)}
-          onClose={close}
+          open={ Boolean(anchor) }
+          onClose={ close }
         >
           <Link to='/settings'>
-            <MenuItem onClick={close}>Settings</MenuItem>
+            <MenuItem onClick={ close }>Settings</MenuItem>
           </Link>
           <Link to='/'>
             <MenuItem>

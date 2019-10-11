@@ -19,6 +19,13 @@ export async function unmarshal(uri, shape) {
   return datum;
 }
 
+export async function popupLogin() {
+  let session = await auth.currentSession();
+  let popupUri = 'https://solid.community/common/popup.html';
+  if (!session)
+    session = await auth.popupLogin({ popupUri });
+}
+
 /**
  * Creates a valid string that represents the application path. This is the
  * default value if no storage predicate is discovered
