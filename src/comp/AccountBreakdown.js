@@ -11,7 +11,7 @@ import {
 } from "./theme/ThemeComp";
 import AccountForm from "./forms/AccountForm";
 
-export default ({ data, buckets, update, onDelete }) => {
+export default ({ data, buckets, onUpdate, onDelete }) => {
   let [accounts, setAccounts] = useState(data);
   let [isAdding, setAdding] = useState(false);
   let [isEditing, setEditing] = useState(false);
@@ -46,8 +46,8 @@ export default ({ data, buckets, update, onDelete }) => {
   }
 
   useEffect(() => {
-    if (accounts) update(accounts);
-  }, [accounts]);
+    if (accounts) onUpdate(accounts);
+  }, [accounts, onUpdate]);
 
   useEffect(() => {
     setAccounts(data);
@@ -59,60 +59,60 @@ export default ({ data, buckets, update, onDelete }) => {
         <h2>Accounts</h2>
         <Spacer />
         <ActionBar>
-          <IconButton onClick={() => setAdding(!isAdding)}>
-            <i className='material-icons'>{isAdding ? "close" : "add"}</i>
+          <IconButton onClick={ () => setAdding(!isAdding) }>
+            <i className='material-icons'>{ isAdding ? "close" : "add" }</i>
           </IconButton>
-          <IconButton onClick={() => setEditing(!isEditing)}>
-            <i className='material-icons'>{isEditing ? "close" : "edit"}</i>
+          <IconButton onClick={ () => setEditing(!isEditing) }>
+            <i className='material-icons'>{ isEditing ? "close" : "edit" }</i>
           </IconButton>
         </ActionBar>
       </HeaderBar>
 
-      {/* NO ACCOUNTS TO DISPLAY */}
-      {(!accounts || !accounts.length) && "No Accounts to display."}
+      {/* NO ACCOUNTS TO DISPLAY */ }
+      { (!accounts || !accounts.length) && "No Accounts to display." }
 
-      {/* MAIN ACCOUNT DISPLAY */}
-      {accounts &&
+      {/* MAIN ACCOUNT DISPLAY */ }
+      { accounts &&
         accounts.map((acc, i) => {
           let allocatedBuckets = getBuckets(acc.label);
           let allocatedValue = totalValue(allocatedBuckets);
           return (
-            <Column key={`account-${i}`}>
+            <Column key={ `account-${ i }` }>
               <IndentRow>
                 <h3>
-                  {acc.name} ({acc.label})
+                  { acc.name } ({ acc.label })
                 </h3>
-                {!!allocatedBuckets.length && (
-                  <IconButton onClick={() => toggleShow(i)} size='small'>
+                { !!allocatedBuckets.length && (
+                  <IconButton onClick={ () => toggleShow(i) } size='small'>
                     <i className='material-icons'>
-                      {show.indexOf(i) !== -1
+                      { show.indexOf(i) !== -1
                         ? "arrow_drop_up"
-                        : "arrow_drop_down"}
+                        : "arrow_drop_down" }
                     </i>
                   </IconButton>
-                )}
+                ) }
                 <Spacer />
                 <Badge
                   color='secondary'
-                  badgeContent={acc.balance - allocatedValue}
-                  invisible={allocatedValue <= acc.balance}
+                  badgeContent={ acc.balance - allocatedValue }
+                  invisible={ allocatedValue <= acc.balance }
                 >
                   <Input
                     type='number'
-                    value={acc.balance}
-                    onChange={e => updateBalance(i, +e.target.value)}
+                    value={ acc.balance }
+                    onChange={ e => updateBalance(i, +e.target.value) }
                   />
                 </Badge>
-                {isEditing && ( // DELETE BUTTON
+                { isEditing && ( // DELETE BUTTON
                   <IconButton
                     color='secondary'
-                    onClick={() => deleteAccount(i)}
+                    onClick={ () => deleteAccount(i) }
                   >
                     <i className='material-icons'>delete</i>
                   </IconButton>
-                )}
+                ) }
               </IndentRow>
-              {show.indexOf(i) !== -1 && !!allocatedBuckets.length && (
+              { show.indexOf(i) !== -1 && !!allocatedBuckets.length && (
                 <>
                   <IndentRow>
                     <p>
@@ -120,32 +120,32 @@ export default ({ data, buckets, update, onDelete }) => {
                     </p>
                     <Spacer />
                     <p>
-                      <strong>{acc.balance - allocatedValue}</strong>
+                      <strong>{ acc.balance - allocatedValue }</strong>
                     </p>
                   </IndentRow>
-                  {allocatedBuckets.map(bucket => (
+                  { allocatedBuckets.map(bucket => (
                     <IndentRow>
-                      <p>{bucket.name}</p>
+                      <p>{ bucket.name }</p>
                       <Spacer />
-                      <p>{bucket.value}</p>
+                      <p>{ bucket.value }</p>
                     </IndentRow>
-                  ))}
+                  )) }
                 </>
-              )}
+              ) }
             </Column>
           );
-        })}
+        }) }
 
-      {/* DISPLAY FORM FOR NEW ACCOUNT */}
-      {isAdding && (
+      {/* DISPLAY FORM FOR NEW ACCOUNT */ }
+      { isAdding && (
         <AccountForm
-          onSubmit={account => {
+          onSubmit={ account => {
             setAccounts([...accounts, account]);
             setAdding(false);
-          }}
-          onCancel={() => setAdding(false)}
+          } }
+          onCancel={ () => setAdding(false) }
         />
-      )}
+      ) }
     </WidgetContainer>
   );
 };

@@ -41,12 +41,11 @@ export default ({ bucketList, accountList, onUpdate, onDelete }) => {
     buckets.sort((a, b) => {
       if (a.favorite) {
         if (!b.favorite) return -1;
-        return 0;
-      }
-      if (b.favorite) return 1;
+      } else if (b.favorite) return 1;
+      return 0;
     });
     onUpdate(buckets);
-  }, [buckets]);
+  }, [buckets, onUpdate]);
 
   useEffect(() => {
     updateBuckets(bucketList);
@@ -61,26 +60,26 @@ export default ({ bucketList, accountList, onUpdate, onDelete }) => {
         </Column>
         <Spacer />
         <Fab
-          onClick={() => setAdding(!isAdding)}
+          onClick={ () => setAdding(!isAdding) }
           color='secondary'
           size='small'
-          style={{ color: "white" }}
+          style={ { color: "white" } }
         >
-          <i className='material-icons'>{isAdding ? "close" : "add"}</i>
+          <i className='material-icons'>{ isAdding ? "close" : "add" }</i>
         </Fab>
       </HeaderBar>
-      {isAdding && (
-        <BucketForm submit={addBucket} labels={getAccountLabels()} />
-      )}
-      {buckets &&
+      { isAdding && (
+        <BucketForm submit={ addBucket } labels={ getAccountLabels() } />
+      ) }
+      { buckets &&
         buckets.map((b, i) => (
           <Bucket
-            key={`bucket-${b.name}`}
-            bucket={b}
-            update={updateBucket(i)}
-            onDelete={deleteBucket(i)}
+            key={ `bucket-${ b.name }` }
+            bucket={ b }
+            update={ updateBucket(i) }
+            onDelete={ deleteBucket(i) }
           />
-        ))}
+        )) }
     </BucketContainer>
   );
 };

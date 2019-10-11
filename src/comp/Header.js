@@ -16,13 +16,13 @@ let HeaderNav = ({ webId }) => {
   const [anchor, setAnchor] = React.useState();
   const [name, setName] = React.useState("Login");
 
-  async function getName() {
-    const user = data[webId];
-    const name = await user.vcard_fn;
-    setName(name.value);
-  }
-
   useEffect(() => {
+    async function getName() {
+      const user = data[webId];
+      const name = await user.vcard_fn;
+      setName(name.value);
+    }
+
     if (webId) getName();
   }, [webId]);
 

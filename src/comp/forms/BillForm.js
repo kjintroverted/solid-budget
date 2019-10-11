@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { TextField, IconButton, FormControl, FormHelperText, FormControlLabel, Checkbox } from '@material-ui/core';
 import styled from 'styled-components';
 
@@ -90,7 +90,7 @@ export default ({ onSubmit }) => {
               <FormControlLabel
                 control={
                   <Checkbox
-                    checked={ bill.months && bill.months.indexOf(i + 1) != -1 }
+                    checked={ bill.months && bill.months.indexOf(i + 1) !== -1 }
                     value={ i + 1 }
                     onChange={ toggle }
                     color="primary"

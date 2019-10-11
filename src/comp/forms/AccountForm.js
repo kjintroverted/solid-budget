@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { TextField, Select, MenuItem, FormLabel, FormControl, OutlinedInput, IconButton, Fab } from '@material-ui/core';
+import { TextField, Select, MenuItem, FormLabel, FormControl, OutlinedInput, IconButton } from '@material-ui/core';
 import styled from 'styled-components';
 
 export default ({ onSubmit }) => {

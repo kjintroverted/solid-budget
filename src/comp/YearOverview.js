@@ -54,7 +54,7 @@ export default ({ bills, settings }) => {
         </MonthView>
       );
       ([month, year] = nextMonth(month, year));
-    } while (month != now.getMonth() + 1)
+    } while (month !== now.getMonth() + 1)
 
     views.push(
       <Info key="year-summary">
