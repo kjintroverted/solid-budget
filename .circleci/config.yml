@@ -17,6 +17,7 @@ jobs:
     steps:
       - checkout
       - run: npm i
+      - run: npm i surge
       - run: npm run deploy
 
 workflows:
