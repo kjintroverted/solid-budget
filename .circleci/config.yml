@@ -18,6 +18,8 @@ jobs:
       - checkout
       - run: npm i
       - run: npm i surge
+      - run: npm run build
+      - run: echo "https://one-budget.surge.sh" > ./build/CNAME
       - run: npm run deploy
 
 workflows:
