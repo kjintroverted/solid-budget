@@ -156,12 +156,12 @@ const Dashboard = ({ webId, settings }) => {
             onDelete={ markForDelete } />
         </div>
 
-        { false && (
-          <div>
-            <YearOverview />
-          </div>
-        ) }
+        <div>
+          <YearOverview bills={ bills } settings={ settings } />
+        </div>
+
       </Widgets>
+
       { isDirty && (
         <BottomAnchor>
           <Fab color='secondary' style={ { color: "white" } } onClick={ saveAll }>
