@@ -1,0 +1,30 @@
+version: 2
+jobs:
+  build:
+    docker:
+      - image: kjintroverted/go-node
+    working_directory: ~/solid-budget
+    steps:
+      - checkout
+      - run: npm i
+      # Add Tests
+      - run: npm run build
+
+  deploy:
+    docker:
+      - image: kjintroverted/go-node
+    working_directory: ~/solid-budget
+    steps:
+      - checkout
+      - run: npm i
+      - run: npm run deploy
+
+workflows:
+  version: 2
+  build-deploy:
+    jobs:
+      - build
+      - deploy:
+          filters:
+            branches:
+              only: master
