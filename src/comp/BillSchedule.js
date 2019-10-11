@@ -6,7 +6,7 @@ import styled from 'styled-components';
 import { theme } from './theme/Provider';
 import { calculateBillsTil, getNextPayDate } from '../util/helper';
 
-export default ({ data, balance, settings, save }) => {
+export default ({ data, balance, settings, onUpdate, onDelete }) => {
   let [isAdding, setAdding] = useState(false);
   let [isEditing, setEditing] = useState(false);
   let [overrides, setOverrides] = useState([]);
@@ -27,7 +27,7 @@ export default ({ data, balance, settings, save }) => {
   }
 
   useEffect(() => {
-    if (bills) save(bills);
+    if (bills) onUpdate(bills);
   }, [bills]);
 
   useEffect(() => {

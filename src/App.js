@@ -15,15 +15,15 @@ function App({ webId }) {
 
   return (
     <Router>
-      <ThemeProvider theme={theme}>
+      <ThemeProvider theme={ theme }>
         <div className='App'>
           <HeaderNav />
           <Content>
-            {!webId ? (
-              <Route path='/' exact render={() => <Login />} />
+            { !webId ? (
+              <Route path='/' exact render={ () => <Login /> } />
             ) : (
-              <Route path='/' exact render={() => <Dashboard />} />
-            )}
+                <Route path='/' exact render={ () => <Dashboard settings={ { "paycheck": 2600, "payDate": "2019-07-05" } } /> } />
+              ) }
           </Content>
         </div>
       </ThemeProvider>

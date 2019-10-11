@@ -13,6 +13,13 @@ export const months = [
   "December"
 ]
 
+export function getMainBalance(accountList) {
+  if (accountList.length === 0) return 0;
+  if (accountList.length === 1) return accountList[0].balance;
+  const main = accountList.find(acc => acc.label === "Main");
+  return main.balance;
+}
+
 export function getAccount(accounts, label) {
   if (!accounts || !label) return {};
   let account = accounts.find(val => val.label === label);
@@ -59,4 +66,8 @@ export function round(num, places) {
 
 export function deepEquals(obj1, obj2) {
   return JSON.stringify(obj1) === JSON.stringify(obj2);
+}
+
+export function uniqueId() {
+  return new Date().getTime();
 }
