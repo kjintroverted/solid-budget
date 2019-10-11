@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import { BrowserRouter as Router, Route } from "react-router-dom";
 import { ThemeProvider } from "@material-ui/styles";
@@ -10,15 +10,18 @@ import Dashboard from "./comp/Dashboard";
 import { theme } from "./comp/theme/Provider";
 
 function App({ webId }) {
-  console.log("Hello", webId);
+
+  const [loggedIn, setLoggedIn] = useState(false);
+
+  useEffect(() => setLoggedIn(!!webId), [webId])
 
   return (
     <Router>
       <ThemeProvider theme={ theme }>
         <div className='App'>
-          <HeaderNav />
+          <HeaderNav onUpdate={ setLoggedIn } />
           <Content>
-            <Route path='/' exact render={ () => <Dashboard settings={ { "paycheck": 2600, "payDate": "2019-07-05" } } /> } />
+            <Route path='/' exact render={ () => <Dashboard auth={ loggedIn } settings={ { "paycheck": 2600, "payDate": "2019-07-05" } } /> } />
           </Content>
         </div>
       </ThemeProvider>

@@ -20,7 +20,7 @@ import accountShape from "../contexts/account-shape";
 import bucketShape from "../contexts/bucket-shape";
 import billShape from "../contexts/bill-shape";
 
-const Dashboard = ({ webId, settings }) => {
+const Dashboard = ({ webId, settings, auth }) => {
   const [isDirty, setDirty] = useState(false);
   const [markedDocs, markDocs] = useState([]);
 
@@ -126,6 +126,8 @@ const Dashboard = ({ webId, settings }) => {
   ]);
 
   // RENDER()
+  if (!auth) return <h2>Log in to start budgeting!</h2>
+
   return (
     <>
       <Widgets>
