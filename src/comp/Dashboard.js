@@ -39,13 +39,6 @@ const Dashboard = ({ webId, settings }) => {
   const [bills, setBills] = useState([]);
   const [savedBills, setSavedBills] = useState([]);
 
-  async function init() {
-    const storage = await getAppStoragePath(webId);
-    setAccountFolder(`${ storage }accounts/`);
-    setBucketFolder(`${ storage }buckets/`);
-    setBillFolder(`${ storage }bills/`);
-  }
-
   async function load(folder, shape, ...hooks) {
     const folderDoc = await fetchDocument(folder);
     if (!folderDoc) return;
@@ -93,6 +86,13 @@ const Dashboard = ({ webId, settings }) => {
 
   // LOAD NEW USER
   useEffect(() => {
+    async function init() {
+      const storage = await getAppStoragePath(webId);
+      setAccountFolder(`${ storage }accounts/`);
+      setBucketFolder(`${ storage }buckets/`);
+      setBillFolder(`${ storage }bills/`);
+    }
+
     if (webId) init(webId);
   }, [webId]);
 
@@ -133,7 +133,7 @@ const Dashboard = ({ webId, settings }) => {
           <AccountBreakdown
             data={ accounts }
             buckets={ buckets }
-            update={ setAccounts }
+            onUpdate={ setAccounts }
             onDelete={ markForDelete }
           />
         </div>
