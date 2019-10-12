@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { WidgetContainer, HeaderBar, ActionBar, Spacer, IndentRow, Info } from './theme/ThemeComp';
+import { Link } from 'react-router-dom';
+import { WidgetContainer, HeaderBar, ActionBar, Spacer, IndentRow, Info, ErrorText } from './theme/ThemeComp';
 import { IconButton } from '@material-ui/core';
 import BillForm from './forms/BillForm';
 import styled from 'styled-components';
@@ -14,6 +15,7 @@ export default ({ data, balance, settings, onUpdate, onDelete }) => {
   let [bills, updateBills] = useState(data);
 
   async function deleteBill(i) {
+    onDelete(bills[i])
     updateBills([...bills.slice(0, i), ...bills.slice(i + 1)]);
   }
 
@@ -108,8 +110,14 @@ export default ({ data, balance, settings, onUpdate, onDelete }) => {
 
     let summary =
       <Info key="summary">
-        <i>Next payday: <strong>{ nextPayDate.getMonth() + 1 }/{ nextPayDate.getDate() }</strong></i>
-        <i>Maximum available funds: <strong>{ balance - calculateBillsTil(bills, nextPayDate.getMonth(), nextPayDate.getDate()) }</strong></i>
+        { settings.payDate ?
+          <i>Next payday: <strong>{ nextPayDate.getMonth() + 1 }/{ nextPayDate.getDate() }</strong></i> :
+          <Link to="/settings"><ErrorText>For better information, configure a <strong>pay date</strong> in app settings.</ErrorText></Link>
+        }
+        { settings.paycheck ?
+          <i>Maximum available funds: <strong>{ balance - calculateBillsTil(bills, nextPayDate.getMonth(), nextPayDate.getDate()) }</strong></i> :
+          <Link to="/settings"><ErrorText>For better information, configure a <strong>pay check</strong> in app settings.</ErrorText></Link>
+        }
       </Info>
 
     billRows.push(summary);

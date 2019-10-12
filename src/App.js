@@ -9,12 +9,33 @@ import HeaderNav from "./comp/Header";
 import Dashboard from "./comp/Dashboard";
 import Settings from "./comp/Settings";
 import { theme } from "./comp/theme/Provider";
+import { getAppStoragePath, unmarshal } from "./util/pods";
 
 function App({ webId }) {
 
   const [loggedIn, setLoggedIn] = useState(false);
+  const [storage, setStorage] = useState(null);
+  const [settings, setSettings] = useState({});
 
   useEffect(() => setLoggedIn(!!webId), [webId])
+
+  // LOAD NEW USER
+  useEffect(() => {
+    async function init() {
+      const storage = await getAppStoragePath(webId);
+      setStorage(storage);
+    }
+    if (webId) init(webId);
+  }, [webId]);
+
+  useEffect(() => {
+    async function loadSettings() {
+      const data = await unmarshal(`${ storage }data.ttl`)
+      setSettings(data)
+    }
+
+    if (storage) loadSettings()
+  }, [storage])
 
   return (
     <Router>
@@ -22,7 +43,14 @@ function App({ webId }) {
         <div className='App'>
           <HeaderNav onUpdate={ setLoggedIn } />
           <Content>
-            <Route path='/' exact render={ () => <Dashboard auth={ loggedIn } settings={ { "paycheck": 2600, "payDate": "2019-07-05" } } /> } />
+            <Route path='/' exact
+              render={ () =>
+                <Dashboard
+                  auth={ loggedIn }
+                  storage={ storage }
+                  settings={ settings }
+                /> }
+            />
             <Route path='/settings' exact component={ Settings } />
           </Content>
         </div>

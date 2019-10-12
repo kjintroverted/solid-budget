@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
-import { withWebId } from "@inrupt/solid-react-components";
 
 import AccountBreakdown from "./AccountBreakdown";
 import BillSchedule from "./BillSchedule";
@@ -10,10 +9,9 @@ import Welcome from "./Welcome";
 import { BottomAnchor } from "./theme/ThemeComp";
 import { Fab } from "@material-ui/core";
 import {
-  getAppStoragePath,
   fetchDocument,
   createNonExistentDocument,
-  unmarshal,
+  load,
   deleteFile
 } from "../util/pods";
 import { deepEquals, getMainBalance, uniqueId } from "../util/helper";
@@ -21,7 +19,7 @@ import accountShape from "../contexts/account-shape";
 import bucketShape from "../contexts/bucket-shape";
 import billShape from "../contexts/bill-shape";
 
-const Dashboard = ({ webId, settings, auth }) => {
+const Dashboard = ({ settings, auth, storage }) => {
   const [isDirty, setDirty] = useState(false);
   const [markedDocs, markDocs] = useState([]);
 
@@ -39,16 +37,6 @@ const Dashboard = ({ webId, settings, auth }) => {
   const [billFolder, setBillFolder] = useState("");
   const [bills, setBills] = useState([]);
   const [savedBills, setSavedBills] = useState([]);
-
-  async function load(folder, shape, ...hooks) {
-    const folderDoc = await fetchDocument(folder);
-    if (!folderDoc) return;
-    const data = [];
-    for await (const item of folderDoc["ldp:contains"]) {
-      data.push(await unmarshal(item.value, shape));
-    }
-    hooks.forEach(f => f(data));
-  }
 
   async function saveAll() {
     await Promise.all([
@@ -88,14 +76,13 @@ const Dashboard = ({ webId, settings, auth }) => {
   // LOAD NEW USER
   useEffect(() => {
     async function init() {
-      const storage = await getAppStoragePath(webId);
       setAccountFolder(`${ storage }accounts/`);
       setBucketFolder(`${ storage }buckets/`);
       setBillFolder(`${ storage }bills/`);
     }
 
-    if (webId) init(webId);
-  }, [webId]);
+    if (storage) init();
+  }, [storage]);
 
   // LOAD DATA WHEN FOLDER UPDATES
   useEffect(() => {
@@ -176,7 +163,7 @@ const Dashboard = ({ webId, settings, auth }) => {
   );
 };
 
-export default withWebId(Dashboard);
+export default Dashboard;
 
 const Widgets = styled.div`
   width: 100vw;

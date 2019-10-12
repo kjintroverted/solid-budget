@@ -64,3 +64,7 @@ export const BottomAnchor = styled.div`
   right: .5em;
   z-index: 99;
 `
+
+export const ErrorText = styled.p`
+  color: red;
+`

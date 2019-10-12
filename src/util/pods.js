@@ -5,7 +5,8 @@ const appPath = "public/munnypouch/";
 
 // Gets JSON object from ttl doc
 export async function unmarshal(uri, shape) {
-  const doc = data[uri];
+  const doc = await fetchDocument(uri);
+  if (!doc) return {};
   const datum = { uri };
   await Promise.all(
     shape.shape.map(async ({ prefix, predicate, alias, parse }) => {
@@ -68,6 +69,17 @@ export const getAppStoragePath = async webId => {
 
   return `${ podStoragePathValue }${ appPath }`;
 };
+
+// Loads data from folders
+export async function load(folder, shape, ...cb) {
+  const folderDoc = await fetchDocument(folder);
+  if (!folderDoc) return;
+  const data = [];
+  for await (const item of folderDoc["ldp:contains"]) {
+    data.push(await unmarshal(item.value, shape));
+  }
+  cb.forEach(f => f(data));
+}
 
 // Delete file from storage
 export const deleteFile = async url => {

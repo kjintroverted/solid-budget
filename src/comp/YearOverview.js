@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
-import { WidgetContainer, HeaderBar, Row, Spacer, IndentRow, Info } from './theme/ThemeComp';
+import { Link } from 'react-router-dom';
+import { WidgetContainer, HeaderBar, Row, Spacer, IndentRow, Info, ErrorText } from './theme/ThemeComp';
 import { months, totalCredit, totalDebitForMonth, round } from '../util/helper';
 import { Divider } from '@material-ui/core';
 
@@ -58,9 +59,15 @@ export default ({ bills, settings }) => {
 
     views.push(
       <Info key="year-summary">
-        <i>Total Income: <strong>{ totalIncome }</strong></i>
+        { settings.payDate ?
+          <i>Total Income: <strong>{ totalIncome }</strong></i> :
+          <Link to="/settings"><ErrorText>For better information, configure a <strong>pay date</strong> in app settings.</ErrorText></Link>
+        }
         <i>Total Debit: <strong>{ totalDebit }</strong></i>
-        <i>Munny with a Job: <strong>{ round((totalDebit / totalIncome) * 100, 2) }%</strong></i>
+        { settings.paycheck ?
+          <i>Munny with a Job: <strong>{ round((totalDebit / totalIncome) * 100, 2) }%</strong></i> :
+          <Link to="/settings"><ErrorText>For better information, configure a <strong>pay check</strong> in app settings.</ErrorText></Link>
+        }
       </Info>
     )
     return views;
