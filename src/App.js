@@ -7,6 +7,7 @@ import { withWebId } from "@inrupt/solid-react-components";
 import "./App.css";
 import HeaderNav from "./comp/Header";
 import Dashboard from "./comp/Dashboard";
+import Settings from "./comp/Settings";
 import { theme } from "./comp/theme/Provider";
 
 function App({ webId }) {
@@ -22,6 +23,7 @@ function App({ webId }) {
           <HeaderNav onUpdate={ setLoggedIn } />
           <Content>
             <Route path='/' exact render={ () => <Dashboard auth={ loggedIn } settings={ { "paycheck": 2600, "payDate": "2019-07-05" } } /> } />
+            <Route path='/settings' exact component={ Settings } />
           </Content>
         </div>
       </ThemeProvider>
