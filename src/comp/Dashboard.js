@@ -6,6 +6,7 @@ import AccountBreakdown from "./AccountBreakdown";
 import BillSchedule from "./BillSchedule";
 import YearOverview from "./YearOverview";
 import BucketView from "./BucketView";
+import Welcome from "./Welcome";
 import { BottomAnchor } from "./theme/ThemeComp";
 import { Fab } from "@material-ui/core";
 import {
@@ -126,7 +127,7 @@ const Dashboard = ({ webId, settings, auth }) => {
   ]);
 
   // RENDER()
-  if (!auth) return <h2>Log in to start budgeting!</h2>
+  if (!auth) return <Welcome />
 
   return (
     <>
