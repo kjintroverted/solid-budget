@@ -19,11 +19,17 @@ export async function unmarshal(uri, shape) {
   return datum;
 }
 
+// Login
 export async function popupLogin() {
   let session = await auth.currentSession();
   let popupUri = 'https://solid.community/common/popup.html';
   if (!session)
     session = await auth.popupLogin({ popupUri });
+}
+
+// Login
+export async function logout() {
+  await auth.logout()
 }
 
 /**

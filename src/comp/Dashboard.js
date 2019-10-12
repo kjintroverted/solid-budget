@@ -6,6 +6,7 @@ import AccountBreakdown from "./AccountBreakdown";
 import BillSchedule from "./BillSchedule";
 import YearOverview from "./YearOverview";
 import BucketView from "./BucketView";
+import Welcome from "./Welcome";
 import { BottomAnchor } from "./theme/ThemeComp";
 import { Fab } from "@material-ui/core";
 import {
@@ -20,7 +21,7 @@ import accountShape from "../contexts/account-shape";
 import bucketShape from "../contexts/bucket-shape";
 import billShape from "../contexts/bill-shape";
 
-const Dashboard = ({ webId, settings }) => {
+const Dashboard = ({ webId, settings, auth }) => {
   const [isDirty, setDirty] = useState(false);
   const [markedDocs, markDocs] = useState([]);
 
@@ -126,6 +127,8 @@ const Dashboard = ({ webId, settings }) => {
   ]);
 
   // RENDER()
+  if (!auth) return <Welcome />
+
   return (
     <>
       <Widgets>
