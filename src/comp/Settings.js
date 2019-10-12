@@ -10,10 +10,13 @@ const Settings = ({ webId }) => {
 
   return (
     <Container>
+      {/* TABS */ }
       <Tabs value={ value } onChange={ (event, newVal) => setValue(newVal) } aria-label="simple tabs example">
         <Tab label="Account" />
         <Tab label="Settings" />
       </Tabs>
+
+      {/* ACCOUNT FORM */ }
       <TabPanel value={ value } index={ 0 }>
         <ShexContainer>
           <ShexFormBuilder
@@ -35,8 +38,10 @@ const Settings = ({ webId }) => {
           />
         </ShexContainer>
       </TabPanel>
+
+      {/* APP SETTINGS */ }
       <TabPanel value={ value } index={ 1 }>
-        Item Two
+        Application Settings
       </TabPanel>
     </Container >
   )
