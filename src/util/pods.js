@@ -102,7 +102,7 @@ export async function save(shape, data, folder) {
 
 // Saves JSON data to file
 export async function saveOne(shape, datum, folder) {
-  const doc = await fetchDocument(datum.uri);
+  let doc = await fetchDocument(datum.uri);
   if (!doc) {
     await createNonExistentDocument(datum.uri);
     doc = await fetchDocument(datum.uri);
