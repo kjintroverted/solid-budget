@@ -9,12 +9,11 @@ import Welcome from "./Welcome";
 import { BottomAnchor } from "./theme/ThemeComp";
 import { Fab } from "@material-ui/core";
 import {
-  fetchDocument,
-  createNonExistentDocument,
+  save,
   load,
   deleteFile
 } from "../util/pods";
-import { deepEquals, getMainBalance, uniqueId } from "../util/helper";
+import { deepEquals, getMainBalance } from "../util/helper";
 import accountShape from "../contexts/account-shape";
 import bucketShape from "../contexts/bucket-shape";
 import billShape from "../contexts/bill-shape";
@@ -49,24 +48,6 @@ const Dashboard = ({ settings, auth, storage }) => {
     setSavedBuckets(buckets);
     setSavedBills(bills);
     console.log("Successfully saved");
-  }
-
-  async function save(shape, data, folder) {
-    return Promise.all(
-      data.map(async datum => {
-        if (!datum.uri) {
-          datum.uri = `${ folder }${ uniqueId() }.ttl`
-          await createNonExistentDocument(datum.uri);
-        }
-        const doc = await fetchDocument(datum.uri);
-        shape.shape.forEach(async ({ prefix, predicate, alias, stringify }) => {
-          const object = datum[alias || predicate];
-          await doc[`${ shape["@context"][prefix] }${ predicate }`].set(
-            stringify ? stringify(object) : object
-          );
-        });
-      })
-    );
   }
 
   function markForDelete(object) {

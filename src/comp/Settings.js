@@ -3,8 +3,9 @@ import styled from 'styled-components';
 import { withWebId, ShexFormBuilder } from '@inrupt/solid-react-components';
 import { Tabs, Tab } from '@material-ui/core';
 import TabPanel from './TabPanel';
+import SettingsForm from './forms/SettingsForm';
 
-const Settings = ({ webId }) => {
+const Settings = ({ webId, settings, onUpdate }) => {
 
   const [value, setValue] = useState(0);
 
@@ -41,7 +42,7 @@ const Settings = ({ webId }) => {
 
       {/* APP SETTINGS */ }
       <TabPanel value={ value } index={ 1 }>
-        Application Settings
+        <SettingsForm data={ settings } onUpdate={ onUpdate } />
       </TabPanel>
     </Container >
   )
@@ -50,14 +51,14 @@ const Settings = ({ webId }) => {
 export default withWebId(Settings);
 
 const ShexContainer = styled.div`
-  width: 95vw;
-  max-width: 500px;
-`
+      width: 95vw;
+      max-width: 500px;
+    `
 
 const Container = styled.div`
-  width: 95vw;
-  max-width: 600px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+      width: 95vw;
+      max-width: 600px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
 `

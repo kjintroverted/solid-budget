@@ -9,7 +9,8 @@ import HeaderNav from "./comp/Header";
 import Dashboard from "./comp/Dashboard";
 import Settings from "./comp/Settings";
 import { theme } from "./comp/theme/Provider";
-import { getAppStoragePath, unmarshal } from "./util/pods";
+import { getAppStoragePath, unmarshal, saveOne } from "./util/pods";
+import settingsShape from './contexts/settings-shape';
 
 function App({ webId }) {
 
@@ -18,6 +19,12 @@ function App({ webId }) {
   const [settings, setSettings] = useState({});
 
   useEffect(() => setLoggedIn(!!webId), [webId])
+
+  async function saveSettings(data) {
+    setSettings(data);
+    await saveOne(settingsShape, data, `${ storage }data.ttl`)
+    console.log("Preferences saved.");
+  }
 
   // LOAD NEW USER
   useEffect(() => {
@@ -30,7 +37,7 @@ function App({ webId }) {
 
   useEffect(() => {
     async function loadSettings() {
-      const data = await unmarshal(`${ storage }data.ttl`)
+      const data = await unmarshal(`${ storage }data.ttl`, settingsShape);
       setSettings(data)
     }
 
@@ -51,7 +58,13 @@ function App({ webId }) {
                   settings={ settings }
                 /> }
             />
-            <Route path='/settings' exact component={ Settings } />
+            <Route path='/settings' exact
+              render={ () =>
+                <Settings
+                  settings={ settings }
+                  onUpdate={ saveSettings }
+                /> }
+            />
           </Content>
         </div>
       </ThemeProvider>
