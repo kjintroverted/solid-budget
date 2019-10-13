@@ -1,11 +1,13 @@
 import data from "@solid/query-ldflex";
 import auth from "solid-auth-client";
+import { uniqueId } from './helper';
 
 const appPath = "public/munnypouch/";
 
 // Gets JSON object from ttl doc
 export async function unmarshal(uri, shape) {
-  const doc = data[uri];
+  const doc = await fetchDocument(uri);
+  if (!doc) return { uri };
   const datum = { uri };
   await Promise.all(
     shape.shape.map(async ({ prefix, predicate, alias, parse }) => {
@@ -15,7 +17,6 @@ export async function unmarshal(uri, shape) {
       }
     })
   );
-
   return datum;
 }
 
@@ -68,6 +69,53 @@ export const getAppStoragePath = async webId => {
 
   return `${ podStoragePathValue }${ appPath }`;
 };
+
+// Loads data from folders
+export async function load(folder, shape, ...cb) {
+  const folderDoc = await fetchDocument(folder);
+  if (!folderDoc) return;
+  const data = [];
+  for await (const item of folderDoc["ldp:contains"]) {
+    data.push(await unmarshal(item.value, shape));
+  }
+  cb.forEach(f => f(data));
+}
+
+// Saves array JSON data to file
+export async function save(shape, data, folder) {
+  return Promise.all(
+    data.map(async datum => {
+      if (!datum.uri) {
+        datum.uri = `${ folder }${ uniqueId() }.ttl`
+        await createNonExistentDocument(datum.uri);
+      }
+      const doc = await fetchDocument(datum.uri);
+      shape.shape.forEach(async ({ prefix, predicate, alias, stringify }) => {
+        const object = datum[alias || predicate];
+        await doc[`${ shape["@context"][prefix] }${ predicate }`].set(
+          stringify ? stringify(object) : object
+        );
+      });
+    })
+  );
+}
+
+// Saves JSON data to file
+export async function saveOne(shape, datum, folder) {
+  let doc = await fetchDocument(datum.uri);
+  if (!doc) {
+    await createNonExistentDocument(datum.uri);
+    doc = await fetchDocument(datum.uri);
+  }
+  return Promise.all(
+    shape.shape.map(async ({ prefix, predicate, alias, stringify }) => {
+      const object = datum[alias || predicate];
+      await doc[`${ shape["@context"][prefix] }${ predicate }`].set(
+        stringify ? stringify(object) : object
+      );
+    })
+  )
+}
 
 // Delete file from storage
 export const deleteFile = async url => {

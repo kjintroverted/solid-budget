@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
-import { withWebId } from "@inrupt/solid-react-components";
 
 import AccountBreakdown from "./AccountBreakdown";
 import BillSchedule from "./BillSchedule";
@@ -10,18 +9,16 @@ import Welcome from "./Welcome";
 import { BottomAnchor } from "./theme/ThemeComp";
 import { Fab } from "@material-ui/core";
 import {
-  getAppStoragePath,
-  fetchDocument,
-  createNonExistentDocument,
-  unmarshal,
+  save,
+  load,
   deleteFile
 } from "../util/pods";
-import { deepEquals, getMainBalance, uniqueId } from "../util/helper";
+import { deepEquals, getMainBalance } from "../util/helper";
 import accountShape from "../contexts/account-shape";
 import bucketShape from "../contexts/bucket-shape";
 import billShape from "../contexts/bill-shape";
 
-const Dashboard = ({ webId, settings, auth }) => {
+const Dashboard = ({ settings, auth, storage }) => {
   const [isDirty, setDirty] = useState(false);
   const [markedDocs, markDocs] = useState([]);
 
@@ -40,16 +37,6 @@ const Dashboard = ({ webId, settings, auth }) => {
   const [bills, setBills] = useState([]);
   const [savedBills, setSavedBills] = useState([]);
 
-  async function load(folder, shape, ...hooks) {
-    const folderDoc = await fetchDocument(folder);
-    if (!folderDoc) return;
-    const data = [];
-    for await (const item of folderDoc["ldp:contains"]) {
-      data.push(await unmarshal(item.value, shape));
-    }
-    hooks.forEach(f => f(data));
-  }
-
   async function saveAll() {
     await Promise.all([
       save(accountShape, accounts, accountFolder),
@@ -63,24 +50,6 @@ const Dashboard = ({ webId, settings, auth }) => {
     console.log("Successfully saved");
   }
 
-  async function save(shape, data, folder) {
-    return Promise.all(
-      data.map(async datum => {
-        if (!datum.uri) {
-          datum.uri = `${ folder }${ uniqueId() }.ttl`
-          await createNonExistentDocument(datum.uri);
-        }
-        const doc = await fetchDocument(datum.uri);
-        shape.shape.forEach(async ({ prefix, predicate, alias, stringify }) => {
-          const object = datum[alias || predicate];
-          await doc[`${ shape["@context"][prefix] }${ predicate }`].set(
-            stringify ? stringify(object) : object
-          );
-        });
-      })
-    );
-  }
-
   function markForDelete(object) {
     markDocs([...markedDocs, object.uri]);
   }
@@ -88,14 +57,13 @@ const Dashboard = ({ webId, settings, auth }) => {
   // LOAD NEW USER
   useEffect(() => {
     async function init() {
-      const storage = await getAppStoragePath(webId);
       setAccountFolder(`${ storage }accounts/`);
       setBucketFolder(`${ storage }buckets/`);
       setBillFolder(`${ storage }bills/`);
     }
 
-    if (webId) init(webId);
-  }, [webId]);
+    if (storage) init();
+  }, [storage]);
 
   // LOAD DATA WHEN FOLDER UPDATES
   useEffect(() => {
@@ -176,7 +144,7 @@ const Dashboard = ({ webId, settings, auth }) => {
   );
 };
 
-export default withWebId(Dashboard);
+export default Dashboard;
 
 const Widgets = styled.div`
   width: 100vw;

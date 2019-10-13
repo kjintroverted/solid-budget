@@ -64,7 +64,7 @@ let HeaderNav = ({ webId, onUpdate }) => {
           onClose={ close }
         >
           <Link to='/settings'>
-            <MenuItem onClick={ close }>Settings</MenuItem>
+            <MenuItem onClick={ close }>Account</MenuItem>
           </Link>
           <Link to='/'>
             <MenuItem onClick={ onLogout }>Logout</MenuItem>

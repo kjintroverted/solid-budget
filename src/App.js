@@ -7,13 +7,42 @@ import { withWebId } from "@inrupt/solid-react-components";
 import "./App.css";
 import HeaderNav from "./comp/Header";
 import Dashboard from "./comp/Dashboard";
+import Settings from "./comp/Settings";
 import { theme } from "./comp/theme/Provider";
+import { getAppStoragePath, unmarshal, saveOne } from "./util/pods";
+import settingsShape from './contexts/settings-shape';
 
 function App({ webId }) {
 
   const [loggedIn, setLoggedIn] = useState(false);
+  const [storage, setStorage] = useState(null);
+  const [settings, setSettings] = useState({});
 
   useEffect(() => setLoggedIn(!!webId), [webId])
+
+  async function saveSettings(data) {
+    setSettings(data);
+    await saveOne(settingsShape, data, `${ storage }data.ttl`)
+    console.log("Preferences saved.");
+  }
+
+  // LOAD NEW USER
+  useEffect(() => {
+    async function init() {
+      const storage = await getAppStoragePath(webId);
+      setStorage(storage);
+    }
+    if (webId) init(webId);
+  }, [webId]);
+
+  useEffect(() => {
+    async function loadSettings() {
+      const data = await unmarshal(`${ storage }data.ttl`, settingsShape);
+      setSettings(data)
+    }
+
+    if (storage) loadSettings()
+  }, [storage])
 
   return (
     <Router>
@@ -21,7 +50,21 @@ function App({ webId }) {
         <div className='App'>
           <HeaderNav onUpdate={ setLoggedIn } />
           <Content>
-            <Route path='/' exact render={ () => <Dashboard auth={ loggedIn } settings={ { "paycheck": 2600, "payDate": "2019-07-05" } } /> } />
+            <Route path='/' exact
+              render={ () =>
+                <Dashboard
+                  auth={ loggedIn }
+                  storage={ storage }
+                  settings={ settings }
+                /> }
+            />
+            <Route path='/settings' exact
+              render={ () =>
+                <Settings
+                  settings={ settings }
+                  onUpdate={ saveSettings }
+                /> }
+            />
           </Content>
         </div>
       </ThemeProvider>
