@@ -131,10 +131,10 @@ export default ({ data, balance, settings, onUpdate, onDelete }) => {
         <h2>Bill Planning</h2>
         <Spacer />
         <ActionBar>
-          <IconButton onClick={ () => setAdding(!isAdding) } disabled={ !bills }>
+          <IconButton color="secondary" onClick={ () => setAdding(!isAdding) } disabled={ !bills }>
             <i className="material-icons">{ isAdding ? 'close' : 'add' }</i>
           </IconButton>
-          <IconButton onClick={ () => setEditing(!isEditing) } disabled={ !bills }>
+          <IconButton color="secondary" onClick={ () => setEditing(!isEditing) } disabled={ !bills }>
             <i className="material-icons">{ isEditing ? 'close' : 'edit' }</i>
           </IconButton>
         </ActionBar>

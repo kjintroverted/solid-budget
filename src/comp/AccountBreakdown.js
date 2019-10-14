@@ -68,10 +68,10 @@ export default ({ data, buckets, onUpdate, onDelete }) => {
         <h2>Accounts</h2>
         <Spacer />
         <ActionBar>
-          <IconButton onClick={ () => setAdding(!isAdding) } disabled={ !accounts }>
+          <IconButton color="secondary" onClick={ () => setAdding(!isAdding) } disabled={ !accounts }>
             <i className='material-icons'>{ isAdding ? "close" : "add" }</i>
           </IconButton>
-          <IconButton onClick={ () => setEditing(!isEditing) } disabled={ !accounts }>
+          <IconButton color="secondary" onClick={ () => setEditing(!isEditing) } disabled={ !accounts }>
             <i className='material-icons'>{ isEditing ? "close" : "edit" }</i>
           </IconButton>
         </ActionBar>
