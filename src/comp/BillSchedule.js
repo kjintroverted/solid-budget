@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { WidgetContainer, HeaderBar, ActionBar, Spacer, IndentRow, Info, ErrorText } from './theme/ThemeComp';
-import { IconButton } from '@material-ui/core';
+import { WidgetContainer, HeaderBar, ActionBar, Spacer, IndentRow, Info, ErrorText, LoadingContainer } from './theme/ThemeComp';
+import { IconButton, CircularProgress } from '@material-ui/core';
 import BillForm from './forms/BillForm';
 import styled from 'styled-components';
 import { theme } from './theme/Provider';
@@ -140,7 +140,9 @@ export default ({ data, balance, settings, onUpdate, onDelete }) => {
         </ActionBar>
       </HeaderBar>
 
-      { (!bills || !bills.length) && <p>No bills to track.</p> }
+      { (!bills) && <LoadingContainer><CircularProgress /></LoadingContainer> }
+
+      { (bills && !bills.length) && <p>No bills to track.</p> }
 
       { // ADDING NEW BILL
         isAdding &&

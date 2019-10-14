@@ -34,7 +34,7 @@ const Dashboard = ({ settings, auth, storage }) => {
 
   // BILL TRACKING
   const [billFolder, setBillFolder] = useState("");
-  const [bills, setBills] = useState([]);
+  const [bills, setBills] = useState(null);
   const [savedBills, setSavedBills] = useState([]);
 
   async function saveAll() {
@@ -84,11 +84,15 @@ const Dashboard = ({ settings, auth, storage }) => {
 
   useEffect(() => {
     if (billFolder)
-      load(billFolder, billShape, setBills, setSavedBills);
+      load(billFolder, billShape, setBills, setSavedBills)
+        .then(success => {
+          if (!success) setBills([]);
+        })
   }, [billFolder]);
 
   // CHECK FOR DIRTY FORMS ON DATA UPDATE
   useEffect(() => {
+    if (!accounts || !bills || !buckets) return;
     setDirty(
       !deepEquals(savedAccounts, accounts)
       || !deepEquals(savedBuckets, buckets)
