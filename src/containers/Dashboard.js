@@ -5,8 +5,8 @@ import AccountBreakdown from "./AccountBreakdown";
 import BillSchedule from "./BillSchedule";
 import YearOverview from "./YearOverview";
 import BucketView from "./BucketView";
-import Welcome from "./Welcome";
-import { BottomAnchor, FabLoader } from "./theme/ThemeComp";
+import Welcome from "../components/Welcome";
+import { BottomAnchor, FabLoader } from "../components/theme/ThemeComp";
 import { Fab, CircularProgress } from "@material-ui/core";
 import {
   save,

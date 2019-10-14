@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
-import { Column, HeaderBar, Spacer, LoadingContainer } from "./theme/ThemeComp";
+import { Column, HeaderBar, Spacer, LoadingContainer } from "../components/theme/ThemeComp";
 import { Fab, CircularProgress } from "@material-ui/core";
-import BucketForm from "./forms/BucketForm";
-import Bucket from "./Bucket";
+import BucketForm from "../components/forms/BucketForm";
+import Bucket from "../components/Bucket";
 
 export default ({ bucketList, accountList, onUpdate, onDelete }) => {
   let [buckets, updateBuckets] = useState(bucketList);

@@ -5,10 +5,10 @@ import { ThemeProvider } from "@material-ui/styles";
 import { withWebId } from "@inrupt/solid-react-components";
 
 import "./App.css";
-import HeaderNav from "./comp/Header";
-import Dashboard from "./comp/Dashboard";
-import Settings from "./comp/Settings";
-import { theme } from "./comp/theme/Provider";
+import HeaderNav from "./components/Header";
+import { theme } from "./components/theme/Provider";
+import Dashboard from "./containers/Dashboard";
+import Settings from "./containers/Settings";
 import { getAppStoragePath, unmarshal, saveOne } from "./util/pods";
 import settingsShape from './contexts/settings-shape';
 

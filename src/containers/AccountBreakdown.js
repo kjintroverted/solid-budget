@@ -9,8 +9,8 @@ import {
   IndentRow,
   Column,
   LoadingContainer
-} from "./theme/ThemeComp";
-import AccountForm from "./forms/AccountForm";
+} from "../components/theme/ThemeComp";
+import AccountForm from "../components/forms/AccountForm";
 
 export default ({ data, buckets, onUpdate, onDelete }) => {
   let [accounts, setAccounts] = useState(data);

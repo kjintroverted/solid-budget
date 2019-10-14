@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { WidgetContainer, HeaderBar, ActionBar, Spacer, IndentRow, Info, ErrorText, LoadingContainer } from './theme/ThemeComp';
+import { WidgetContainer, HeaderBar, ActionBar, Spacer, IndentRow, Info, ErrorText, LoadingContainer } from '../components/theme/ThemeComp';
 import { IconButton, CircularProgress } from '@material-ui/core';
-import BillForm from './forms/BillForm';
+import BillForm from '../components/forms/BillForm';
 import styled from 'styled-components';
-import { theme } from './theme/Provider';
+import { theme } from '../components/theme/Provider';
 import { calculateBillsTil, getNextPayDate } from '../util/helper';
 
 export default ({ data, balance, settings, onUpdate, onDelete }) => {
