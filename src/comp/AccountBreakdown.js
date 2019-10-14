@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { IconButton, Input, Badge } from "@material-ui/core";
+import { IconButton, Input, Badge, CircularProgress } from "@material-ui/core";
 
 import {
   ActionBar,
@@ -7,7 +7,8 @@ import {
   HeaderBar,
   Spacer,
   IndentRow,
-  Column
+  Column,
+  LoadingContainer
 } from "./theme/ThemeComp";
 import AccountForm from "./forms/AccountForm";
 
@@ -77,7 +78,9 @@ export default ({ data, buckets, onUpdate, onDelete }) => {
       </HeaderBar>
 
       {/* NO ACCOUNTS TO DISPLAY */ }
-      { (!accounts || !accounts.length) && "No Accounts to display." }
+      { !accounts && <LoadingContainer><CircularProgress /></LoadingContainer> }
+
+      { (accounts && !accounts.length) && "No Accounts to display." }
 
       {/* MAIN ACCOUNT DISPLAY */ }
       { accounts &&

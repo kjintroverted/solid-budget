@@ -14,6 +14,7 @@ export const months = [
 ]
 
 export function getMainBalance(accountList) {
+  if (!accountList) return 0;
   if (accountList.length === 0) return 0;
   if (accountList.length === 1) return accountList[0].balance;
   const main = accountList.find(acc => acc.label === "Main");

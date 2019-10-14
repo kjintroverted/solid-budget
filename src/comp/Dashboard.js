@@ -24,7 +24,7 @@ const Dashboard = ({ settings, auth, storage }) => {
 
   // ACCOUNT TRACKING
   const [accountFolder, setAccountFolder] = useState("");
-  const [accounts, setAccounts] = useState([]);
+  const [accounts, setAccounts] = useState(null);
   const [savedAccounts, setSavedAccounts] = useState([]);
 
   // BUCKET TRACKING
@@ -68,7 +68,10 @@ const Dashboard = ({ settings, auth, storage }) => {
   // LOAD DATA WHEN FOLDER UPDATES
   useEffect(() => {
     if (accountFolder)
-      load(accountFolder, accountShape, setAccounts, setSavedAccounts);
+      load(accountFolder, accountShape, setAccounts, setSavedAccounts)
+        .then(success => {
+          if (!success) setAccounts([]);
+        })
   }, [accountFolder]);
 
   useEffect(() => {

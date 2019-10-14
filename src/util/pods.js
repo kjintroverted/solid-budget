@@ -73,12 +73,13 @@ export const getAppStoragePath = async webId => {
 // Loads data from folders
 export async function load(folder, shape, ...cb) {
   const folderDoc = await fetchDocument(folder);
-  if (!folderDoc) return;
+  if (!folderDoc) return false;
   const data = [];
   for await (const item of folderDoc["ldp:contains"]) {
     data.push(await unmarshal(item.value, shape));
   }
   cb.forEach(f => f(data));
+  return true;
 }
 
 // Saves array JSON data to file
