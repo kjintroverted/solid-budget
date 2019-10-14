@@ -43,7 +43,7 @@ export const RowCenter = styled.div`
 
 export const IndentRow = styled.div`
   display: flex;
-  align-items: center;
+  align-items: start;
   padding-left: 15px;
   padding-right: 10px;
   border-bottom: whitesmoke solid 1px;
