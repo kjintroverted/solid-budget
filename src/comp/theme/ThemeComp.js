@@ -68,3 +68,14 @@ export const BottomAnchor = styled.div`
 export const ErrorText = styled.p`
   color: red;
 `
+export const LoadingContainer = styled.div`
+  margin: 10px;
+  display: flex;
+  justify-content: center;
+`
+
+export const FabLoader = styled.div`
+  position: absolute;
+  top: -6px;
+  right: -6px;
+`

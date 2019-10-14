@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
-import { Column, HeaderBar, Spacer } from "./theme/ThemeComp";
-import { Fab } from "@material-ui/core";
+import { Column, HeaderBar, Spacer, LoadingContainer } from "./theme/ThemeComp";
+import { Fab, CircularProgress } from "@material-ui/core";
 import BucketForm from "./forms/BucketForm";
 import Bucket from "./Bucket";
 
@@ -64,6 +64,7 @@ export default ({ bucketList, accountList, onUpdate, onDelete }) => {
           color='secondary'
           size='small'
           style={ { color: "white" } }
+          disabled={ !buckets }
         >
           <i className='material-icons'>{ isAdding ? "close" : "add" }</i>
         </Fab>
@@ -71,6 +72,9 @@ export default ({ bucketList, accountList, onUpdate, onDelete }) => {
       { isAdding && (
         <BucketForm submit={ addBucket } labels={ getAccountLabels() } />
       ) }
+
+      { !buckets && <LoadingContainer><CircularProgress /></LoadingContainer> }
+
       { buckets &&
         buckets.map((b, i) => (
           <Bucket

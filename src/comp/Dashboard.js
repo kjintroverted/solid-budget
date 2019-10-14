@@ -6,8 +6,8 @@ import BillSchedule from "./BillSchedule";
 import YearOverview from "./YearOverview";
 import BucketView from "./BucketView";
 import Welcome from "./Welcome";
-import { BottomAnchor } from "./theme/ThemeComp";
-import { Fab } from "@material-ui/core";
+import { BottomAnchor, FabLoader } from "./theme/ThemeComp";
+import { Fab, CircularProgress } from "@material-ui/core";
 import {
   save,
   load,
@@ -21,23 +21,25 @@ import billShape from "../contexts/bill-shape";
 const Dashboard = ({ settings, auth, storage }) => {
   const [isDirty, setDirty] = useState(false);
   const [markedDocs, markDocs] = useState([]);
+  const [saving, setSaving] = useState(false);
 
   // ACCOUNT TRACKING
   const [accountFolder, setAccountFolder] = useState("");
-  const [accounts, setAccounts] = useState([]);
+  const [accounts, setAccounts] = useState(null);
   const [savedAccounts, setSavedAccounts] = useState([]);
 
   // BUCKET TRACKING
   const [bucketFolder, setBucketFolder] = useState("");
-  const [buckets, setBuckets] = useState([]);
+  const [buckets, setBuckets] = useState(null);
   const [savedBuckets, setSavedBuckets] = useState([]);
 
   // BILL TRACKING
   const [billFolder, setBillFolder] = useState("");
-  const [bills, setBills] = useState([]);
+  const [bills, setBills] = useState(null);
   const [savedBills, setSavedBills] = useState([]);
 
   async function saveAll() {
+    setSaving(true);
     await Promise.all([
       save(accountShape, accounts, accountFolder),
       save(bucketShape, buckets, bucketFolder),
@@ -47,7 +49,7 @@ const Dashboard = ({ settings, auth, storage }) => {
     setSavedAccounts(accounts);
     setSavedBuckets(buckets);
     setSavedBills(bills);
-    console.log("Successfully saved");
+    setSaving(false);
   }
 
   function markForDelete(object) {
@@ -68,21 +70,31 @@ const Dashboard = ({ settings, auth, storage }) => {
   // LOAD DATA WHEN FOLDER UPDATES
   useEffect(() => {
     if (accountFolder)
-      load(accountFolder, accountShape, setAccounts, setSavedAccounts);
+      load(accountFolder, accountShape, setAccounts, setSavedAccounts)
+        .then(success => {
+          if (!success) setAccounts([]);
+        })
   }, [accountFolder]);
 
   useEffect(() => {
     if (bucketFolder)
-      load(bucketFolder, bucketShape, setBuckets, setSavedBuckets);
+      load(bucketFolder, bucketShape, setBuckets, setSavedBuckets)
+        .then(success => {
+          if (!success) setBuckets([]);
+        })
   }, [bucketFolder]);
 
   useEffect(() => {
     if (billFolder)
-      load(billFolder, billShape, setBills, setSavedBills);
+      load(billFolder, billShape, setBills, setSavedBills)
+        .then(success => {
+          if (!success) setBills([]);
+        })
   }, [billFolder]);
 
   // CHECK FOR DIRTY FORMS ON DATA UPDATE
   useEffect(() => {
+    if (!accounts || !bills || !buckets) return;
     setDirty(
       !deepEquals(savedAccounts, accounts)
       || !deepEquals(savedBuckets, buckets)
@@ -135,9 +147,15 @@ const Dashboard = ({ settings, auth, storage }) => {
 
       { isDirty && (
         <BottomAnchor>
-          <Fab color='secondary' style={ { color: "white" } } onClick={ saveAll }>
+          <Fab
+            color='secondary'
+            style={ { color: "white" } }
+            onClick={ saveAll }
+            disabled={ saving }
+          >
             <i className='material-icons'>save</i>
           </Fab>
+          { saving && <FabLoader><CircularProgress size={ 68 } /></FabLoader> }
         </BottomAnchor>
       ) }
     </>

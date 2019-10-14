@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { IconButton, Input, Badge } from "@material-ui/core";
+import { IconButton, Input, Badge, CircularProgress } from "@material-ui/core";
 
 import {
   ActionBar,
@@ -7,7 +7,8 @@ import {
   HeaderBar,
   Spacer,
   IndentRow,
-  Column
+  Column,
+  LoadingContainer
 } from "./theme/ThemeComp";
 import AccountForm from "./forms/AccountForm";
 
@@ -67,17 +68,19 @@ export default ({ data, buckets, onUpdate, onDelete }) => {
         <h2>Accounts</h2>
         <Spacer />
         <ActionBar>
-          <IconButton onClick={ () => setAdding(!isAdding) }>
+          <IconButton color="secondary" onClick={ () => setAdding(!isAdding) } disabled={ !accounts }>
             <i className='material-icons'>{ isAdding ? "close" : "add" }</i>
           </IconButton>
-          <IconButton onClick={ () => setEditing(!isEditing) }>
+          <IconButton color="secondary" onClick={ () => setEditing(!isEditing) } disabled={ !accounts }>
             <i className='material-icons'>{ isEditing ? "close" : "edit" }</i>
           </IconButton>
         </ActionBar>
       </HeaderBar>
 
       {/* NO ACCOUNTS TO DISPLAY */ }
-      { (!accounts || !accounts.length) && "No Accounts to display." }
+      { !accounts && <LoadingContainer><CircularProgress /></LoadingContainer> }
+
+      { (accounts && !accounts.length) && "No Accounts to display." }
 
       {/* MAIN ACCOUNT DISPLAY */ }
       { accounts &&
@@ -91,7 +94,7 @@ export default ({ data, buckets, onUpdate, onDelete }) => {
                   { acc.name } ({ acc.label })
                 </h3>
                 { !!allocatedBuckets.length && (
-                  <IconButton onClick={ () => toggleShow(i) } size='small'>
+                  <IconButton style={ { alignSelf: "center" } } onClick={ () => toggleShow(i) } size='small'>
                     <i className='material-icons'>
                       { show.indexOf(i) !== -1
                         ? "arrow_drop_up"

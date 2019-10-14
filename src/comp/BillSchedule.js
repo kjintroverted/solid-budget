@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { WidgetContainer, HeaderBar, ActionBar, Spacer, IndentRow, Info, ErrorText } from './theme/ThemeComp';
-import { IconButton } from '@material-ui/core';
+import { WidgetContainer, HeaderBar, ActionBar, Spacer, IndentRow, Info, ErrorText, LoadingContainer } from './theme/ThemeComp';
+import { IconButton, CircularProgress } from '@material-ui/core';
 import BillForm from './forms/BillForm';
 import styled from 'styled-components';
 import { theme } from './theme/Provider';
@@ -29,8 +29,6 @@ export default ({ data, balance, settings, onUpdate, onDelete }) => {
   }
 
   useEffect(() => {
-    console.log("bills", bills);
-
     if (bills) onUpdate(bills.sort((a, b) => a.date - b.date));
   }, [bills, onUpdate]);
 
@@ -133,16 +131,18 @@ export default ({ data, balance, settings, onUpdate, onDelete }) => {
         <h2>Bill Planning</h2>
         <Spacer />
         <ActionBar>
-          <IconButton onClick={ () => setAdding(!isAdding) }>
+          <IconButton color="secondary" onClick={ () => setAdding(!isAdding) } disabled={ !bills }>
             <i className="material-icons">{ isAdding ? 'close' : 'add' }</i>
           </IconButton>
-          <IconButton onClick={ () => setEditing(!isEditing) }>
+          <IconButton color="secondary" onClick={ () => setEditing(!isEditing) } disabled={ !bills }>
             <i className="material-icons">{ isEditing ? 'close' : 'edit' }</i>
           </IconButton>
         </ActionBar>
       </HeaderBar>
 
-      { (!bills || !bills.length) && <p>No bills to track.</p> }
+      { (!bills) && <LoadingContainer><CircularProgress /></LoadingContainer> }
+
+      { (bills && !bills.length) && <p>No bills to track.</p> }
 
       { // ADDING NEW BILL
         isAdding &&
