@@ -42,7 +42,7 @@ export default ({ bucketList, accountList, onUpdate, onDelete }) => {
       if (a.favorite) {
         if (!b.favorite) return -1;
       } else if (b.favorite) return 1;
-      return 0;
+      return a.name.toLowerCase().localeCompare(b.name.toLowerCase());
     });
     onUpdate(buckets);
   }, [buckets, onUpdate]);
