@@ -29,6 +29,8 @@ export default ({ data, balance, settings, onUpdate, onDelete }) => {
   }
 
   useEffect(() => {
+    console.log("bills", bills);
+
     if (bills) onUpdate(bills.sort((a, b) => a.date - b.date));
   }, [bills, onUpdate]);
 
@@ -43,7 +45,7 @@ export default ({ data, balance, settings, onUpdate, onDelete }) => {
   function createBillRows() {
     payDate = getNextPayDate(new Date(settings.payDate), now);
     let billRows = bills.map((bill, i) => { // MAIN BILL READOUT
-      if (bill.months && bill.months.indexOf((now.getMonth() + 1) + "") < 0) return null;
+      if (bill.months && bill.months.indexOf((now.getMonth() + 1)) < 0) return null;
       let paid = bill.date < now.getDate();
       let payday = bill.date >= payDate;
       if (overrides.indexOf(i) >= 0) paid = !paid;
