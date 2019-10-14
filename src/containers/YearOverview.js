@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
-import { WidgetContainer, HeaderBar, Row, Spacer, IndentRow, Info, ErrorText } from './theme/ThemeComp';
+import { WidgetContainer, HeaderBar, Row, Spacer, IndentRow, Info, ErrorText } from '../components/theme/ThemeComp';
 import { months, totalCredit, totalDebitForMonth, round } from '../util/helper';
 import { Divider } from '@material-ui/core';
 

@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import styled from 'styled-components';
 import { withWebId, ShexFormBuilder } from '@inrupt/solid-react-components';
 import { Tabs, Tab } from '@material-ui/core';
-import TabPanel from './TabPanel';
-import SettingsForm from './forms/SettingsForm';
+import TabPanel from '../components/TabPanel';
+import SettingsForm from '../components/forms/SettingsForm';
 
 const Settings = ({ webId, settings, onUpdate }) => {
 
