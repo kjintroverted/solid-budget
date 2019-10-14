@@ -69,5 +69,5 @@ export function deepEquals(obj1, obj2) {
 }
 
 export function uniqueId() {
-  return new Date().getTime();
+  return '_' + Math.random().toString(36).substr(2, 9);
 }
