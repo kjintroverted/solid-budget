@@ -29,7 +29,7 @@ export default ({ data, balance, settings, onUpdate, onDelete }) => {
   }
 
   useEffect(() => {
-    if (bills) onUpdate(bills);
+    if (bills) onUpdate(bills.sort((a, b) => a.date - b.date));
   }, [bills, onUpdate]);
 
   useEffect(() => {
@@ -147,7 +147,7 @@ export default ({ data, balance, settings, onUpdate, onDelete }) => {
         <BillForm
           onSubmit={
             data => {
-              updateBills([...bills, data].sort((a, b) => a.date - b.date));
+              updateBills([...bills, data]);
               setAdding(false);
             }
           } />
