@@ -64,6 +64,7 @@ export default ({ bucketList, accountList, onUpdate, onDelete }) => {
           color='secondary'
           size='small'
           style={ { color: "white" } }
+          disabled={ !buckets }
         >
           <i className='material-icons'>{ isAdding ? "close" : "add" }</i>
         </Fab>
