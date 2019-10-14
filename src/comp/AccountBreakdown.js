@@ -46,7 +46,15 @@ export default ({ data, buckets, onUpdate, onDelete }) => {
   }
 
   useEffect(() => {
-    if (accounts) onUpdate(accounts);
+    if (accounts)
+      onUpdate(
+        accounts
+          .sort((a, b) => {
+            if (a.label === "Main") return -1;
+            if (b.label === "Main") return 1;
+            return 0
+          })
+      );
   }, [accounts, onUpdate]);
 
   useEffect(() => {
