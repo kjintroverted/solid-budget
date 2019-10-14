@@ -91,7 +91,7 @@ export default ({ data, buckets, onUpdate, onDelete }) => {
                   { acc.name } ({ acc.label })
                 </h3>
                 { !!allocatedBuckets.length && (
-                  <IconButton onClick={ () => toggleShow(i) } size='small'>
+                  <IconButton style={ { alignSelf: "center" } } onClick={ () => toggleShow(i) } size='small'>
                     <i className='material-icons'>
                       { show.indexOf(i) !== -1
                         ? "arrow_drop_up"
