@@ -29,7 +29,7 @@ const Dashboard = ({ settings, auth, storage }) => {
 
   // BUCKET TRACKING
   const [bucketFolder, setBucketFolder] = useState("");
-  const [buckets, setBuckets] = useState([]);
+  const [buckets, setBuckets] = useState(null);
   const [savedBuckets, setSavedBuckets] = useState([]);
 
   // BILL TRACKING
@@ -76,7 +76,10 @@ const Dashboard = ({ settings, auth, storage }) => {
 
   useEffect(() => {
     if (bucketFolder)
-      load(bucketFolder, bucketShape, setBuckets, setSavedBuckets);
+      load(bucketFolder, bucketShape, setBuckets, setSavedBuckets)
+        .then(success => {
+          if (!success) setBuckets([]);
+        })
   }, [bucketFolder]);
 
   useEffect(() => {
