@@ -29,8 +29,6 @@ export default ({ data, balance, settings, onUpdate, onDelete }) => {
   }
 
   useEffect(() => {
-    console.log("bills", bills);
-
     if (bills) onUpdate(bills.sort((a, b) => a.date - b.date));
   }, [bills, onUpdate]);
 
