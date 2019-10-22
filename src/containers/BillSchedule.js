@@ -125,6 +125,7 @@ export default ({ data, balance, settings, onUpdate, onDelete }) => {
     return billRows;
   }
 
+  // RENDER =======================
   return (
     <WidgetContainer>
       <HeaderBar>
