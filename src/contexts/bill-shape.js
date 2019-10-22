@@ -1,3 +1,6 @@
+// Find option bank here
+// https://github.com/solid/context/blob/master/context.json
+
 export default {
   "@context": {
     "foaf": "http://xmlns.com/foaf/0.1/",
@@ -28,6 +31,13 @@ export default {
       "alias": "payment",
       "stringify": value => value + "",
       "parse": value => +value
+    },
+    {
+      prefix: "as",
+      predicate: "bcc",
+      alias: "oneTime",
+      stringify: value => value + "",
+      parse: value => value === "true"
     }
   ]
 }
