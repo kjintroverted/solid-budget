@@ -1,17 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { WidgetContainer, HeaderBar, ActionBar, Spacer, IndentRow, Info, ErrorText, LoadingContainer } from '../components/theme/ThemeComp';
+import { WidgetContainer, HeaderBar, ActionBar, Spacer, IndentRow, LoadingContainer, Info, ErrorText } from '../components/theme/ThemeComp';
+import { theme } from '../components/theme/Provider';
 import { IconButton, CircularProgress } from '@material-ui/core';
 import BillForm from '../components/forms/BillForm';
 import styled from 'styled-components';
-import { theme } from '../components/theme/Provider';
-import { calculateBillsTil, getNextPayDate } from '../util/helper';
+import { getNextPayDate, calculateBillsTil } from '../util/helper';
+import { deleteFile } from '../util/pods';
 
 export default ({ data, balance, settings, onUpdate, onDelete }) => {
   let [isAdding, setAdding] = useState(false);
   let [isEditing, setEditing] = useState(false);
   let [overrides, setOverrides] = useState([]);
-
   let [bills, updateBills] = useState(data);
 
   async function deleteBill(i) {
@@ -29,57 +29,51 @@ export default ({ data, balance, settings, onUpdate, onDelete }) => {
   }
 
   useEffect(() => {
-    if (bills) onUpdate(bills.sort((a, b) => a.date - b.date));
+    if (!bills) return;
+    onUpdate(bills.sort((a, b) => a.date - b.date));
   }, [bills, onUpdate]);
 
   useEffect(() => {
     updateBills(data)
   }, [data]);
 
-  let now = new Date();
 
-  let payDate;
-  // BUILD BILL INFO ROWS
-  function createBillRows() {
-    payDate = getNextPayDate(new Date(settings.payDate), now);
-    let billRows = bills.map((bill, i) => { // MAIN BILL READOUT
-      if (bill.months && bill.months.indexOf((now.getMonth() + 1)) < 0) return null;
-      let paid = bill.date < now.getDate();
-      let payday = bill.date >= payDate;
-      if (overrides.indexOf(i) >= 0) paid = !paid;
+  function buildSchedule() {
+    if (!bills || !settings.paycheck || !settings.payDate) return null;
+    let now = new Date();
+    const paydays = buildPayDays(now);
+    const schedule = [...paydays, ...bills].sort((a, b) => a.date - b.date)
 
-      let paydayRow;
-      if (payday) { // ADDS A PRE-ROW FOR PAYDAY INFO
-        if (now.getDate() < payDate) {
-          balance += +settings.paycheck;
-          paydayRow =
-            <IndentRow key={ `payday-${ payDate }` }
-              style={ { background: theme.palette.primary.light, color: theme.palette.primary.contrastText } }>
-              <DateText>{ now.getMonth() + 1 }/{ payDate }</DateText>
-              <p>Payday</p>
-              <Spacer />
-              <p>{ balance }</p>
-            </IndentRow>
+    let runningBalance = balance;
+    let rows = schedule
+      .filter(item => (!item.months || item.months.indexOf((now.getMonth() + 1)) !== -1) && !item.future)
+      .map((item, i) => { // MAIN item READOUT
+        let paid = item.date < now.getDate();
+        if (paid && item.oneTime) {
+          deleteFile(item.uri)
+            .then(() => console.info(`Deleted "${ item.title }" (One-time payment)`))
+          return null;
         }
-        payDate += 14;
-      }
 
-      if (!paid) balance -= bill.payment;
+        if (overrides.indexOf(i) >= 0) paid = !paid;
 
-      return (
-        <div key={ `billrow-${ i }` }>
-          { paydayRow }
+        if (item.isCredit) runningBalance += item.payment;
+        else if (!paid) runningBalance -= item.payment;
+
+        return (
           <IndentRow
+            key={ `item-row-${ i }` }
+            style={ item.isCredit ? { outlineColor: theme.palette.primary.light, outlineStyle: 'solid' } : null }
             className={ paid ? 'inactive clickable' : 'clickable' }
             onClick={ () => toggleOverride(i)
             }
           >
-            <DateText>{ now.getMonth() + 1 }/{ bill.date }</DateText>
-            <p>{ bill.title }</p>
+            <DateText>{ now.getMonth() + 1 }/{ item.date }</DateText>
+            <p>{ item.title }</p>
             <Spacer />
             <Column>
-              <Debit>({ bill.payment })</Debit>
-              { !paid && <p>{ balance }</p> }
+              { !item.isCredit ? <Debit>({ item.payment })</Debit> : <Credit>+{ item.payment }</Credit> }
+              { !paid && <p>{ runningBalance }</p> }
             </Column>
             { isEditing && // DELETE BUTTON
               <IconButton color='secondary' onClick={ () => deleteBill(i) }>
@@ -87,44 +81,54 @@ export default ({ data, balance, settings, onUpdate, onDelete }) => {
               </IconButton>
             }
           </IndentRow >
-        </div>
-      )
-    }
-    )
-    let nextPayDate = new Date(now.getTime());
-    nextPayDate.setDate(payDate);
-    payDate = nextPayDate.getDate();
-    if (payDate > 28) {
-      balance += settings.paycheck;
-      billRows.push(
-        <IndentRow key={ `payday-${ payDate }` }
-          style={ { background: theme.palette.primary.light, color: theme.palette.primary.contrastText } }>
-          <DateText>{ now.getMonth() + 1 }/{ payDate }</DateText>
-          <p>Payday</p>
-          <Spacer />
-          <p>{ balance }</p>
-        </IndentRow>
-      )
-      nextPayDate.setDate(payDate + 14);
-    }
+        )
+      });
 
-    let summary =
+    let futurePayDay = paydays.find(item => item.future);
+    rows.push(
       <Info key="summary">
         { settings.payDate ?
-          <i>Next payday: <strong>{ nextPayDate.getMonth() + 1 }/{ nextPayDate.getDate() }</strong></i> :
+          <i>Next payday: <strong>{ futurePayDay.month }/{ futurePayDay.date }</strong></i> :
           <Link to="/settings"><ErrorText>For better information, configure a <strong>pay date</strong> in app settings.</ErrorText></Link>
         }
         { settings.paycheck ?
-          <i>Maximum available funds: <strong>{ balance - calculateBillsTil(bills, nextPayDate.getMonth(), nextPayDate.getDate()) }</strong></i> :
+          <i>Maximum available funds: <strong>{ runningBalance - calculateBillsTil(bills, futurePayDay.month, futurePayDay.date) }</strong></i> :
           <Link to="/settings"><ErrorText>For better information, configure a <strong>pay check</strong> in app settings.</ErrorText></Link>
         }
       </Info>
+    )
 
-    billRows.push(summary);
-
-    return billRows;
+    return rows;
   }
 
+  function buildPayDays(now) {
+    const d = new Date(now.getTime());
+    let date = getNextPayDate(new Date(settings.payDate), d);
+    let days = [];
+    while (d.getMonth() === now.getMonth()) {
+      days.push({
+        title: "Payday",
+        isCredit: true,
+        date,
+        month: d.getMonth() + 1,
+        payment: settings.paycheck
+      })
+      d.setDate(date + 14);
+      date = d.getDate();
+    }
+
+    days.push({
+      title: "Payday",
+      isCredit: true,
+      date,
+      month: d.getMonth() + 1,
+      future: true
+    })
+
+    return days;
+  }
+
+  // RENDER =======================
   return (
     <WidgetContainer>
       <HeaderBar>
@@ -155,10 +159,8 @@ export default ({ data, balance, settings, onUpdate, onDelete }) => {
           } />
       }
 
-      {
-        bills && settings &&
-        createBillRows()
-      }
+      { buildSchedule() }
+
     </WidgetContainer>
   )
 }
@@ -176,4 +178,8 @@ const Column = styled.span`
 
 const Debit = styled.p`
   color: red;
+`
+
+const Credit = styled.p`
+  color: green;
 `

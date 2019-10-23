@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { TextField, IconButton, FormControl, FormHelperText, FormControlLabel, Checkbox } from '@material-ui/core';
+import { TextField, IconButton, FormControl, FormHelperText, FormControlLabel, Checkbox, RadioGroup, Radio } from '@material-ui/core';
 import styled from 'styled-components';
 
 import { months } from '../../util/helper'
@@ -7,25 +7,48 @@ import { months } from '../../util/helper'
 export default ({ onSubmit }) => {
 
   let [bill, setValues] = useState({});
-  let [error, setError] = useState(null);
-  let [monthly, setMonthly] = useState(true);
+  let [dateError, setDateError] = useState(null);
+  let [monthError, setMonthError] = useState(null);
+  let [mode, setMode] = useState("monthly"); // monthly, once, custom
 
   function handleChange(field, numeric) {
     return event => {
       let val = numeric ? +event.target.value : event.target.value;
       if (field === 'date') {
         if (val > 28) {
-          setError("Must be less than 28")
+          setDateError("Must be less than 28")
           return;
         }
         if (val < 1) {
-          setError("Must be greater than 1")
+          setDateError("Must be greater than 1")
           return;
         }
       }
-      setError("")
+      if (field === 'months') {
+        if (val > 12) {
+          setMonthError("Must be less than 12")
+          return;
+        }
+        if (val < 1) {
+          setMonthError("Must be greater than 1")
+          return;
+        }
+        val = [val];
+      }
+      setMonthError(null)
       setValues({ ...bill, [field]: val })
     }
+  }
+
+  function changeMode(e) {
+    const newMode = e.target.value;
+    if (newMode === "once")
+      setValues({ ...bill, months: null, oneTime: true })
+    else if (newMode === "custom")
+      setValues({ ...bill, months: [], oneTime: false })
+    else
+      setValues({ ...bill, months: null, oneTime: false })
+    setMode(newMode);
   }
 
   function toggle(e) {
@@ -44,19 +67,26 @@ export default ({ onSubmit }) => {
 
   return (
     <>
-      <FormControlLabel
-        control={
-          <Checkbox
-            checked={ monthly }
-            onChange={ e => {
-              if (e.target.checked) setValues({ ...bill, months: null })
-              setMonthly(e.target.checked)
-            } }
-            color="primary"
-          />
-        }
-        label="Monthly Payment"
-      />
+      <RadioGroup aria-label="position" name="position" value={ mode || "monthly" } onChange={ changeMode } row>
+        <FormControlLabel
+          value="monthly"
+          control={ <Radio color="primary" /> }
+          label="Monthly"
+          labelPlacement="end"
+        />
+        <FormControlLabel
+          value="custom"
+          control={ <Radio color="primary" /> }
+          label="Select Months"
+          labelPlacement="end"
+        />
+        <FormControlLabel
+          value="once"
+          control={ <Radio color="primary" /> }
+          label="One Time"
+          labelPlacement="end"
+        />
+      </RadioGroup>
       <Form>
         <TextField
           variant="outlined"
@@ -69,25 +99,38 @@ export default ({ onSubmit }) => {
           label="Payment"
           onChange={ handleChange('payment', true) } />
 
-        <FormControl error={ !!error }>
+        { mode === "once" &&
+          <FormControl error={ !!monthError }>
+            <TextField
+              variant="outlined"
+              type="number"
+              label="Month"
+              onChange={ handleChange('months', true) } />
+            <FormHelperText>{ monthError }</FormHelperText>
+          </FormControl>
+        }
+
+        <FormControl error={ !!dateError }>
           <TextField
             variant="outlined"
             type="number"
             label="Date"
             onChange={ handleChange('date') } />
-          <FormHelperText>{ error }</FormHelperText>
+          <FormHelperText>{ dateError }</FormHelperText>
         </FormControl>
 
         <IconButton onClick={ () => onSubmit(bill) }>
           <i className="material-icons">check</i>
         </IconButton>
       </Form>
-      { !monthly &&
+      {
+        mode === "custom" &&
         <>
           <p>Occurs in these months:</p>
           <FormGroup>
             { months.map((name, i) => (
               <FormControlLabel
+                key={ name }
                 control={
                   <Checkbox
                     checked={ bill.months && bill.months.indexOf(i + 1) !== -1 }
