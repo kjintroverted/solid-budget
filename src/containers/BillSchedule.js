@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { WidgetContainer, HeaderBar, ActionBar, Spacer, IndentRow, LoadingContainer, Info, ErrorText } from '../components/theme/ThemeComp';
+import { theme } from '../components/theme/Provider';
 import { IconButton, CircularProgress } from '@material-ui/core';
 import BillForm from '../components/forms/BillForm';
 import styled from 'styled-components';
@@ -38,7 +39,7 @@ export default ({ data, balance, settings, onUpdate, onDelete }) => {
 
 
   function buildSchedule() {
-    if (!bills) return null;
+    if (!bills || !settings.paycheck || !settings.payDate) return null;
     let now = new Date();
     const paydays = buildPayDays(now);
     const schedule = [...paydays, ...bills].sort((a, b) => a.date - b.date)
@@ -55,11 +56,14 @@ export default ({ data, balance, settings, onUpdate, onDelete }) => {
         }
 
         if (overrides.indexOf(i) >= 0) paid = !paid;
-        if (!paid) runningBalance -= item.payment;
+
+        if (item.isCredit) runningBalance += item.payment;
+        else if (!paid) runningBalance -= item.payment;
 
         return (
           <IndentRow
             key={ `item-row-${ i }` }
+            style={ item.isCredit ? { outlineColor: theme.palette.primary.light, outlineStyle: 'solid' } : null }
             className={ paid ? 'inactive clickable' : 'clickable' }
             onClick={ () => toggleOverride(i)
             }
@@ -68,7 +72,7 @@ export default ({ data, balance, settings, onUpdate, onDelete }) => {
             <p>{ item.title }</p>
             <Spacer />
             <Column>
-              { item.payment > 0 ? <Debit>({ item.payment })</Debit> : <Credit>+{ item.payment * -1 }</Credit> }
+              { !item.isCredit ? <Debit>({ item.payment })</Debit> : <Credit>+{ item.payment }</Credit> }
               { !paid && <p>{ runningBalance }</p> }
             </Column>
             { isEditing && // DELETE BUTTON
@@ -104,9 +108,10 @@ export default ({ data, balance, settings, onUpdate, onDelete }) => {
     while (d.getMonth() === now.getMonth()) {
       days.push({
         title: "Payday",
+        isCredit: true,
         date,
         month: d.getMonth() + 1,
-        payment: -1 * settings.paycheck
+        payment: settings.paycheck
       })
       d.setDate(date + 14);
       date = d.getDate();
@@ -114,6 +119,7 @@ export default ({ data, balance, settings, onUpdate, onDelete }) => {
 
     days.push({
       title: "Payday",
+      isCredit: true,
       date,
       month: d.getMonth() + 1,
       future: true
