@@ -47,11 +47,12 @@ export default ({ data, balance, settings, onUpdate, onDelete }) => {
     let runningBalance = balance;
     let rows = schedule
       .filter(item => (!item.months || item.months.indexOf((now.getMonth() + 1)) !== -1) && !item.future)
-      .map((item, i) => { // MAIN item READOUT
+      .map((item, i) => {
         let paid = item.date < now.getDate();
-        if (paid && item.oneTime) {
+        if ((paid && item.oneTime) // DELETE PAID ONE-TIME EXPENSES
+          || !item.title || !item.payment || !item.date) { // DELETE CORRUPTED ITEMS
           deleteFile(item.uri)
-            .then(() => console.info(`Deleted "${ item.title }" (One-time payment)`))
+            .then(() => console.info(`Deleted "${ item.title }"`))
           return null;
         }
 
