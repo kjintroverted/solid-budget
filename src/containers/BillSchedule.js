@@ -5,6 +5,7 @@ import { IconButton, CircularProgress } from '@material-ui/core';
 import BillForm from '../components/forms/BillForm';
 import styled from 'styled-components';
 import { getNextPayDate, calculateBillsTil } from '../util/helper';
+import { deleteFile } from '../util/pods';
 
 export default ({ data, balance, settings, onUpdate, onDelete }) => {
   let [isAdding, setAdding] = useState(false);
@@ -47,6 +48,12 @@ export default ({ data, balance, settings, onUpdate, onDelete }) => {
       .filter(item => (!item.months || item.months.indexOf((now.getMonth() + 1)) !== -1) && !item.future)
       .map((item, i) => { // MAIN item READOUT
         let paid = item.date < now.getDate();
+        if (paid && item.oneTime) {
+          deleteFile(item.uri)
+            .then(() => console.info(`Deleted "${ item.title }" (One-time payment)`))
+          return null;
+        }
+
         if (overrides.indexOf(i) >= 0) paid = !paid;
         if (!paid) runningBalance -= item.payment;
 
