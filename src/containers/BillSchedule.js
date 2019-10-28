@@ -105,6 +105,8 @@ export default ({ data, balance, settings, onUpdate, onDelete }) => {
   function buildPayDays(now) {
     const d = new Date(now.getTime());
     let date = getNextPayDate(new Date(settings.payDate), d);
+    d.setDate(date);
+    date = d.getDate();
     let days = [];
     while (d.getMonth() === now.getMonth()) {
       days.push({
