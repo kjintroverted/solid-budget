@@ -19,6 +19,7 @@ jobs:
       - run: npm i
       - run: npm i surge
       - run: npm run build
+      - run: rm -rf .git
       - run: cd build
       - run: echo "https://budget.wkgreen.dev" > CNAME
       - run: git init
