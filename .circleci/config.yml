@@ -16,6 +16,9 @@ jobs:
     working_directory: ~/solid-budget
     steps:
       - checkout
+      - add_ssh_keys:
+          fingerprints:
+            - '91:33:c2:6a:f1:f6:fd:18:c3:95:72:b4:67:5e:6d:9e'
       - run: npm i
       - run: npm i surge
       - run: npm run build
@@ -29,7 +32,7 @@ jobs:
       - run: git config user.email "wkgreen13@gmail.com"
       - run: git config user.name "CircleCI"
       - run: git commit -m "CI Deploy"
-      - run: git push -u origin gh-pages
+      - run: git push -uf origin gh-pages
 
 workflows:
   version: 2
