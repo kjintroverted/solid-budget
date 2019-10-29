@@ -24,7 +24,7 @@ jobs:
       - run: echo "https://budget.wkgreen.dev" > CNAME
       - run: git init
       - run: git remote add origin git@github.com:kjintroverted/solid-budget.git
-      - run: git branch -m master gh-pages
+      - run: git checkout -b gh-pages
       - run: git add .
       - run: git commit -m "CI Deploy"
       - run: git push -u origin gh-pages
