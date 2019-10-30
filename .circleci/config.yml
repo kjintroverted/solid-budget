@@ -23,16 +23,15 @@ jobs:
       - run: npm i surge
       - run: npm run build
       - run: rm -rf .git
-      - run: cd build
-      - run: echo "https://budget.wkgreen.dev" > CNAME
-      - run: git init
-      - run: git remote add origin git@github.com:kjintroverted/solid-budget.git
-      - run: git checkout -b gh-pages
-      - run: git add .
-      - run: git config user.email "wkgreen13@gmail.com"
-      - run: git config user.name "CircleCI"
-      - run: git commit -m "CI Deploy"
-      - run: git push -uf origin gh-pages
+      - run: echo "https://budget.wkgreen.dev" > ./build/CNAME
+      - run: cd build && git init
+      - run: cd build && git remote add origin git@github.com:kjintroverted/solid-budget.git
+      - run: cd build && git checkout -b gh-pages
+      - run: cd build && git add .
+      - run: cd build && git config user.email "wkgreen13@gmail.com"
+      - run: cd build && git config user.name "CircleCI"
+      - run: cd build && git commit -m "CI Deploy"
+      - run: cd build && git push -uf origin gh-pages
 
 workflows:
   version: 2
