@@ -47,7 +47,9 @@ export default ({ data, balance, settings, onUpdate, onDelete }) => {
 
     let runningBalance = balance;
     let rows = schedule
-      .filter(item => (!item.months || item.months.indexOf((now.getMonth() + 1)) !== -1) && !item.future)
+      .filter(item => (isEditing && !item.isCredit) ||
+        ((!item.months ||
+          item.months.indexOf((now.getMonth() + 1)) !== -1) && !item.future))
       .map((item, i) => {
         let paid = item.date < now.getDate();
         if ((paid && item.oneTime) // DELETE PAID ONE-TIME EXPENSES
@@ -62,13 +64,16 @@ export default ({ data, balance, settings, onUpdate, onDelete }) => {
         if (item.isCredit) runningBalance += item.payment;
         else if (!paid) runningBalance -= item.payment;
 
+        let dateContent = !item.months || item.months.indexOf(now.getMonth() + 1) !== -1 ?
+          `${ now.getMonth() + 1 }/${ item.date }` : <i className="material-icons">warning</i>;
+
         return (
           <IndentRow
             key={ `item-row-${ i }` }
             style={ item.isCredit ? { outlineColor: theme.palette.primary.light, outlineStyle: 'solid' } : null }
             className={ paid ? 'inactive clickable' : 'clickable' }
           >
-            <DateText>{ now.getMonth() + 1 }/{ item.date }</DateText>
+            <DateText>{ dateContent }</DateText>
             <p onClick={ () => toggleOverride(i) }>{ item.title }</p>
             <Spacer />
             <Column>
