@@ -14,8 +14,9 @@ export default ({ data, balance, settings, onUpdate, onDelete }) => {
   let [overrides, setOverrides] = useState([]);
   let [bills, updateBills] = useState(data);
 
-  async function deleteBill(i) {
-    onDelete(bills[i])
+  async function deleteBill(e, i) {
+    e.preventDefault();
+    onDelete(bills[i]);
     updateBills([...bills.slice(0, i), ...bills.slice(i + 1)]);
   }
 
@@ -46,7 +47,9 @@ export default ({ data, balance, settings, onUpdate, onDelete }) => {
 
     let runningBalance = balance;
     let rows = schedule
-      .filter(item => (!item.months || item.months.indexOf((now.getMonth() + 1)) !== -1) && !item.future)
+      .filter(item => (isEditing && !item.isCredit) ||
+        ((!item.months ||
+          item.months.indexOf((now.getMonth() + 1)) !== -1) && !item.future))
       .map((item, i) => {
         let paid = item.date < now.getDate();
         if ((paid && item.oneTime) // DELETE PAID ONE-TIME EXPENSES
@@ -61,23 +64,24 @@ export default ({ data, balance, settings, onUpdate, onDelete }) => {
         if (item.isCredit) runningBalance += item.payment;
         else if (!paid) runningBalance -= item.payment;
 
+        let dateContent = !item.months || item.months.indexOf(now.getMonth() + 1) !== -1 ?
+          `${ now.getMonth() + 1 }/${ item.date }` : <i className="material-icons">warning</i>;
+
         return (
           <IndentRow
             key={ `item-row-${ i }` }
             style={ item.isCredit ? { outlineColor: theme.palette.primary.light, outlineStyle: 'solid' } : null }
             className={ paid ? 'inactive clickable' : 'clickable' }
-            onClick={ () => toggleOverride(i)
-            }
           >
-            <DateText>{ now.getMonth() + 1 }/{ item.date }</DateText>
-            <p>{ item.title }</p>
+            <DateText>{ dateContent }</DateText>
+            <p onClick={ () => toggleOverride(i) }>{ item.title }</p>
             <Spacer />
             <Column>
               { !item.isCredit ? <Debit>({ item.payment })</Debit> : <Credit>+{ item.payment }</Credit> }
               { !paid && <p>{ runningBalance }</p> }
             </Column>
             { isEditing && // DELETE BUTTON
-              <IconButton color='secondary' onClick={ () => deleteBill(i) }>
+              <IconButton color='secondary' onClick={ e => deleteBill(e, bills.findIndex(val => val.uri === item.uri)) }>
                 <i className="material-icons">delete</i>
               </IconButton>
             }

@@ -29,7 +29,7 @@ export default ({ bucket, update, onDelete }) => {
       </HeaderBar>
       <Row>
         <Spacer />
-        <TextField type="number" value={ bucket.value || 0 } onChange={ handleChange('value', true) } />
+        <TextField type="number" placeholder="0" value={ bucket.value || '' } onChange={ handleChange('value', true) } />
       </Row>
     </WidgetContainer>
   )

@@ -109,8 +109,7 @@ export default ({ data, buckets, onUpdate, onDelete }) => {
                   invisible={ allocatedValue <= acc.balance }
                 >
                   <Input
-                    type='number'
-                    value={ acc.balance }
+                    type='number' placeholder="0" value={ acc.balance || '' }
                     onChange={ e => updateBalance(i, +e.target.value) }
                   />
                 </Badge>
