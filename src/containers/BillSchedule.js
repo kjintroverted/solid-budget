@@ -14,8 +14,9 @@ export default ({ data, balance, settings, onUpdate, onDelete }) => {
   let [overrides, setOverrides] = useState([]);
   let [bills, updateBills] = useState(data);
 
-  async function deleteBill(i) {
-    onDelete(bills[i])
+  async function deleteBill(e, i) {
+    e.preventDefault();
+    onDelete(bills[i]);
     updateBills([...bills.slice(0, i), ...bills.slice(i + 1)]);
   }
 
@@ -66,18 +67,16 @@ export default ({ data, balance, settings, onUpdate, onDelete }) => {
             key={ `item-row-${ i }` }
             style={ item.isCredit ? { outlineColor: theme.palette.primary.light, outlineStyle: 'solid' } : null }
             className={ paid ? 'inactive clickable' : 'clickable' }
-            onClick={ () => toggleOverride(i)
-            }
           >
             <DateText>{ now.getMonth() + 1 }/{ item.date }</DateText>
-            <p>{ item.title }</p>
+            <p onClick={ () => toggleOverride(i) }>{ item.title }</p>
             <Spacer />
             <Column>
               { !item.isCredit ? <Debit>({ item.payment })</Debit> : <Credit>+{ item.payment }</Credit> }
               { !paid && <p>{ runningBalance }</p> }
             </Column>
             { isEditing && // DELETE BUTTON
-              <IconButton color='secondary' onClick={ () => deleteBill(i) }>
+              <IconButton color='secondary' onClick={ e => deleteBill(e, bills.findIndex(val => val.uri === item.uri)) }>
                 <i className="material-icons">delete</i>
               </IconButton>
             }
