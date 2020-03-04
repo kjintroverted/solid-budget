@@ -18,8 +18,6 @@ function App({ webId }) {
   const [storage, setStorage] = useState(null);
   const [settings, setSettings] = useState({});
 
-  useEffect(() => setLoggedIn(!!webId), [webId])
-
   async function saveSettings(data) {
     setSettings(data);
     await saveOne(settingsShape, data, `${ storage }data.ttl`)
@@ -33,8 +31,10 @@ function App({ webId }) {
       setStorage(storage);
     }
     if (webId) init(webId);
+    setLoggedIn(!!webId)
   }, [webId]);
 
+  // LOAD STORAGE
   useEffect(() => {
     async function loadSettings() {
       const data = await unmarshal(`${ storage }data.ttl`, settingsShape);
