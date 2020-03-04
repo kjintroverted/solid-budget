@@ -9,16 +9,20 @@ import HeaderNav from "./components/Header";
 import { theme } from "./components/theme/Provider";
 import Dashboard from "./containers/Dashboard";
 import Settings from "./containers/Settings";
-import { getAppStoragePath, unmarshal, saveOne } from "./util/pods";
+import { getAppStoragePath, unmarshal, saveOne, logout } from "./util/pods";
+import { day } from "./util/helper";
 import settingsShape from './contexts/settings-shape';
+import Warning from "./components/Warning";
+
+// 2 DAYS
+const timeout = day * 2;
+
 
 function App({ webId }) {
 
   const [loggedIn, setLoggedIn] = useState(false);
   const [storage, setStorage] = useState(null);
   const [settings, setSettings] = useState({});
-
-  useEffect(() => setLoggedIn(!!webId), [webId])
 
   async function saveSettings(data) {
     setSettings(data);
@@ -32,9 +36,23 @@ function App({ webId }) {
       const storage = await getAppStoragePath(webId);
       setStorage(storage);
     }
-    if (webId) init(webId);
+    if (webId) {
+      init(webId);
+      // CHECK FOR STALE AUTH
+      let timestamp = localStorage.getItem("lastLogin")
+      if (!timestamp) {
+        localStorage.setItem("lastLogin", JSON.stringify(new Date()))
+      } else if ((new Date() - new Date(JSON.parse(timestamp))) > timeout) { // LAST LOGIN IS GREATER THAN 2 DAYS AGO
+        logout()
+        return
+      }
+      setLoggedIn(true)
+      return
+    }
+    setLoggedIn(false)
   }, [webId]);
 
+  // LOAD STORAGE
   useEffect(() => {
     async function loadSettings() {
       const data = await unmarshal(`${ storage }data.ttl`, settingsShape);
@@ -48,8 +66,9 @@ function App({ webId }) {
     <Router>
       <ThemeProvider theme={ theme }>
         <div className='App'>
-          <HeaderNav onUpdate={ setLoggedIn } />
+          <HeaderNav loggedIn={ loggedIn } onUpdate={ setLoggedIn } />
           <Content>
+            <Warning />
             <Route path='/' exact
               render={ () =>
                 <Dashboard
@@ -78,7 +97,7 @@ const Content = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-top: 80px;
+  margin-top: 59px;
   margin-bottom: 20px;
   padding: 0px 5px;
 `;

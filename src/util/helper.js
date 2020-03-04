@@ -13,6 +13,8 @@ export const months = [
   "December"
 ]
 
+export const day = 86400000;
+
 export function getMainBalance(accountList) {
   if (!accountList) return 0;
   if (accountList.length === 0) return 0;

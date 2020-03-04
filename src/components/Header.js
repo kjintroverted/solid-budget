@@ -12,7 +12,7 @@ import { popupLogin, logout } from '../util/pods'
 
 const logo = require("../assets/munny_pouch.png");
 
-let HeaderNav = ({ webId, onUpdate }) => {
+let HeaderNav = ({ webId, loggedIn, onUpdate }) => {
   const [anchor, setAnchor] = React.useState();
   const [name, setName] = React.useState(null);
 
@@ -51,9 +51,9 @@ let HeaderNav = ({ webId, onUpdate }) => {
 
         <Button
           style={ { color: "white" } }
-          onClick={ name ? event => setAnchor(event.currentTarget) : popupLogin }
+          onClick={ loggedIn ? event => setAnchor(event.currentTarget) : popupLogin }
         >
-          { name ? name : "Login" }
+          { loggedIn ? name : "Login" }
           <i className='material-icons click'>person</i>
         </Button>
 

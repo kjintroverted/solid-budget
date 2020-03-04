@@ -18,7 +18,7 @@ jobs:
       - checkout
       - add_ssh_keys:
           fingerprints:
-            - '91:33:c2:6a:f1:f6:fd:18:c3:95:72:b4:67:5e:6d:9e'
+            - "91:33:c2:6a:f1:f6:fd:18:c3:95:72:b4:67:5e:6d:9e"
       - run: npm i
       - run: npm i surge
       - run: npm run build
@@ -37,7 +37,10 @@ workflows:
   version: 2
   build-deploy:
     jobs:
-      - build
+      - build:
+          filters:
+            branches:
+              ignore: gh-pages
       - deploy:
           filters:
             branches:
