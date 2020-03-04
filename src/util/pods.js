@@ -30,6 +30,7 @@ export async function popupLogin() {
 
 // Login
 export async function logout() {
+  localStorage.clear()
   await auth.logout()
 }
 

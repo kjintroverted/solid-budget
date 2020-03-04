@@ -9,8 +9,12 @@ import HeaderNav from "./components/Header";
 import { theme } from "./components/theme/Provider";
 import Dashboard from "./containers/Dashboard";
 import Settings from "./containers/Settings";
-import { getAppStoragePath, unmarshal, saveOne } from "./util/pods";
+import { getAppStoragePath, unmarshal, saveOne, logout } from "./util/pods";
 import settingsShape from './contexts/settings-shape';
+
+// 2 DAYS
+const timeout = 86400000 * 2;
+
 
 function App({ webId }) {
 
@@ -30,8 +34,20 @@ function App({ webId }) {
       const storage = await getAppStoragePath(webId);
       setStorage(storage);
     }
-    if (webId) init(webId);
-    setLoggedIn(!!webId)
+    if (webId) {
+      init(webId);
+      // CHECK FOR STALE AUTH
+      let timestamp = localStorage.getItem("lastLogin")
+      if (!timestamp) {
+        localStorage.setItem("lastLogin", JSON.stringify(new Date()))
+      } else if ((new Date() - new Date(JSON.parse(timestamp))) > timeout) { // LAST LOGIN IS GREATER THAN 2 DAYS AGO
+        logout()
+        return
+      }
+      setLoggedIn(true)
+      return
+    }
+    setLoggedIn(false)
   }, [webId]);
 
   // LOAD STORAGE
@@ -48,7 +64,7 @@ function App({ webId }) {
     <Router>
       <ThemeProvider theme={ theme }>
         <div className='App'>
-          <HeaderNav onUpdate={ setLoggedIn } />
+          <HeaderNav loggedIn={ loggedIn } onUpdate={ setLoggedIn } />
           <Content>
             <Route path='/' exact
               render={ () =>
