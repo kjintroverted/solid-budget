@@ -10,10 +10,12 @@ import { theme } from "./components/theme/Provider";
 import Dashboard from "./containers/Dashboard";
 import Settings from "./containers/Settings";
 import { getAppStoragePath, unmarshal, saveOne, logout } from "./util/pods";
+import { day } from "./util/helper";
 import settingsShape from './contexts/settings-shape';
+import Warning from "./components/Warning";
 
 // 2 DAYS
-const timeout = 86400000 * 2;
+const timeout = day * 2;
 
 
 function App({ webId }) {
@@ -66,6 +68,7 @@ function App({ webId }) {
         <div className='App'>
           <HeaderNav loggedIn={ loggedIn } onUpdate={ setLoggedIn } />
           <Content>
+            <Warning />
             <Route path='/' exact
               render={ () =>
                 <Dashboard
@@ -94,7 +97,7 @@ const Content = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-top: 80px;
+  margin-top: 59px;
   margin-bottom: 20px;
   padding: 0px 5px;
 `;

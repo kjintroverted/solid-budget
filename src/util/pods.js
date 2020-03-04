@@ -30,7 +30,7 @@ export async function popupLogin() {
 
 // Login
 export async function logout() {
-  localStorage.clear()
+  localStorage.removeItem("lastLogin")
   await auth.logout()
 }
 
@@ -85,6 +85,7 @@ export async function load(folder, shape, ...cb) {
 
 // Saves array JSON data to file
 export async function save(shape, data, folder) {
+  localStorage.setItem("lastUpdated", new Date())
   return Promise.all(
     data.map(async datum => {
       if (!datum.uri) {
@@ -103,7 +104,8 @@ export async function save(shape, data, folder) {
 }
 
 // Saves JSON data to file
-export async function saveOne(shape, datum, folder) {
+export async function saveOne(shape, datum) {
+  localStorage.setItem("lastUpdated", new Date())
   let doc = await fetchDocument(datum.uri);
   if (!doc) {
     await createNonExistentDocument(datum.uri);
