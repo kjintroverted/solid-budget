@@ -12,7 +12,7 @@ import Settings from "./containers/Settings";
 import { getAppStoragePath, unmarshal, saveOne, logout } from "./util/pods";
 import { day } from "./util/helper";
 import settingsShape from './contexts/settings-shape';
-import Warning from "./components/Warning";
+// import Warning from "./components/Warning";
 
 // 2 DAYS
 const timeout = day * 2;
