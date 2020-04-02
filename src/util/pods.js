@@ -85,9 +85,9 @@ export async function load(folder, shape, ...cb) {
 
 // Saves array JSON data to file
 export async function save(shape, data, folder) {
-  localStorage.setItem("lastUpdated", new Date())
   return Promise.all(
     data.map(async datum => {
+      datum.lastUpdated = new Date();
       if (!datum.uri) {
         datum.uri = `${ folder }${ uniqueId() }.ttl`
         await createNonExistentDocument(datum.uri);
@@ -105,7 +105,7 @@ export async function save(shape, data, folder) {
 
 // Saves JSON data to file
 export async function saveOne(shape, datum) {
-  localStorage.setItem("lastUpdated", new Date())
+  datum.lastUpdated = new Date();
   let doc = await fetchDocument(datum.uri);
   if (!doc) {
     await createNonExistentDocument(datum.uri);

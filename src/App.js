@@ -68,7 +68,6 @@ function App({ webId }) {
         <div className='App'>
           <HeaderNav loggedIn={ loggedIn } onUpdate={ setLoggedIn } />
           <Content>
-            {/* <Warning /> */ }
             <Route path='/' exact
               render={ () =>
                 <Dashboard

@@ -17,11 +17,13 @@ import { deepEquals, getMainBalance } from "../util/helper";
 import accountShape from "../contexts/account-shape";
 import bucketShape from "../contexts/bucket-shape";
 import billShape from "../contexts/bill-shape";
+import Warning from "../components/Warning";
 
 const Dashboard = ({ settings, auth, storage }) => {
   const [isDirty, setDirty] = useState(false);
   const [markedDocs, markDocs] = useState([]);
   const [saving, setSaving] = useState(false);
+  const [lastUpdated, setLastUpdated] = useState(null)
 
   // ACCOUNT TRACKING
   const [accountFolder, setAccountFolder] = useState("");
@@ -56,6 +58,11 @@ const Dashboard = ({ settings, auth, storage }) => {
     markDocs([...markedDocs, object.uri]);
   }
 
+  function getLastUpdated(accounts) {
+    const lastUpd = accounts.reduce((min, x) => x.lastUpdated < min ? x.lastUpdated : min, new Date());
+    setLastUpdated(lastUpd)
+  }
+
   // LOAD NEW USER
   useEffect(() => {
     async function init() {
@@ -70,7 +77,7 @@ const Dashboard = ({ settings, auth, storage }) => {
   // LOAD DATA WHEN FOLDER UPDATES
   useEffect(() => {
     if (accountFolder)
-      load(accountFolder, accountShape, setAccounts, setSavedAccounts)
+      load(accountFolder, accountShape, setAccounts, setSavedAccounts, getLastUpdated)
         .then(success => {
           if (!success) setAccounts([]);
         })
@@ -111,6 +118,7 @@ const Dashboard = ({ settings, auth, storage }) => {
 
   return (
     <>
+      <Warning lastUpdated={ lastUpdated } />
       <Widgets>
         <div>
           <AccountBreakdown

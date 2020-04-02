@@ -3,10 +3,8 @@ import styled from 'styled-components';
 import { day } from '../util/helper';
 import { RowCenter } from './theme/ThemeComp';
 
-const Warning = () => {
-  let timestamp = localStorage.getItem("lastUpdated")
-  let lastUpdated = timestamp ? new Date(timestamp) : new Date(0)
-  let now = new Date()
+const Warning = ({ lastUpdated = new Date(0) }) => {
+  const now = new Date()
 
   if (now - lastUpdated < day * 2) {
     let Bar = appBar("green");
@@ -29,7 +27,7 @@ const Warning = () => {
       <RowCenter>
         <i style={ { margin: "0px 5px" } } class="material-icons">warning</i>
         <p>
-          Info displayed may be old. Last updated { Math.floor((now - lastUpdated) / day) } days ago.
+          Info displayed may be out dated. Last updated { Math.floor((now - lastUpdated) / day) } days ago.
         </p>
       </RowCenter>
     </Bar>
