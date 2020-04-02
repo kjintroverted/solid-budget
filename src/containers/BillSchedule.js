@@ -96,15 +96,16 @@ export default ({ data, balance, settings, onUpdate, onDelete }) => {
     let futurePayDay = paydays.find(item => item.future);
     let eomFunds = runningBalance - calculateBillsTil(bills, futurePayDay.month, futurePayDay.date);
     let currentFunds = Math.min(eomFunds, minBalance);
+
     rows = [
-      <i>Operational Budget: <b>{ currentFunds }</b></i>,
+      <i>Operational Budget: <b>{ currentFunds }</b></i>,   // OPS BUDGET
       ...rows,
       <Info key="summary">
-        { settings.payDate ?
+        { settings.payDate ?                                // NEXT PAYDAY
           <i>Next payday: <strong>{ futurePayDay.month }/{ futurePayDay.date }</strong></i> :
           <Link to="/settings"><ErrorText>For better information, configure a <strong>pay date</strong> in app settings.</ErrorText></Link>
         }
-        { settings.paycheck ?
+        { settings.paycheck ?                               // EOM FUNDS
           <i>Funds available: <strong>{ eomFunds }</strong></i> :
           <Link to="/settings"><ErrorText>For better information, configure a <strong>pay check</strong> in app settings.</ErrorText></Link>
         }
