@@ -122,21 +122,21 @@ const Dashboard = ({ settings, auth, storage }) => {
         </div>
 
         <div>
-          <BucketView
-            bucketList={ buckets }
-            accountList={ accounts }
-            onUpdate={ setBuckets }
-            onDelete={ markForDelete }
-          />
-        </div>
-
-        <div>
           <BillSchedule
             data={ bills }
             balance={ getMainBalance(accounts) }
             settings={ settings }
             onUpdate={ setBills }
             onDelete={ markForDelete } />
+        </div>
+
+        <div>
+          <BucketView
+            bucketList={ buckets }
+            accountList={ accounts }
+            onUpdate={ setBuckets }
+            onDelete={ markForDelete }
+          />
         </div>
 
         <div>
