@@ -46,6 +46,8 @@ export default ({ data, balance, settings, onUpdate, onDelete }) => {
     const schedule = [...paydays, ...bills].sort((a, b) => a.date - b.date)
 
     let runningBalance = balance;
+    let minBalance = runningBalance;
+
     let rows = schedule
       .filter(item => (isEditing && !item.isCredit) ||
         ((!item.months ||
@@ -61,8 +63,10 @@ export default ({ data, balance, settings, onUpdate, onDelete }) => {
 
         if (overrides.indexOf(i) >= 0) paid = !paid;
 
-        if (item.isCredit) runningBalance += item.payment;
-        else if (!paid) runningBalance -= item.payment;
+        if (item.isCredit) runningBalance += item.payment;  // ADD PAYDAY
+        else if (!paid) runningBalance -= item.payment;     // SUBTRACT BILL PAYMENT
+
+        if (runningBalance < minBalance) minBalance = runningBalance; // UPDATE MIN BALANCE
 
         let dateContent = !item.months || item.months.indexOf(now.getMonth() + 1) !== -1 ?
           `${ now.getMonth() + 1 }/${ item.date }` : <i className="material-icons">warning</i>;
@@ -90,18 +94,22 @@ export default ({ data, balance, settings, onUpdate, onDelete }) => {
       });
 
     let futurePayDay = paydays.find(item => item.future);
-    rows.push(
+    let eomFunds = runningBalance - calculateBillsTil(bills, futurePayDay.month, futurePayDay.date);
+    let currentFunds = Math.min(eomFunds, minBalance);
+    rows = [
+      <i>Operational Budget: <b>{ currentFunds }</b></i>,
+      ...rows,
       <Info key="summary">
         { settings.payDate ?
           <i>Next payday: <strong>{ futurePayDay.month }/{ futurePayDay.date }</strong></i> :
           <Link to="/settings"><ErrorText>For better information, configure a <strong>pay date</strong> in app settings.</ErrorText></Link>
         }
         { settings.paycheck ?
-          <i>Maximum available funds: <strong>{ runningBalance - calculateBillsTil(bills, futurePayDay.month, futurePayDay.date) }</strong></i> :
+          <i>Funds available: <strong>{ eomFunds }</strong></i> :
           <Link to="/settings"><ErrorText>For better information, configure a <strong>pay check</strong> in app settings.</ErrorText></Link>
         }
       </Info>
-    )
+    ]
 
     return rows;
   }
