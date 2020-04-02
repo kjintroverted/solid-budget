@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { WidgetContainer, HeaderBar, ActionBar, Spacer, IndentRow, LoadingContainer, Info, ErrorText } from '../components/theme/ThemeComp';
+import { WidgetContainer, HeaderBar, ActionBar, Spacer, IndentRow, LoadingContainer, Info, ErrorText, Row, RowCenter } from '../components/theme/ThemeComp';
 import { theme } from '../components/theme/Provider';
-import { IconButton, CircularProgress } from '@material-ui/core';
+import { IconButton, CircularProgress, Tooltip } from '@material-ui/core';
 import BillForm from '../components/forms/BillForm';
 import styled from 'styled-components';
 import { getNextPayDate, calculateBillsTil } from '../util/helper';
@@ -98,16 +98,31 @@ export default ({ data, balance, settings, onUpdate, onDelete }) => {
     let currentFunds = Math.min(eomFunds, minBalance);
 
     rows = [
-      <i>Operational Budget: <b>{ currentFunds }</b></i>,   // OPS BUDGET
+      <RowCenter>
+        <Tooltip title="Lowest predicted account balance. Don't spend more than this.">
+          <i className="material-icons">info_outline</i>
+        </Tooltip>
+        <i>Operational Budget: <b>{ currentFunds }</b></i>
+      </RowCenter>,                                                  // OPS BUDGET
       ...rows,
       <Info key="summary">
         { settings.payDate ?                                // NEXT PAYDAY
-          <i>Next payday: <strong>{ futurePayDay.month }/{ futurePayDay.date }</strong></i> :
-          <Link to="/settings"><ErrorText>For better information, configure a <strong>pay date</strong> in app settings.</ErrorText></Link>
+          <RowCenter>
+            <Tooltip title="First payday of next month">
+              <i className="material-icons">info_outline</i>
+            </Tooltip>
+            <i>Next payday: <strong>{ futurePayDay.month }/{ futurePayDay.date }</strong></i>
+          </RowCenter>
+          : <Link to="/settings"><ErrorText>For better information, configure a <strong>pay date</strong> in app settings.</ErrorText></Link>
         }
         { settings.paycheck ?                               // EOM FUNDS
-          <i>Funds available: <strong>{ eomFunds }</strong></i> :
-          <Link to="/settings"><ErrorText>For better information, configure a <strong>pay check</strong> in app settings.</ErrorText></Link>
+          <RowCenter>
+            <Tooltip title="Predicted final balance for the month, subtract all bill payments before next payday.">
+              <i className="material-icons">info_outline</i>
+            </Tooltip>
+            <i>Funds available: <strong>{ eomFunds }</strong></i>
+          </RowCenter>
+          : <Link to="/settings"><ErrorText>For better information, configure a <strong>pay check</strong> in app settings.</ErrorText></Link>
         }
       </Info>
     ]
