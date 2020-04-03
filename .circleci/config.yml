@@ -24,6 +24,7 @@ jobs:
       - run: npm run build
       - run: rm -rf .git
       - run: echo "https://budget.wkgreen.dev" > ./build/CNAME
+      - run: cp -r .circleci build
       - run: cd build && git init
       - run: cd build && git remote add origin git@github.com:kjintroverted/solid-budget.git
       - run: cd build && git checkout -b gh-pages
