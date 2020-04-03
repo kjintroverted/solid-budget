@@ -96,7 +96,7 @@ const Content = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-top: 59px;
+  margin-top: 80px;
   margin-bottom: 20px;
   padding: 0px 5px;
 `;

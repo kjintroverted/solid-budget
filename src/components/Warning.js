@@ -15,7 +15,7 @@ const Warning = ({ lastUpdated = new Date(0) }) => {
     setOpen(false);
   };
 
-  const autoClose = 10000
+  const autoClose = 15000
   const now = new Date()
 
   if (now - lastUpdated < day * 2) {
