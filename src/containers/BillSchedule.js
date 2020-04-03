@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { WidgetContainer, HeaderBar, ActionBar, Spacer, IndentRow, LoadingContainer, Info, ErrorText, Row, RowCenter } from '../components/theme/ThemeComp';
+import { WidgetContainer, HeaderBar, ActionBar, Spacer, IndentRow, LoadingContainer, Info, ErrorText, RowCenter } from '../components/theme/ThemeComp';
 import { theme } from '../components/theme/Provider';
 import { IconButton, CircularProgress, Tooltip } from '@material-ui/core';
 import BillForm from '../components/forms/BillForm';
@@ -98,7 +98,7 @@ export default ({ data, balance, settings, onUpdate, onDelete }) => {
     let currentFunds = Math.min(eomFunds, minBalance);
 
     rows = [
-      <RowCenter>
+      <RowCenter key="ops-budget">
         <Tooltip title="Lowest predicted account balance. Don't spend more than this.">
           <i className="material-icons">info_outline</i>
         </Tooltip>

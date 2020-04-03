@@ -59,7 +59,7 @@ const Dashboard = ({ settings, auth, storage }) => {
   }
 
   function getLastUpdated(accounts) {
-    const lastUpd = accounts.reduce((min, x) => x.lastUpdated < min ? x.lastUpdated : min, new Date());
+    const lastUpd = accounts.reduce((min, x) => !min || x.lastUpdated < min ? x.lastUpdated : min, new Date());
     setLastUpdated(lastUpd)
   }
 
@@ -118,7 +118,9 @@ const Dashboard = ({ settings, auth, storage }) => {
 
   return (
     <>
-      <Warning lastUpdated={ lastUpdated } />
+      {
+        lastUpdated && <Warning lastUpdated={ lastUpdated } />
+      }
       <Widgets>
         <div>
           <AccountBreakdown

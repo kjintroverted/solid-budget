@@ -1,46 +1,40 @@
-import React from 'react';
-import styled from 'styled-components';
+import React, { useState } from 'react';
 import { day } from '../util/helper';
-import { RowCenter } from './theme/ThemeComp';
+import { Snackbar } from '@material-ui/core';
+import { Alert } from '@material-ui/lab';
 
 const Warning = ({ lastUpdated = new Date(0) }) => {
+
+  const [open, setOpen] = useState(true)
+
+  const handleClose = (_, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+
+    setOpen(false);
+  };
+
+  const autoClose = 10000
   const now = new Date()
 
   if (now - lastUpdated < day * 2) {
-    let Bar = appBar("green");
     return (
-      <Bar>
-        <RowCenter>
-          <i style={ { margin: "0px 5px" } } class="material-icons">check</i>
-          <p>
-            Budget is up to date.
-          </p>
-        </RowCenter>
-      </Bar>
+      <Snackbar onClose={ handleClose } open={ open } autoHideDuration={ autoClose } >
+        <Alert onClose={ handleClose } severity="success">
+          Budget is up to date.
+        </Alert>
+      </Snackbar>
     )
   }
 
-  let Bar = appBar(now - lastUpdated > day * 5 ? 'red' : 'orange')
-
   return (
-    <Bar>
-      <RowCenter>
-        <i style={ { margin: "0px 5px" } } class="material-icons">warning</i>
-        <p>
-          Info displayed may be out dated. Last updated { Math.floor((now - lastUpdated) / day) } days ago.
-        </p>
-      </RowCenter>
-    </Bar>
+    <Snackbar onClose={ handleClose } open={ open } autoHideDuration={ autoClose } >
+      <Alert onClose={ handleClose } severity={ now - lastUpdated > day * 5 ? 'error' : 'warning' }>
+        Info displayed may be out dated. Last updated { Math.floor((now - lastUpdated) / day) } days ago.
+      </Alert>
+    </Snackbar>
   )
 }
 
 export default Warning;
-
-function appBar(color) {
-  return styled.div`
-  width: 100vw;
-  padding: 0px 5px;
-  background: ${color };
-  color: white;
-`
-}
