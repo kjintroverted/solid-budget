@@ -21,7 +21,7 @@ a {
 
 input[type="number"] {
   text-align: right;
-  max-width: 100px;
+  max-width: 120px;
   font-size: 1.2em;
 }
 

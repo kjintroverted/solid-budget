@@ -74,3 +74,11 @@ export function deepEquals(obj1, obj2) {
 export function uniqueId() {
   return '_' + Math.random().toString(36).substr(2, 9);
 }
+
+export function amortization(p, r, n) {
+  r = r / 100;
+  let top = r * Math.pow(r + 1, n);
+  let bottom = Math.pow(r + 1, n) - 1;
+  let a = p * (top / bottom)
+  return Math.round(a * 100) / 100;
+}

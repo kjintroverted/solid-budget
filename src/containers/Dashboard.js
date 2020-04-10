@@ -18,6 +18,7 @@ import accountShape from "../contexts/account-shape";
 import bucketShape from "../contexts/bucket-shape";
 import billShape from "../contexts/bill-shape";
 import Warning from "../components/Warning";
+import Loan from "../components/Loan";
 
 const Dashboard = ({ settings, auth, storage }) => {
   const [isDirty, setDirty] = useState(false);
@@ -129,6 +130,7 @@ const Dashboard = ({ settings, auth, storage }) => {
             onUpdate={ setAccounts }
             onDelete={ markForDelete }
           />
+          <Loan />
         </div>
 
         <div>
