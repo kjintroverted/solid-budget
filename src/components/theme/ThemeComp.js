@@ -30,7 +30,11 @@ export const HeaderBar = styled.div`
   }
 `
 
-export const Row = styled.div`display:flex;`;
+export const Row = styled.div`
+  display:flex;
+  justify-content: ${props => props.just };
+  align-items: ${props => props.align };
+`
 export const Column = styled.div`
   display:flex;
   flex-direction: column;
