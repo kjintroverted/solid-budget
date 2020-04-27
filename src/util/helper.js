@@ -47,7 +47,7 @@ export function totalCredit(paycheck, payDate, month, year) {
   date.setMonth(month - 1);
   date.setDate(1);
   date.setFullYear(year);
-  payDate = getNextPayDate(payDate, date);
+  payDate = getNextPayDate(payDate, date, true);
   date.setDate(payDate);
 
   let income = 0;
