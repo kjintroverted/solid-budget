@@ -43,10 +43,7 @@ export function getNextPayDate(basePayDate, date, inclusive) {
 }
 
 export function totalCredit(paycheck, payDate, month, year) {
-  let date = new Date();
-  date.setMonth(month - 1);
-  date.setDate(1);
-  date.setFullYear(year);
+  let date = new Date(`${ ("0" + month).substr(-2, 2) }/1/${ year }`);
   payDate = getNextPayDate(payDate, date, true);
   date.setDate(payDate);
 
