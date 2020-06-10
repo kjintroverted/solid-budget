@@ -38,6 +38,8 @@ export const Row = styled.div`
 export const Column = styled.div`
   display:flex;
   flex-direction: column;
+  justify-content: ${props => props.just };
+  align-items: ${props => props.align };
 `
 
 export const RowCenter = styled.div`
