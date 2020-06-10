@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { IconButton, Input, Badge, CircularProgress } from "@material-ui/core";
+import { IconButton, Badge, CircularProgress } from "@material-ui/core";
 
 import {
   ActionBar,
@@ -11,6 +11,7 @@ import {
   LoadingContainer
 } from "../components/theme/ThemeComp";
 import AccountForm from "../components/forms/AccountForm";
+import BucketInput from "../components/BucketInput";
 
 export default ({ data, buckets, onUpdate, onDelete }) => {
   let [accounts, setAccounts] = useState(data);
@@ -23,8 +24,8 @@ export default ({ data, buckets, onUpdate, onDelete }) => {
     setAccounts([...accounts.slice(0, i), ...accounts.slice(i + 1)]);
   }
 
-  async function updateBalance(i, balance) {
-    setAccounts([
+  function updateBalance(i) {
+    return async (balance) => setAccounts([
       ...accounts.slice(0, i),
       { ...accounts[i], balance },
       ...accounts.slice(i + 1)
@@ -108,10 +109,7 @@ export default ({ data, buckets, onUpdate, onDelete }) => {
                   badgeContent={ acc.balance - allocatedValue }
                   invisible={ allocatedValue <= acc.balance }
                 >
-                  <Input
-                    type='number' placeholder="0" value={ acc.balance || '' }
-                    onChange={ e => updateBalance(i, +e.target.value) }
-                  />
+                  <BucketInput value={ acc.balance } update={ updateBalance(i) } />
                 </Badge>
                 { isEditing && ( // DELETE BUTTON
                   <IconButton

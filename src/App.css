@@ -25,6 +25,16 @@ input[type="number"] {
   font-size: 1.2em;
 }
 
+input[type="number"][minor="true"] {
+  text-align: right;
+  max-width: 50px;
+  font-size: 0.8em;
+  border: none;
+  background: whitesmoke;
+  border-radius: 25%;
+  font-weight: bold;
+}
+
 img {
   max-width: 100%;
   max-height: 100%;

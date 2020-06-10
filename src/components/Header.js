@@ -44,7 +44,7 @@ let HeaderNav = ({ webId, loggedIn, onUpdate }) => {
           <Logo src={ logo } alt='logo' />
         </Link>
         <Link to='/'>
-          <h3>Munny Pouch</h3>
+          <h3 style={ { color: 'white' } }>Munny Pouch</h3>
         </Link>
 
         <span className='spacer' />
