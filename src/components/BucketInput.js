@@ -25,7 +25,7 @@ const BucketInput = ({ value, update }) => {
         <input
           minor="true"
           type='number'
-          value={ number || 0 }
+          value={ number || '' }
           onChange={ e => setNumber(+e.target.value) }
         />
       </Row>

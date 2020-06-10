@@ -1,11 +1,11 @@
 import React from 'react';
 import { WidgetContainer, HeaderBar, Spacer, ActionBar, Row, Column } from './theme/ThemeComp';
 import { IconButton, TextField } from '@material-ui/core';
+import BucketInput from './BucketInput';
 
 export default ({ bucket, update, onDelete }) => {
-  function handleChange(field, numeric) {
-    return e => {
-      let val = numeric ? +e.target.value : e.target.value;
+  function handleChange(field) {
+    return val => {
       update({ ...bucket, [field]: val });
     }
   }
@@ -29,7 +29,7 @@ export default ({ bucket, update, onDelete }) => {
       </HeaderBar>
       <Row>
         <Spacer />
-        <TextField type="number" placeholder="0" value={ bucket.value || '' } onChange={ handleChange('value', true) } />
+        <BucketInput value={ bucket.value } update={ handleChange('value') } />
       </Row>
     </WidgetContainer>
   )
