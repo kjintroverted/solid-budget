@@ -12,6 +12,7 @@ import {
 } from "../components/theme/ThemeComp";
 import AccountForm from "../components/forms/AccountForm";
 import BucketInput from "../components/BucketInput";
+import IOU from "../components/IOU";
 
 export default ({ data, buckets, onUpdate, onDelete }) => {
   let [accounts, setAccounts] = useState(data);
@@ -154,6 +155,8 @@ export default ({ data, buckets, onUpdate, onDelete }) => {
           onCancel={ () => setAdding(false) }
         />
       ) }
+
+      <IOU />
     </WidgetContainer>
   );
 };
