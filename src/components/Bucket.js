@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { WidgetContainer, HeaderBar, Spacer, ActionBar, Row, Column } from './theme/ThemeComp';
-import { IconButton } from '@material-ui/core';
+import { Badge, IconButton } from '@material-ui/core';
 import BucketInput from './BucketInput';
 import BucketForm from './forms/BucketForm';
 
@@ -51,7 +51,14 @@ export default ({ bucket, update, onDelete }) => {
       </HeaderBar>
       <Row>
         <Spacer />
-        <BucketInput value={ bucket.value } update={ handleChange('value') } />
+        <Badge
+          color="primary"
+          badgeContent={ bucket.cups ? bucket.value - bucket.cups.reduce((acc, { value }) => acc + value, 0) : NaN }
+          max={ 999 }
+          invisible={ !bucket.cups || !bucket.cups.length }
+        >
+          <BucketInput value={ bucket.value } update={ handleChange('value') } />
+        </Badge>
       </Row>
       { adding && <BucketForm submit={ addCup } labels={ [bucket.name] } /> }
       {
