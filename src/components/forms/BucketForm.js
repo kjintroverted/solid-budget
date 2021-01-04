@@ -14,7 +14,7 @@ export default ({ submit, labels }) => {
   return (
     <WidgetContainer>
       <HeaderBar>
-        <h2>New Bucket</h2>
+        <h2>Set Aside For...</h2>
         <Spacer />
         <ActionBar>
           <IconButton onClick={ () => submit(values) }>
@@ -23,14 +23,15 @@ export default ({ submit, labels }) => {
         </ActionBar>
       </HeaderBar>
       <RowCenter>
-        <TextField variant="outlined" value={ values.name || "" } label="Bucket Name" onChange={ handleChange('name') } />
+        <TextField variant="outlined" value={ values.name || "" } label="Desc" onChange={ handleChange('name') } />
         <Spacer />
         <FormControl variant="outlined" style={ { minWidth: 120 } }>
           <FormLabel htmlFor="label">Label</FormLabel>
           <Select
-            value={ values.label || "" }
+            value={ labels.length === 1 ? labels[0] : values.label || "" }
             onChange={ handleChange('label') }
             input={ <OutlinedInput name="label" id="label" /> }
+            disabled={ labels.length <= 1 }
           >
             { labels.map(s => <MenuItem key={ `bucket-label-${ s }` } value={ s }>{ s }</MenuItem>) }
           </Select>
