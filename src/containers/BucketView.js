@@ -18,7 +18,7 @@ export default ({ bucketList, accountList, onUpdate, onDelete }) => {
   }
 
   function addBucket(data) {
-    data = { ...data, value: 0, debits: [] };
+    data = { ...data, value: 0, debits: [], cups: [] };
     updateBuckets([data, ...buckets]);
     setAdding(false);
   }
