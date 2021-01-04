@@ -33,11 +33,11 @@ export default {
       "parse": value => +value
     },
     {
-      prefix: "as",
-      predicate: "bcc",
-      alias: "oneTime",
-      stringify: value => value + "",
-      parse: value => value === "true"
+      "prefix": "as",
+      "predicate": "bcc",
+      "alias": "oneTime",
+      "stringify": value => value + "",
+      "parse": value => value === "true"
     }
   ]
 }

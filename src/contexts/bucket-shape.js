@@ -26,6 +26,13 @@ export default {
       alias: "favorite",
       stringify: value => value + "",
       parse: value => value === "true"
+    },
+    {
+      prefix: "foaf",
+      predicate: "topics",
+      alias: "cups",
+      stringify: JSON.stringify,
+      parse: JSON.parse
     }
   ]
 };
