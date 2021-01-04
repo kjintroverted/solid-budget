@@ -19,6 +19,12 @@ a {
   text-decoration: none;
 }
 
+hr {
+  height: 1px;
+  width: 100%;
+  opacity: 0.3;
+}
+
 input[type="number"] {
   text-align: right;
   max-width: 100px;

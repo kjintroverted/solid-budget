@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { WidgetContainer, HeaderBar, Spacer, ActionBar, Row, Column } from './theme/ThemeComp';
+import { WidgetContainer, HeaderBar, Spacer, ActionBar, Row, Column, RowCenter } from './theme/ThemeComp';
 import { Badge, IconButton } from '@material-ui/core';
 import BucketInput from './BucketInput';
 import BucketForm from './forms/BucketForm';
@@ -7,6 +7,7 @@ import BucketForm from './forms/BucketForm';
 export default ({ bucket, update, onDelete }) => {
 
   let [adding, setAdding] = useState(false)
+  let [show, setShow] = useState(false)
 
   function handleChange(field) {
     return val => {
@@ -70,9 +71,19 @@ export default ({ bucket, update, onDelete }) => {
       { adding && <BucketForm submit={ addCup } labels={ [bucket.name] } /> }
       {
         (bucket.cups && !!bucket.cups.length)
+        &&
+        <RowCenter>
+          <IconButton color="secondary" onClick={ () => setShow(!show) }>
+            <i className="material-icons">{ show ? "arrow_drop_up" : "arrow_drop_down" }</i>
+          </IconButton>
+          <hr />
+        </RowCenter>
+      }
+      {
+        (bucket.cups && !!bucket.cups.length && show)
         && bucket.cups.map((cup, i) => {
           return (
-            <Row>
+            <Row key={ bucket.name + cup.name }>
               <IconButton color="secondary" onClick={ removeCup(i) }>
                 <i className="material-icons">close</i>
               </IconButton>
