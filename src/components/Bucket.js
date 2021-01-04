@@ -21,6 +21,13 @@ export default ({ bucket, update, onDelete }) => {
     }
   }
 
+  function removeCup(i) {
+    return () => {
+      let updatedCups = [...bucket.cups.slice(0, i), ...bucket.cups.slice(i + 1)]
+      update({ ...bucket, cups: updatedCups });
+    }
+  }
+
   function addCup(data) {
     if (!bucket.cups) {
       bucket.cups = [];
@@ -66,6 +73,9 @@ export default ({ bucket, update, onDelete }) => {
         && bucket.cups.map((cup, i) => {
           return (
             <Row>
+              <IconButton color="secondary" onClick={ removeCup(i) }>
+                <i className="material-icons">close</i>
+              </IconButton>
               <p>{ cup.name }</p>
               <Spacer />
               <BucketInput value={ cup.value } update={ handleCupChange(i) } />
