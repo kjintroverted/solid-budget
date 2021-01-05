@@ -85,20 +85,30 @@ export async function load(folder, shape, ...cb) {
 
 // Saves array JSON data to file
 export async function save(shape, data, folder) {
+  let error;
   return Promise.all(
     data.map(async datum => {
       datum.lastUpdated = new Date();
       if (!datum.uri) {
         datum.uri = `${ folder }${ uniqueId() }.ttl`
-        await createNonExistentDocument(datum.uri);
+        try {
+          await createNonExistentDocument(datum.uri);
+        } catch (e) {
+          return Promise.reject(e)
+        }
       }
       const doc = await fetchDocument(datum.uri);
       shape.shape.forEach(async ({ prefix, predicate, alias, stringify }) => {
         const object = datum[alias || predicate];
-        await doc[`${ shape["@context"][prefix] }${ predicate }`].set(
-          stringify ? stringify(object) : object
-        );
+        try {
+          await doc[`${ shape["@context"][prefix] }${ predicate }`].set(
+            stringify ? stringify(object) : object
+          );
+        } catch (e) {
+          error = e;
+        }
       });
+      if (error) return Promise.reject(error);
     })
   );
 }
