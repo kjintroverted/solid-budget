@@ -1,0 +1,48 @@
+version: 2
+jobs:
+  build:
+    docker:
+      - image: kjintroverted/go-node
+    working_directory: ~/solid-budget
+    steps:
+      - checkout
+      - run: npm i
+      # Add Tests
+      - run: npm run build
+
+  deploy:
+    docker:
+      - image: kjintroverted/go-node
+    working_directory: ~/solid-budget
+    steps:
+      - checkout
+      - add_ssh_keys:
+          fingerprints:
+            - "91:33:c2:6a:f1:f6:fd:18:c3:95:72:b4:67:5e:6d:9e"
+      - run: npm i
+      - run: npm i surge
+      - run: npm run build
+      - run: rm -rf .git
+      - run: echo "https://budget.wkgreen.dev" > ./build/CNAME
+      - run: cp -r .circleci build
+      - run: cd build && git init
+      - run: cd build && git remote add origin git@github.com:kjintroverted/solid-budget.git
+      - run: cd build && git checkout -b gh-pages
+      - run: cd build && git add .
+      - run: cd build && git config user.email "wkgreen13@gmail.com"
+      - run: cd build && git config user.name "CircleCI"
+      - run: cd build && git commit -m "CI Deploy"
+      - run: cd build && git push -uf origin gh-pages
+
+workflows:
+  version: 2
+  build-deploy:
+    jobs:
+      - build:
+          filters:
+            branches:
+              ignore: gh-pages
+      - deploy:
+          filters:
+            branches:
+              only: master
