@@ -58,7 +58,7 @@ const Dashboard = ({ settings, auth, storage }) => {
           setSaving(0);
         },
         (val) => {
-          console.debug(val)
+          console.error(val)
           setSaving(-1)
         }
       )

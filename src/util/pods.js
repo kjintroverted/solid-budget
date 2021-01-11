@@ -98,7 +98,7 @@ export async function save(shape, data, folder) {
         }
       }
       const doc = await fetchDocument(datum.uri);
-      shape.shape.forEach(async ({ prefix, predicate, alias, stringify }) => {
+      await Promise.all(shape.shape.map(async ({ prefix, predicate, alias, stringify }) => {
         const object = datum[alias || predicate];
         if (!object) return;
         try {
@@ -107,11 +107,10 @@ export async function save(shape, data, folder) {
           );
         } catch (e) {
           error = e;
-          console.log("ISSUE SAVING:", object)
+          return;
         }
-      });
+      }));
       if (error) {
-        console.log("Error saving:", error);
         return Promise.reject(error);
       }
     })
