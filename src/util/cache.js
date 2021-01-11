@@ -7,9 +7,14 @@ function load(key) {
   return JSON.parse(data);
 }
 
+export function clearCache() {
+  localStorage.clear()
+}
+
 export function checkUser(user) {
-  let lastUser = localStorage.getItem("user");
-  if (user !== lastUser) localStorage.clear();
+  let lastUser = load("user");
+  if (user !== lastUser) clearCache();
+  save("user", user);
 }
 
 export function saveAccounts(data) {
