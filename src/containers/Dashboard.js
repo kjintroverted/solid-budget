@@ -19,6 +19,7 @@ import bucketShape from "../contexts/bucket-shape";
 import billShape from "../contexts/bill-shape";
 import Warning from "../components/Warning";
 import { Alert } from "@material-ui/lab";
+import * as cache from "../util/cache";
 
 const Dashboard = ({ settings, auth, storage }) => {
   const [isDirty, setDirty] = useState(false);
@@ -41,6 +42,11 @@ const Dashboard = ({ settings, auth, storage }) => {
   const [bills, setBills] = useState(null);
   const [savedBills, setSavedBills] = useState([]);
 
+  // CACHE LOAD
+  function loadCache() {
+    setAccounts(cache.loadAccounts())
+  }
+
   async function saveAll() {
     setSaving(1);
     await Promise.all([
@@ -53,6 +59,7 @@ const Dashboard = ({ settings, auth, storage }) => {
         () => {
           console.info("Save successful.")
           setSavedAccounts(accounts);
+          cache.saveAccounts(accounts);
           setSavedBuckets(buckets);
           setSavedBills(bills);
           setSaving(0);
@@ -79,6 +86,7 @@ const Dashboard = ({ settings, auth, storage }) => {
       setAccountFolder(`${ storage }accounts/`);
       setBucketFolder(`${ storage }buckets/`);
       setBillFolder(`${ storage }bills/`);
+      loadCache();
     }
 
     if (storage) init();
