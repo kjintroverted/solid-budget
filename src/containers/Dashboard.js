@@ -57,7 +57,10 @@ const Dashboard = ({ settings, auth, storage }) => {
           setSavedBills(bills);
           setSaving(0);
         },
-        () => setSaving(-1)
+        (val) => {
+          console.debug(val)
+          setSaving(-1)
+        }
       )
   }
 

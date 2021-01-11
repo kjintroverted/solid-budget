@@ -100,15 +100,20 @@ export async function save(shape, data, folder) {
       const doc = await fetchDocument(datum.uri);
       shape.shape.forEach(async ({ prefix, predicate, alias, stringify }) => {
         const object = datum[alias || predicate];
+        if (!object) return;
         try {
           await doc[`${ shape["@context"][prefix] }${ predicate }`].set(
             stringify ? stringify(object) : object
           );
         } catch (e) {
           error = e;
+          console.log("ISSUE SAVING:", object)
         }
       });
-      if (error) return Promise.reject(error);
+      if (error) {
+        console.log("Error saving:", error);
+        return Promise.reject(error);
+      }
     })
   );
 }
