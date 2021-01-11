@@ -19,3 +19,11 @@ export function saveAccounts(data) {
 export function loadAccounts() {
   return load("accounts")
 }
+
+export function saveBills(data) {
+  save("bills", data)
+}
+
+export function loadBills() {
+  return load("bills")
+}

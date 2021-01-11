@@ -45,6 +45,7 @@ const Dashboard = ({ settings, auth, storage }) => {
   // CACHE LOAD
   function loadCache() {
     setAccounts(cache.loadAccounts())
+    setBills(cache.loadBills())
   }
 
   async function saveAll() {
@@ -62,6 +63,7 @@ const Dashboard = ({ settings, auth, storage }) => {
           cache.saveAccounts(accounts);
           setSavedBuckets(buckets);
           setSavedBills(bills);
+          cache.saveBills(bills);
           setSaving(0);
         },
         (val) => {
