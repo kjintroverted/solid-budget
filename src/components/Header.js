@@ -9,6 +9,7 @@ import { withWebId } from "@inrupt/solid-react-components";
 import { AppBar, Toolbar } from "@material-ui/core";
 import data from "@solid/query-ldflex";
 import { popupLogin, logout } from '../util/pods'
+import { clearCache } from "../util/cache";
 
 const logo = require("../assets/munny_pouch.png");
 
@@ -31,9 +32,10 @@ let HeaderNav = ({ webId, loggedIn, onUpdate }) => {
   }
 
   function onLogout() {
-    logout();
+    clearCache();
     setName(null);
     onUpdate(false);
+    logout();
     close();
   }
 

@@ -12,6 +12,7 @@ import Settings from "./containers/Settings";
 import { getAppStoragePath, unmarshal, saveOne, logout } from "./util/pods";
 import { day } from "./util/helper";
 import settingsShape from './contexts/settings-shape';
+import { checkUser, clearCache } from "./util/cache";
 // import Warning from "./components/Warning";
 
 // 2 DAYS
@@ -44,9 +45,11 @@ function App({ webId }) {
         localStorage.setItem("lastLogin", JSON.stringify(new Date()))
       } else if ((new Date() - new Date(JSON.parse(timestamp))) > timeout) { // LAST LOGIN IS GREATER THAN 2 DAYS AGO
         logout()
+        clearCache()
         return
       }
       setLoggedIn(true)
+      checkUser(webId)
       return
     }
     setLoggedIn(false)

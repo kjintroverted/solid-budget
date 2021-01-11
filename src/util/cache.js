@@ -1,5 +1,16 @@
+const CACHE_LIST = [
+  "user",
+  "accounts",
+  "bills",
+  "buckets",
+]
+
 function save(key, data) {
   localStorage.setItem(JSON.stringify(key), JSON.stringify(data))
+}
+
+function remove(key) {
+  localStorage.removeItem(JSON.stringify(key))
 }
 
 function load(key) {
@@ -7,9 +18,14 @@ function load(key) {
   return JSON.parse(data);
 }
 
+export function clearCache() {
+  CACHE_LIST.forEach(k => remove(k))
+}
+
 export function checkUser(user) {
-  let lastUser = localStorage.getItem("user");
-  if (user !== lastUser) localStorage.clear();
+  let lastUser = load("user");
+  if (user !== lastUser) clearCache();
+  save("user", user);
 }
 
 export function saveAccounts(data) {
