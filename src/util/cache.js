@@ -27,3 +27,11 @@ export function saveBills(data) {
 export function loadBills() {
   return load("bills")
 }
+
+export function saveBuckets(data) {
+  save("buckets", data)
+}
+
+export function loadBuckets() {
+  return load("buckets")
+}
