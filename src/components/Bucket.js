@@ -61,7 +61,7 @@ export default ({ bucket, update, onDelete }) => {
         <Spacer />
         <Badge
           color="primary"
-          badgeContent={ bucket.cups ? bucket.value - bucket.cups.reduce((acc, { value }) => acc + value, 0) : NaN }
+          badgeContent={ bucket.cups ? bucket.value - bucket.cups.reduce((acc, { value }) => acc + value, 0) : undefined }
           max={ 999 }
           invisible={ !bucket.cups || !bucket.cups.length }
         >

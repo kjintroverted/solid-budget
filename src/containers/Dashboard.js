@@ -7,7 +7,7 @@ import YearOverview from "./YearOverview";
 import BucketView from "./BucketView";
 import Welcome from "../components/Welcome";
 import { BottomAnchor, FabLoader } from "../components/theme/ThemeComp";
-import { Fab, CircularProgress } from "@material-ui/core";
+import { Fab, CircularProgress, Snackbar } from "@material-ui/core";
 import {
   save,
   load,
@@ -18,11 +18,13 @@ import accountShape from "../contexts/account-shape";
 import bucketShape from "../contexts/bucket-shape";
 import billShape from "../contexts/bill-shape";
 import Warning from "../components/Warning";
+import { Alert } from "@material-ui/lab";
+import * as cache from "../util/cache";
 
 const Dashboard = ({ settings, auth, storage }) => {
   const [isDirty, setDirty] = useState(false);
   const [markedDocs, markDocs] = useState([]);
-  const [saving, setSaving] = useState(false);
+  const [saving, setSaving] = useState(0);
   const [lastUpdated, setLastUpdated] = useState(null)
 
   // ACCOUNT TRACKING
@@ -40,18 +42,37 @@ const Dashboard = ({ settings, auth, storage }) => {
   const [bills, setBills] = useState(null);
   const [savedBills, setSavedBills] = useState([]);
 
+  // CACHE LOAD
+  function loadCache() {
+    setAccounts(cache.loadAccounts())
+    setBills(cache.loadBills())
+    setBuckets(cache.loadBuckets())
+  }
+
   async function saveAll() {
-    setSaving(true);
+    setSaving(1);
     await Promise.all([
       save(accountShape, accounts, accountFolder),
       save(bucketShape, buckets, bucketFolder),
       save(billShape, bills, billFolder),
       Promise.all(markedDocs.map(deleteFile))
-    ]);
-    setSavedAccounts(accounts);
-    setSavedBuckets(buckets);
-    setSavedBills(bills);
-    setSaving(false);
+    ])
+      .then(
+        () => {
+          console.info("Save successful.")
+          setSavedAccounts(accounts);
+          cache.saveAccounts(accounts);
+          setSavedBuckets(buckets);
+          cache.saveBuckets(buckets);
+          setSavedBills(bills);
+          cache.saveBills(bills);
+          setSaving(0);
+        },
+        (val) => {
+          console.error(val)
+          setSaving(-1)
+        }
+      )
   }
 
   function markForDelete(object) {
@@ -69,6 +90,7 @@ const Dashboard = ({ settings, auth, storage }) => {
       setAccountFolder(`${ storage }accounts/`);
       setBucketFolder(`${ storage }buckets/`);
       setBillFolder(`${ storage }bills/`);
+      loadCache();
     }
 
     if (storage) init();
@@ -121,6 +143,11 @@ const Dashboard = ({ settings, auth, storage }) => {
       {
         lastUpdated && <Warning lastUpdated={ lastUpdated } />
       }
+
+      <Snackbar open={ saving === -1 }>
+        <Alert severity="error">Failed to save to your card. Your updates have been saved locally but may not persist.</Alert>
+      </Snackbar>
+
       <Widgets>
         <div>
           <AccountBreakdown
@@ -161,11 +188,11 @@ const Dashboard = ({ settings, auth, storage }) => {
             color='secondary'
             style={ { color: "white" } }
             onClick={ saveAll }
-            disabled={ saving }
+            disabled={ !!saving }
           >
-            <i className='material-icons'>save</i>
+            <i className='material-icons'>{ saving === -1 ? "warning" : "save" }</i>
           </Fab>
-          { saving && <FabLoader><CircularProgress size={ 68 } /></FabLoader> }
+          { saving === 1 && <FabLoader><CircularProgress size={ 68 } /></FabLoader> }
         </BottomAnchor>
       ) }
     </>
