@@ -1,12 +1,12 @@
 import styled from 'styled-components';
 import { createTheme } from '@material-ui/core/styles'
 
-// https://poolors.com/379968-f0f0ef-c7a487-5b5348
+// https://poolors.com/4c1e81-0787a2-795a3f-e6cad4
 export const THEME = {
-  light: '#f0f0ef',
-  dark: '#5b5348',
-  primary: '#379968',
-  secondary: '#c7a487'
+  light: '#e6cad4',
+  dark: '#795a3f',
+  primary: '#4c1e81',
+  secondary: '#0787a2'
 }
 
 export const muiTheme = createTheme({
@@ -22,7 +22,7 @@ export const muiTheme = createTheme({
 
 export const Column = styled.div`
   height: 100%;
-  width: 100%;
+  width: ${ props => props.width };
   display: flex;
   flex-direction: column;
   justify-content: ${ props => props.justify };

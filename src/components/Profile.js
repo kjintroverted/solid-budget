@@ -65,9 +65,12 @@ function Profile({ profile, onChange }) {
         </Column>
         <Spacer />
         <Column justify="flex-end">
+          {/* <IconButton color="inherit" href="https://kitchen.wkgreen.dev">
+            <span className="material-icons large">kitchen</span>
+          </IconButton> */}
           <Link to="/">
             <IconButton color="inherit">
-              <span className="material-icons large">kitchen</span>
+              <span className="material-icons large">request_quote</span>
             </IconButton>
           </Link>
         </Column>
