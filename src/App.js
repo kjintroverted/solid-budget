@@ -1,102 +1,67 @@
-import React, { useState, useEffect } from "react";
-import styled from "styled-components";
-import { BrowserRouter as Router, Route } from "react-router-dom";
-import { ThemeProvider } from "@material-ui/styles";
-import { withWebId } from "@inrupt/solid-react-components";
+import React from 'react';
+import './App.css';
+import { Main, muiTheme } from './components/styled';
+import { appLogin, getDomain, getThings, loadDataset, loadThing, save, SaveState } from 'solid-core';
+import { useEffect, useState } from 'react';
+import { getDefaultSession } from '@inrupt/solid-client-authn-browser';
+import profileStruct from './models/profile'
+import Profile from './components/Profile';
+import { Route, BrowserRouter as Router, Routes } from 'react-router-dom';
+import { ThemeProvider } from '@material-ui/core';
 
-import "./App.css";
-import HeaderNav from "./components/Header";
-import { theme } from "./components/theme/Provider";
-import Dashboard from "./containers/Dashboard";
-import Settings from "./containers/Settings";
-import { getAppStoragePath, unmarshal, saveOne, logout } from "./util/pods";
-import { day } from "./util/helper";
-import settingsShape from './contexts/settings-shape';
-// import Warning from "./components/Warning";
+function App() {
 
-// 2 DAYS
-const timeout = day * 2;
+  const [user, setUser] = useState();
+  const [profile, setProfile] = useState();
+  const [things, setThings] = useState();
+  const [queue, updateQueue] = useState([]);
 
-
-function App({ webId }) {
-
-  const [loggedIn, setLoggedIn] = useState(false);
-  const [storage, setStorage] = useState(null);
-  const [settings, setSettings] = useState({});
-
-  async function saveSettings(data) {
-    setSettings(data);
-    await saveOne(settingsShape, data, `${ storage }data.ttl`)
-    console.log("Preferences saved.");
+  async function saveFromQ() {
+    await save(queue);
+    updateQueue([])
   }
 
-  // LOAD NEW USER
   useEffect(() => {
-    async function init() {
-      const storage = await getAppStoragePath(webId);
-      setStorage(storage);
-    }
-    if (webId) {
-      init(webId);
-      // CHECK FOR STALE AUTH
-      let timestamp = localStorage.getItem("lastLogin")
-      if (!timestamp) {
-        localStorage.setItem("lastLogin", JSON.stringify(new Date()))
-      } else if ((new Date() - new Date(JSON.parse(timestamp))) > timeout) { // LAST LOGIN IS GREATER THAN 2 DAYS AGO
-        logout()
-        return
-      }
-      setLoggedIn(true)
-      return
-    }
-    setLoggedIn(false)
-  }, [webId]);
+    const session = getDefaultSession();
+    session.handleIncomingRedirect()
+      .then(info => {
+        if (info.isLoggedIn) setUser(info.webId)
+        else appLogin()
+      })
+  }, [])
 
-  // LOAD STORAGE
+  // USER LOADED => LOAD DATA
   useEffect(() => {
-    async function loadSettings() {
-      const data = await unmarshal(`${ storage }data.ttl`, settingsShape);
-      setSettings(data)
+    if (user) {
+      // LOAD PROFILE
+      loadThing(user, profileStruct)
+        .then(setProfile)
+      // LOAD COOKBOOK DATASET
+      loadDataset(getDomain(user) + "/kitchen")
+        .then(data => {
+          setThings(getThings(data))
+        });
     }
-
-    if (storage) loadSettings()
-  }, [storage])
+  }, [user])
 
   return (
-    <Router>
-      <ThemeProvider theme={ theme }>
-        <div className='App'>
-          <HeaderNav loggedIn={ loggedIn } onUpdate={ setLoggedIn } />
-          <Content>
-            <Route path='/' exact
-              render={ () =>
-                <Dashboard
-                  auth={ loggedIn }
-                  storage={ storage }
-                  settings={ settings }
-                /> }
-            />
-            <Route path='/settings' exact
-              render={ () =>
-                <Settings
-                  settings={ settings }
-                  onUpdate={ saveSettings }
-                /> }
-            />
-          </Content>
-        </div>
+    <SaveState.Provider value={ { queue, updateQueue, saveFromQ } }>
+      <ThemeProvider theme={ muiTheme }>
+        <Main>
+          <Router>
+            <Routes>
+              <Route path="/"
+                element={
+                  <Profile
+                    profile={ profile }
+                    onChange={ setProfile } />
+                } />
+            </Routes>
+          </Router>
+        </Main>
       </ThemeProvider>
-    </Router>
+    </SaveState.Provider>
   );
 }
 
-export default withWebId(App);
-
-const Content = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin-top: 80px;
-  margin-bottom: 20px;
-  padding: 0px 5px;
-`;
+export default App;
