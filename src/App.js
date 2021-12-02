@@ -1,20 +1,31 @@
 import React from 'react';
 import './App.css';
-import { Main, muiTheme } from './components/styled';
-import { appLogin, getDomain, getThings, loadDataset, loadThing, save, SaveState } from 'solid-core';
+import {
+  Main,
+  muiTheme,
+  appLogin,
+  getDomain,
+  getThings,
+  loadDataset,
+  loadThing,
+  save,
+  SaveState,
+  Profile,
+  profileStruct
+} from 'solid-core';
 import { useEffect, useState } from 'react';
 import { getDefaultSession } from '@inrupt/solid-client-authn-browser';
-import profileStruct from './models/profile'
-import Profile from './components/Profile';
 import { Route, BrowserRouter as Router, Routes } from 'react-router-dom';
-import { ThemeProvider } from '@material-ui/core';
+import * as mui from '@material-ui/core';
 
 function App() {
 
   const [user, setUser] = useState();
-  const [profile, setProfile] = useState();
   const [things, setThings] = useState();
   const [queue, updateQueue] = useState([]);
+  // PROFILE STATE
+  const [profile, setProfile] = useState();
+  const [edit, toggleEdit] = useState(false);
 
   async function saveFromQ() {
     await save(queue);
@@ -46,20 +57,31 @@ function App() {
 
   return (
     <SaveState.Provider value={ { queue, updateQueue, saveFromQ } }>
-      <ThemeProvider theme={ muiTheme }>
+      <mui.ThemeProvider theme={ muiTheme }>
         <Main>
           <Router>
             <Routes>
               <Route path="/"
                 element={
-                  <Profile
-                    profile={ profile }
-                    onChange={ setProfile } />
+                  <SaveState.Consumer>
+                    {
+                      saveState => (
+                        <Profile
+                          profile={ profile }
+                          edit={ edit }
+                          toggleEdit={ toggleEdit }
+                          ui={ mui }
+                          saveState={ saveState }
+                          onChange={ setProfile }
+                        />
+                      )
+                    }
+                  </SaveState.Consumer>
                 } />
             </Routes>
           </Router>
         </Main>
-      </ThemeProvider>
+      </mui.ThemeProvider>
     </SaveState.Provider>
   );
 }
