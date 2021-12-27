@@ -17,6 +17,7 @@ import { useEffect, useState } from 'react';
 import { handleIncomingRedirect, getDefaultSession } from '@inrupt/solid-client-authn-browser';
 import { Route, BrowserRouter as Router, Routes } from 'react-router-dom';
 import * as mui from '@material-ui/core';
+import Dashboard from './components/Dashboard';
 
 // https://poolors.com/4c1e81-0787a2-795a3f-e6cad4
 export const THEME = {
@@ -85,7 +86,8 @@ function App() {
         <Main>
           <Router>
             <Routes>
-              <Route path="/"
+              <Route path="/" element={ <Dashboard data={ things } /> } />
+              <Route path="/profile"
                 element={
                   <SaveState.Consumer>
                     {
