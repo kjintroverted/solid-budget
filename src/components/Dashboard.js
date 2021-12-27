@@ -2,8 +2,8 @@ import { IconButton } from "@material-ui/core";
 import { Link } from "react-router-dom";
 import { HeaderBar, Spacer } from "solid-core/dist/components/styled";
 import styled from "styled-components";
-import { THEME } from "../App";
-import Accounts from "./Accounts";
+import { THEME } from "../util";
+import Accounts from "./accounts/Accounts";
 
 const Dashboard = ({ user, data }) => {
   return (

@@ -18,14 +18,7 @@ import { handleIncomingRedirect, getDefaultSession } from '@inrupt/solid-client-
 import { Route, BrowserRouter as Router, Routes } from 'react-router-dom';
 import * as mui from '@material-ui/core';
 import Dashboard from './components/Dashboard';
-
-// https://poolors.com/4c1e81-0787a2-795a3f-e6cad4
-export const THEME = {
-  light: '#e6cad4',
-  dark: '#795a3f',
-  primary: '#4c1e81',
-  secondary: '#0787a2'
-}
+import { THEME } from './util';
 
 const muiTheme = newTheme(THEME)
 

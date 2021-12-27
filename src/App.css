@@ -34,10 +34,11 @@ section {
   margin: 0.5em 0;
 }
 
-/* MATERIAL OVERRIDES */
-input {
-  min-width: 200px !important;
+input[type="number"] {
+  text-align: right;
 }
+
+/* MATERIAL OVERRIDES */
 
 button span {
   margin: 0 !important;
