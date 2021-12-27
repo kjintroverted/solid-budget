@@ -86,7 +86,7 @@ function App() {
         <Main>
           <Router>
             <Routes>
-              <Route path="/" element={ <Dashboard data={ things } /> } />
+              <Route path="/" element={ <Dashboard data={ things } user={ profile } /> } />
               <Route path="/profile"
                 element={
                   <SaveState.Consumer>
