@@ -2,7 +2,6 @@ import React from 'react';
 import './App.css';
 import {
   Main,
-  muiTheme,
   appLogin,
   getDomain,
   getThings,
@@ -11,15 +10,27 @@ import {
   save,
   SaveState,
   Profile,
-  profileStruct
+  profileStruct,
+  newTheme
 } from 'solid-core';
 import { useEffect, useState } from 'react';
-import { getDefaultSession } from '@inrupt/solid-client-authn-browser';
+import { handleIncomingRedirect, getDefaultSession } from '@inrupt/solid-client-authn-browser';
 import { Route, BrowserRouter as Router, Routes } from 'react-router-dom';
 import * as mui from '@material-ui/core';
 
+// https://poolors.com/4c1e81-0787a2-795a3f-e6cad4
+export const THEME = {
+  light: '#e6cad4',
+  dark: '#795a3f',
+  primary: '#4c1e81',
+  secondary: '#0787a2'
+}
+
+const muiTheme = newTheme(THEME)
+
 function App() {
 
+  const [err, setError] = useState();
   const [user, setUser] = useState();
   const [things, setThings] = useState();
   const [queue, updateQueue] = useState([]);
@@ -33,27 +44,40 @@ function App() {
   }
 
   useEffect(() => {
-    const session = getDefaultSession();
-    session.handleIncomingRedirect()
-      .then(info => {
-        if (info.isLoggedIn) setUser(info.webId)
-        else appLogin()
-      })
-  }, [])
+    const getUser = async function () {
+      await handleIncomingRedirect()
+      let { info } = getDefaultSession()
+      if (info.isLoggedIn) setUser(info.webId)
+      else appLogin()
+    }
+    getUser()
+  }, [err])
 
-  // USER LOADED => LOAD DATA
+  // USER LOADED => GET SESSION
   useEffect(() => {
     if (user) {
       // LOAD PROFILE
       loadThing(user, profileStruct)
-        .then(setProfile)
-      // LOAD COOKBOOK DATASET
-      loadDataset(getDomain(user) + "/kitchen")
+        .then(res => {
+          if (res instanceof Error) {
+            console.error(res)
+            setError(res)
+          }
+          else setProfile(res)
+        })
+    }
+  }, [user])
+
+  // SESSION CONFIRMED => GET DATA
+  useEffect(() => {
+    if (profile) {
+      // LOAD BUDGET DATASET
+      loadDataset(getDomain(user) + "/budget")
         .then(data => {
           setThings(getThings(data))
         });
     }
-  }, [user])
+  }, [profile, user])
 
   return (
     <SaveState.Provider value={ { queue, updateQueue, saveFromQ } }>
@@ -71,6 +95,7 @@ function App() {
                           edit={ edit }
                           toggleEdit={ toggleEdit }
                           ui={ mui }
+                          theme={ THEME }
                           saveState={ saveState }
                           onChange={ setProfile }
                         />
