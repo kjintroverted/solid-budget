@@ -7,17 +7,21 @@ import styled from "styled-components";
 import { THEME } from "../util";
 import Accounts from "./accounts/Accounts";
 import { accountStruct } from "./accounts/accountStruct";
+import { bucketStruct } from "./buckets/bucketStruct";
 
 const Dashboard = ({ user, data }) => {
 
   const { queue, saveFromQ } = useContext(SaveState);
 
   const [accounts, setAccounts] = useState([])
+  const [buckets, setBuckets] = useState([])
 
   useEffect(() => {
     if (!data) return;
     loadAccounts(data)
       .then(setAccounts)
+    loadBuckets(data)
+      .then(setBuckets)
   }, [data])
 
   async function loadAccounts(things) {
@@ -26,6 +30,15 @@ const Dashboard = ({ user, data }) => {
       things
         .filter(nameFilter('account'))
         .map(t => loadThing(t.url, accountStruct))
+    );
+  }
+
+  async function loadBuckets(things) {
+    // GET ALL RECIPE DATA
+    return await Promise.all(
+      things
+        .filter(nameFilter('bucket'))
+        .map(t => loadThing(t.url, bucketStruct))
     );
   }
 
@@ -39,7 +52,7 @@ const Dashboard = ({ user, data }) => {
         </Link>
       </HeaderBar>
       <Content>
-        <Accounts data={ accounts } />
+        <Accounts accountData={ accounts } bucketData={ buckets } />
       </Content>
       {
         !!queue.length &&

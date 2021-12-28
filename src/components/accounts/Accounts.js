@@ -7,7 +7,7 @@ import Buckets from "../buckets/Buckets";
 import AccountForm from "./AccountForm";
 import { accountStruct } from "./accountStruct";
 
-const Accounts = ({ data }) => {
+const Accounts = ({ accountData, bucketData }) => {
 
   const { queue, updateQueue } = useContext(SaveState);
 
@@ -15,15 +15,13 @@ const Accounts = ({ data }) => {
   const [accounts, updateAccounts] = useState([])
 
   useEffect(() => {
-    if (data) {
-      updateAccounts(data.sort((a) => a.primary ? -1 : 0))
-    }
-  }, [data])
+    if (accountData) updateAccounts(accountData.sort((a) => a.primary ? -1 : 0))
+  }, [accountData])
 
   async function addAccount(acc) {
     setIsAdding(false)
-    await initThing('account', acc, accountStruct)
-    updateAccounts([...accounts, acc])
+    let thing = await initThing('account', acc, accountStruct)
+    updateAccounts([...accounts, { ...acc, thing }])
   }
 
   function updateAccount(acc, field) {
@@ -66,7 +64,7 @@ const Accounts = ({ data }) => {
           ))
         }
       </Card>
-      <Buckets accounts={ accounts } />
+      <Buckets accounts={ accounts } bucketData={ bucketData } />
     </Pane>
   )
 }
