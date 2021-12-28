@@ -1,8 +1,8 @@
 import { IconButton, Input } from "@material-ui/core";
 import { useContext, useEffect, useState } from "react";
-import { Card, Divider, Pane, Row, Spacer, Title } from "solid-core/dist/components/styled";
+import { Card, Pane, Row, Spacer, Title } from "solid-core/dist/components/styled";
 import { initThing, setAttr, addToUpdateQueue, SaveState } from "solid-core/dist/pods";
-import { THEME } from "../../util";
+import { Divider, THEME } from "../../util";
 import AccountForm from "./AccountForm";
 import { accountStruct } from "./accountStruct";
 
@@ -60,7 +60,7 @@ const Accounts = ({ data }) => {
                   type="number"
                   value={ a.balance } />
               </Row>
-              <Divider style={ { borderBottomWidth: '0px' } } theme={ THEME } />
+              <Divider thin={ true } theme={ THEME } />
             </>
           ))
         }
