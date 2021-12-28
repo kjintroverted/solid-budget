@@ -2,7 +2,8 @@ import { IconButton, Input } from "@material-ui/core";
 import { useContext, useEffect, useState } from "react";
 import { Card, Pane, Row, Spacer, Title } from "solid-core/dist/components/styled";
 import { initThing, setAttr, addToUpdateQueue, SaveState } from "solid-core/dist/pods";
-import { Divider, THEME } from "../../util";
+import { CardHeader, Divider, THEME } from "../../util";
+import Buckets from "../buckets/Buckets";
 import AccountForm from "./AccountForm";
 import { accountStruct } from "./accountStruct";
 
@@ -38,7 +39,7 @@ const Accounts = ({ data }) => {
     <Pane>
       <Card>
         <Row align="center">
-          <h3 style={ { margin: 0 } } theme={ THEME }>Accounts</h3>
+          <CardHeader>Accounts</CardHeader>
           <Spacer />
           <IconButton onClick={ () => setIsAdding(!isAdding) } color="primary">
             <span className="material-icons">{ isAdding ? 'close' : 'add' }</span>
@@ -50,8 +51,8 @@ const Accounts = ({ data }) => {
         }
         {
           accounts.map(a => (
-            <>
-              <Row key={ a.thing.url ? a.thing.url : a.title }>
+            <span key={ a.thing.url ? a.thing.url : a.title }>
+              <Row>
                 <Title style={ { margin: 0 } }>{ a.title }</Title>
                 <Spacer />
                 <Input
@@ -61,10 +62,11 @@ const Accounts = ({ data }) => {
                   value={ a.balance } />
               </Row>
               <Divider thin={ true } theme={ THEME } />
-            </>
+            </span>
           ))
         }
       </Card>
+      <Buckets accounts={ accounts } />
     </Pane>
   )
 }

@@ -18,7 +18,7 @@ import { handleIncomingRedirect, getDefaultSession } from '@inrupt/solid-client-
 import { Route, BrowserRouter as Router, Routes } from 'react-router-dom';
 import * as mui from '@material-ui/core';
 import Dashboard from './components/Dashboard';
-import { THEME } from './util';
+import { AppTheme, THEME } from './util';
 
 const muiTheme = newTheme(THEME)
 
@@ -75,33 +75,35 @@ function App() {
 
   return (
     <SaveState.Provider value={ { queue, updateQueue, saveFromQ } }>
-      <mui.ThemeProvider theme={ muiTheme }>
-        <Main>
-          <Router>
-            <Routes>
-              <Route path="/" element={ <Dashboard data={ things } user={ profile } /> } />
-              <Route path="/profile"
-                element={
-                  <SaveState.Consumer>
-                    {
-                      saveState => (
-                        <Profile
-                          profile={ profile }
-                          edit={ edit }
-                          toggleEdit={ toggleEdit }
-                          ui={ mui }
-                          theme={ THEME }
-                          saveState={ saveState }
-                          onChange={ setProfile }
-                        />
-                      )
-                    }
-                  </SaveState.Consumer>
-                } />
-            </Routes>
-          </Router>
-        </Main>
-      </mui.ThemeProvider>
+      <AppTheme.Provider value={ THEME }>
+        <mui.ThemeProvider theme={ muiTheme }>
+          <Main>
+            <Router>
+              <Routes>
+                <Route path="/" element={ <Dashboard data={ things } user={ profile } /> } />
+                <Route path="/profile"
+                  element={
+                    <SaveState.Consumer>
+                      {
+                        saveState => (
+                          <Profile
+                            profile={ profile }
+                            edit={ edit }
+                            toggleEdit={ toggleEdit }
+                            ui={ mui }
+                            theme={ THEME }
+                            saveState={ saveState }
+                            onChange={ setProfile }
+                          />
+                        )
+                      }
+                    </SaveState.Consumer>
+                  } />
+              </Routes>
+            </Router>
+          </Main>
+        </mui.ThemeProvider>
+      </AppTheme.Provider>
     </SaveState.Provider>
   );
 }
