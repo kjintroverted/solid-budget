@@ -13,7 +13,6 @@ const AccountForm = ({ onSubmit }) => {
   }
 
   function togglePrimary(e) {
-    debugger
     updateAccount({ ...account, primary: e.target.checked })
   }
 
@@ -26,7 +25,7 @@ const AccountForm = ({ onSubmit }) => {
       <FormGroup>
         <FormControlLabel control={ <Checkbox onChange={ togglePrimary } color="secondary" /> } label="Primary" />
       </FormGroup>
-      <Button onClick={ () => console.debug(account) } variant="outlined" color="secondary">Add</Button>
+      <Button onClick={ () => onSubmit(account) } variant="outlined" color="secondary">Add</Button>
     </Column>
   )
 }

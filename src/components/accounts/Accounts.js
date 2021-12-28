@@ -1,12 +1,26 @@
 import { IconButton } from "@material-ui/core";
-import { useState } from "react";
-import { Card, Divider, Pane, Row, Spacer } from "solid-core/dist/components/styled";
+import { useEffect, useState } from "react";
+import { Card, Divider, Pane, Row, Spacer, Title } from "solid-core/dist/components/styled";
+import { initThing } from "solid-core/dist/pods";
 import { THEME } from "../../util";
 import AccountForm from "./AccountForm";
+import { accountStruct } from "./accountStruct";
 
-const Accounts = ({ accounts }) => {
+const Accounts = ({ data }) => {
 
   const [isAdding, setIsAdding] = useState(false)
+  const [accounts, updateAccounts] = useState([])
+
+  useEffect(() => {
+    if (data) updateAccounts(data)
+  }, [data])
+
+  async function addAccount(acc) {
+    debugger
+    setIsAdding(false)
+    await initThing('account', acc, accountStruct)
+    updateAccounts([...accounts, acc])
+  }
 
   return (
     <Pane>
@@ -20,7 +34,12 @@ const Accounts = ({ accounts }) => {
         </Row>
         <Divider theme={ THEME } />
         {
-          isAdding && <AccountForm />
+          isAdding && <AccountForm onSubmit={ addAccount } />
+        }
+        {
+          accounts.map(a => (
+            <Title>{ a.title }</Title>
+          ))
         }
       </Card>
     </Pane>

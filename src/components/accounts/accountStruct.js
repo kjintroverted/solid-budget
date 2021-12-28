@@ -1,7 +1,7 @@
 import { getBoolean, getStringNoLocale, setBoolean, setStringNoLocale } from "@inrupt/solid-client";
 import { FOAF, VCARD } from "@inrupt/vocab-common-rdf";
 
-export const account = {
+export const accountStruct = {
   title: {
     predicate: FOAF.title,
     parse: getStringNoLocale,
