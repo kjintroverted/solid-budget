@@ -23,7 +23,7 @@ const BucketForm = ({ accounts, onSubmit }) => {
       <CardHeader>New Bucket</CardHeader>
       <Divider theme={ THEME } />
       <Row>
-        <Input onChange={ handleChange("title") } style={ { flex: 2 } } placeholder="title" />
+        <Input onChange={ handleChange("name") } style={ { flex: 2 } } placeholder="name" />
         <Input onChange={ handleChange("balance") } style={ { flex: 1 } } type="number" placeholder="balance" />
       </Row>
       <FormControl fullWidth>
@@ -37,7 +37,7 @@ const BucketForm = ({ accounts, onSubmit }) => {
       <FormGroup>
         <FormControlLabel control={ <Checkbox onChange={ togglePinned } color="secondary" /> } label="Pinned" />
       </FormGroup>
-      <Button onClick={ () => console.log(bucket) } variant="outlined" color="secondary">Add</Button>
+      <Button onClick={ () => onSubmit(bucket) } variant="outlined" color="secondary">Add</Button>
     </Column>
   )
 }
