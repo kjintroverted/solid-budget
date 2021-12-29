@@ -22,7 +22,7 @@ const BalanceInput = ({ value, onUpdate }) => {
         <Input
           value={ value || 0 }
           onChange={ e => onUpdate(e.target.value) }
-          style={ { width: "6em" } }
+          style={ { width: "7em" } }
           type="number"
           startAdornment={
             <Icon onClick={ () => setExpand(!expand) } className="material-icons">calculate</Icon>
@@ -31,7 +31,7 @@ const BalanceInput = ({ value, onUpdate }) => {
       </Row>
       {
         expand &&
-        <Row align="center">
+        <Row align="center" justify="flex-end">
           <Icon onClick={ calc(1) } className="material-icons">add</Icon>
           <HelperInput value={ n } onChange={ e => setN(e.target.value) } type="number" />
           <Icon onClick={ calc(-1) } className="material-icons">remove</Icon>
