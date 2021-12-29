@@ -45,6 +45,17 @@ const Buckets = ({ accounts, bucketData }) => {
     }
   }
 
+  function updateBalance(bucket, value) {
+    let i = buckets.findIndex(b => b.thing.url === bucket.thing.url)
+    let thing = setAttr(bucket.thing, bucketStruct.balance, value)
+    updateQueue(addToUpdateQueue(queue, thing))
+    updateBuckets(
+      [...buckets.slice(0, i),
+      { ...bucket, balance: value, thing },
+      ...buckets.slice(i + 1)]
+    )
+  }
+
   return (
     <Container>
       <Row align="center">
@@ -65,7 +76,7 @@ const Buckets = ({ accounts, bucketData }) => {
       }
       {
         show &&
-        buckets.map(b => <BucketView key={ b.thing.url } bucket={ b } onUpdate={ updateBucket } onDelete={ deleteBucket } />)
+        buckets.map(b => <BucketView key={ b.thing.url } bucket={ b } onUpdate={ updateBucket } updateBalance={ updateBalance } onDelete={ deleteBucket } />)
       }
     </Container>
   )

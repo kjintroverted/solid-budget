@@ -1,9 +1,10 @@
-import { IconButton, Input } from "@material-ui/core";
+import { IconButton } from "@material-ui/core";
 import { useState } from "react";
 import { Card, Column, Divider, Row, Spacer, Subtitle } from "solid-core/dist/components/styled";
 import { CardHeader, THEME } from "../../util";
+import BalanceInput from "../BalanceInput";
 
-const BucketView = ({ bucket, onUpdate, onDelete }) => {
+const BucketView = ({ bucket, onUpdate, updateBalance, onDelete }) => {
 
   const [editMode, setEditMode] = useState(false)
 
@@ -30,12 +31,7 @@ const BucketView = ({ bucket, onUpdate, onDelete }) => {
       </Row>
       <Divider theme={ THEME } />
       <Row justify="flex-end">
-        <Input
-          value={ bucket.balance || 0 }
-          onChange={ onUpdate(bucket, "balance") }
-          style={ { width: "75px" } }
-          type="number"
-          placeholder="balance" />
+        <BalanceInput value={ bucket.balance } onUpdate={ (value) => updateBalance(bucket, value) } />
       </Row>
     </Card>
   )
