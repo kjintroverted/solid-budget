@@ -1,4 +1,4 @@
-import { IconButton } from "@material-ui/core";
+import { Badge, IconButton } from "@material-ui/core";
 import { useContext, useEffect, useState } from "react";
 import { Card, Pane, Row, Spacer, Title, CardHeader, Divider, Icon } from "solid-core/dist/components/styled";
 import { initThing, setAttr, addToUpdateQueue, SaveState } from "solid-core/dist/pods";
@@ -27,14 +27,14 @@ const Accounts = ({ accountData, bucketData }) => {
   useEffect(() => {
     if (bucketData) {
       (function (list) {
-        let bucketObject = accounts.reduce(
+        let bucketObject = accountData.reduce(
           (prev, curr) => (
             { ...prev, [curr.title]: list.filter(bucket => bucket.account === curr.title) }
           ), {})
         updateBuckets(bucketObject)
       })(bucketData)
     }
-  }, [bucketData, accounts])
+  }, [bucketData, accountData])
 
   async function addAccount(acc) {
     setIsAdding(false)
@@ -60,6 +60,11 @@ const Accounts = ({ accountData, bucketData }) => {
     updateBuckets(bucketObject)
   }
 
+  function bucketSum(title) {
+    if (!buckets || !buckets[title]) return 0;
+    return buckets[title].reduce((prev, curr) => +curr.balance + prev, 0)
+  }
+
   return (
     <Pane>
       <Card>
@@ -80,15 +85,20 @@ const Accounts = ({ accountData, bucketData }) => {
               <Row>
                 <Title style={ { margin: 0 } }>{ a.title }</Title>
                 {
-                  (buckets[a.title] && !!buckets[a.title].length) &&
+                  (buckets && buckets[a.title] && !!buckets[a.title].length) &&
                   <Icon theme={ THEME } onClick={ () => updateAccount(a, "details")(!a.details) }>
                     <span className="material-icons">{ a.details ? "expand_less" : "expand_more" }</span>
                   </Icon>
                 }
                 <Spacer />
-                <BalanceInput
-                  onUpdate={ updateAccount(a, 'balance') }
-                  value={ a.balance } />
+                <Badge
+                  badgeContent={ +a.balance - bucketSum(a.title) }
+                  color="secondary"
+                >
+                  <BalanceInput
+                    onUpdate={ updateAccount(a, 'balance') }
+                    value={ a.balance } />
+                </Badge>
               </Row>
               {
                 (a.details && buckets && buckets[a.title]) &&
