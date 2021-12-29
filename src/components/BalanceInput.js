@@ -22,7 +22,7 @@ const BalanceInput = ({ value, onUpdate }) => {
         <Input
           value={ value || 0 }
           onChange={ e => onUpdate(e.target.value) }
-          style={ { width: "100px" } }
+          style={ { width: "6em" } }
           type="number"
           startAdornment={
             <Icon onClick={ () => setExpand(!expand) } className="material-icons">calculate</Icon>
