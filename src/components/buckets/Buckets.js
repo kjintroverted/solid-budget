@@ -1,11 +1,12 @@
-import { IconButton, Input } from "@material-ui/core"
+import { IconButton } from "@material-ui/core"
 import { useContext, useEffect, useState } from "react"
-import { Divider, Card, Column, Row, Spacer, Subtitle } from "solid-core/dist/components/styled"
-import { addToUpdateQueue, initThing, SaveState, setAttr } from "solid-core/dist/pods"
+import { Card, Row, Spacer } from "solid-core/dist/components/styled"
+import { addToUpdateQueue, deleteThing, initThing, SaveState, setAttr } from "solid-core/dist/pods"
 import styled from "styled-components"
-import { CardHeader, THEME } from "../../util"
+import { CardHeader } from "../../util"
 import BucketForm from "./BucketForm"
 import { bucketStruct } from "./bucketStruct"
+import BucketView from "./BucketView"
 
 const Buckets = ({ accounts, bucketData }) => {
 
@@ -26,16 +27,21 @@ const Buckets = ({ accounts, bucketData }) => {
     updateBuckets(b.pinned ? [b, ...buckets] : [...buckets, b])
   }
 
+  async function deleteBucket(bucket) {
+    let i = buckets.findIndex(b => b.thing.url === bucket.thing.url)
+    await deleteThing(bucket.thing)
+    updateBuckets([...buckets.slice(0, i), ...buckets.slice(i + 1)])
+  }
+
   function updateBucket(bucket, field, toggle) {
     let i = buckets.findIndex(b => b.thing.url === bucket.thing.url)
     return e => {
       let value = toggle ? !bucket[field] : e.target.value;
       let thing = setAttr(bucket.thing, bucketStruct[field], value)
       updateQueue(addToUpdateQueue(queue, thing))
-      updateBuckets(
-        [...buckets.slice(0, i), { ...bucket, [field]: value, thing }, ...buckets.slice(i + 1)]
-          .sort(a => a.pinned ? -1 : 0)
-      )
+      let updatedList = [...buckets.slice(0, i), { ...bucket, [field]: value, thing }, ...buckets.slice(i + 1)];
+      if (toggle) updatedList = updatedList.sort(a => a.pinned ? -1 : 0)
+      updateBuckets(updatedList)
     }
   }
 
@@ -59,29 +65,7 @@ const Buckets = ({ accounts, bucketData }) => {
       }
       {
         show &&
-        buckets.map(b => (
-          <Card key={ b.thing.url }>
-            <Row>
-              <Column>
-                <CardHeader>{ b.name }</CardHeader>
-                <Subtitle>{ b.account }</Subtitle>
-              </Column>
-              <Spacer />
-              <IconButton onClick={ updateBucket(b, "pinned", true) } color="primary">
-                <span className="material-icons">{ b.pinned ? 'star' : 'star_outline' }</span>
-              </IconButton>
-            </Row>
-            <Divider theme={ THEME } />
-            <Row justify="flex-end">
-              <Input
-                value={ b.balance || 0 }
-                onChange={ updateBucket(b, "balance") }
-                style={ { width: "75px" } }
-                type="number"
-                placeholder="balance" />
-            </Row>
-          </Card>
-        ))
+        buckets.map(b => <BucketView key={ b.thing.url } bucket={ b } onUpdate={ updateBucket } onDelete={ deleteBucket } />)
       }
     </Container>
   )
