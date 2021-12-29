@@ -1,8 +1,8 @@
 import { Input } from "@material-ui/core";
 import { useState } from "react";
-import { Column, Row } from "solid-core/dist/components/styled"
+import { Column, Row, Icon } from "solid-core/dist/components/styled"
 import styled from "styled-components";
-import { THEME } from "../util";
+import { THEME } from "../util"
 
 const BalanceInput = ({ value, onUpdate }) => {
 
@@ -25,7 +25,7 @@ const BalanceInput = ({ value, onUpdate }) => {
           style={ { width: "7em" } }
           type="number"
           startAdornment={
-            <Icon onClick={ () => setExpand(!expand) } className="material-icons">calculate</Icon>
+            <Icon theme={ THEME } onClick={ () => setExpand(!expand) } className="material-icons">calculate</Icon>
           }
           placeholder="balance" />
       </Row>
@@ -34,7 +34,7 @@ const BalanceInput = ({ value, onUpdate }) => {
         <Row align="center" justify="flex-end">
           <Icon onClick={ calc(1) } className="material-icons">add</Icon>
           <HelperInput value={ n } onChange={ e => setN(e.target.value) } type="number" />
-          <Icon onClick={ calc(-1) } className="material-icons">remove</Icon>
+          <Icon theme={ THEME } onClick={ calc(-1) } className="material-icons">remove</Icon>
         </Row>
       }
     </Column>
@@ -42,14 +42,6 @@ const BalanceInput = ({ value, onUpdate }) => {
 }
 
 export default BalanceInput;
-
-const Icon = styled.span`
-  font-size: 1.3em;
-  color: ${ THEME.primary };
-  &:hover {
-    cursor: pointer;
-  }
-`
 
 const HelperInput = styled.input`
   border: none;

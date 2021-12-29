@@ -1,8 +1,9 @@
-import { IconButton, Input } from "@material-ui/core";
+import { IconButton } from "@material-ui/core";
 import { useContext, useEffect, useState } from "react";
-import { Card, Pane, Row, Spacer, Title } from "solid-core/dist/components/styled";
+import { Card, Pane, Row, Spacer, Title, CardHeader, Divider, Icon } from "solid-core/dist/components/styled";
 import { initThing, setAttr, addToUpdateQueue, SaveState } from "solid-core/dist/pods";
-import { CardHeader, Divider, THEME } from "../../util";
+import styled from "styled-components";
+import { THEME } from "../../util";
 import BalanceInput from "../BalanceInput";
 import Buckets from "../buckets/Buckets";
 import AccountForm from "./AccountForm";
@@ -14,10 +15,26 @@ const Accounts = ({ accountData, bucketData }) => {
 
   const [isAdding, setIsAdding] = useState(false)
   const [accounts, updateAccounts] = useState([])
+  const [buckets, updateBuckets] = useState(null)
 
   useEffect(() => {
-    if (accountData) updateAccounts(accountData.sort((a) => a.primary ? -1 : 0))
+    if (accountData) updateAccounts(
+      accountData
+        .map(a => ({ ...a, details: false }))
+        .sort((a) => a.primary ? -1 : 0))
   }, [accountData])
+
+  useEffect(() => {
+    if (bucketData) {
+      (function (list) {
+        let bucketObject = accounts.reduce(
+          (prev, curr) => (
+            { ...prev, [curr.title]: list.filter(bucket => bucket.account === curr.title) }
+          ), {})
+        updateBuckets(bucketObject)
+      })(bucketData)
+    }
+  }, [bucketData, accounts])
 
   async function addAccount(acc) {
     setIsAdding(false)
@@ -29,9 +46,18 @@ const Accounts = ({ accountData, bucketData }) => {
     let i = accounts.findIndex(a => a.thing.url === acc.thing.url)
     return value => {
       let thing = setAttr(acc.thing, accountStruct[field], value)
-      updateQueue(addToUpdateQueue(queue, thing))
+      if (thing) updateQueue(addToUpdateQueue(queue, thing))
+      else thing = acc.thing
       updateAccounts([...accounts.slice(0, i), { ...acc, [field]: value, thing }, ...accounts.slice(i + 1)])
     }
+  }
+
+  function sortBuckets(list) {
+    let bucketObject = accounts.reduce(
+      (prev, curr) => (
+        { ...prev, [curr.title]: list.filter(bucket => bucket.account === curr.title) }
+      ), {})
+    updateBuckets(bucketObject)
   }
 
   return (
@@ -53,19 +79,49 @@ const Accounts = ({ accountData, bucketData }) => {
             <span key={ a.thing.url ? a.thing.url : a.title }>
               <Row>
                 <Title style={ { margin: 0 } }>{ a.title }</Title>
+                {
+                  (buckets[a.title] && !!buckets[a.title].length) &&
+                  <Icon theme={ THEME } onClick={ () => updateAccount(a, "details")(!a.details) }>
+                    <span className="material-icons">{ a.details ? "expand_less" : "expand_more" }</span>
+                  </Icon>
+                }
                 <Spacer />
                 <BalanceInput
                   onUpdate={ updateAccount(a, 'balance') }
                   value={ a.balance } />
               </Row>
+              {
+                (a.details && buckets && buckets[a.title]) &&
+                <AccountItem>
+                  <p>Available</p>
+                  <Spacer />
+                  <b>{ +a.balance - buckets[a.title].reduce((prev, curr) => +curr.balance + prev, 0) }</b>
+                </AccountItem>
+              }
+              {
+                (a.details && buckets && buckets[a.title]) &&
+                buckets[a.title].map(b => (
+                  <AccountItem key={ b.thing.url }>
+                    <p>{ b.name }</p>
+                    <Spacer />
+                    <p>{ b.balance }</p>
+                  </AccountItem>
+                ))
+              }
               <Divider thin={ true } theme={ THEME } />
             </span>
           ))
         }
       </Card>
-      <Buckets accounts={ accounts } bucketData={ bucketData } />
-    </Pane>
+      <Buckets accounts={ accounts } bucketData={ bucketData } onUpdate={ sortBuckets } />
+    </Pane >
   )
 }
 
 export default Accounts;
+
+const AccountItem = styled.div`
+  display: flex;
+  align-items: center;
+  border-bottom: solid 1px whitesmoke;
+`

@@ -1,7 +1,7 @@
 import { IconButton } from "@material-ui/core";
 import { useState } from "react";
-import { Card, Column, Divider, Row, Spacer, Subtitle } from "solid-core/dist/components/styled";
-import { CardHeader, THEME } from "../../util";
+import { Card, Column, Divider, Row, Spacer, Subtitle, CardHeader } from "solid-core/dist/components/styled";
+import { THEME } from "../../util";
 import BalanceInput from "../BalanceInput";
 
 const BucketView = ({ bucket, onUpdate, updateBalance, onDelete }) => {

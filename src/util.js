@@ -1,5 +1,4 @@
 import { createContext } from "react"
-import styled from "styled-components"
 
 // https://poolors.com/4c1e81-0787a2-795a3f-e6cad4
 export const THEME = {
@@ -10,14 +9,3 @@ export const THEME = {
 }
 
 export const AppTheme = createContext(THEME)
-
-export const Divider = styled.hr`
-  width: 100%;
-  border-color: ${ props => props.theme ? props.theme.light : THEME.light };
-  border-style: solid;
-  border-bottom-width: ${ props => props.thin ? '0px' : '1px' }
-`
-
-export const CardHeader = styled.h3`
-  margin: 0;
-`

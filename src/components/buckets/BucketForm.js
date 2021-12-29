@@ -1,7 +1,7 @@
 import { Button, Checkbox, FormControl, FormControlLabel, FormGroup, Input, InputLabel, MenuItem, Select } from "@material-ui/core"
 import { useContext, useState } from "react";
-import { Column, Divider, Row } from "solid-core/dist/components/styled";
-import { AppTheme, CardHeader } from "../../util";
+import { Column, Divider, Row, CardHeader } from "solid-core/dist/components/styled";
+import { AppTheme } from "../../util";
 
 const BucketForm = ({ accounts, onSubmit }) => {
 

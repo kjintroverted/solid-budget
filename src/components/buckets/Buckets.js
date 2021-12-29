@@ -1,14 +1,13 @@
 import { IconButton } from "@material-ui/core"
 import { useContext, useEffect, useState } from "react"
-import { Card, Row, Spacer } from "solid-core/dist/components/styled"
+import { Card, Row, Spacer, CardHeader } from "solid-core/dist/components/styled"
 import { addToUpdateQueue, deleteThing, initThing, SaveState, setAttr } from "solid-core/dist/pods"
 import styled from "styled-components"
-import { CardHeader } from "../../util"
 import BucketForm from "./BucketForm"
 import { bucketStruct } from "./bucketStruct"
 import BucketView from "./BucketView"
 
-const Buckets = ({ accounts, bucketData }) => {
+const Buckets = ({ accounts, bucketData, onUpdate }) => {
 
   const { updateQueue, queue } = useContext(SaveState)
 
@@ -25,12 +24,14 @@ const Buckets = ({ accounts, bucketData }) => {
     let thing = await initThing('bucket', b, bucketStruct)
     b = { ...b, thing }
     updateBuckets(b.pinned ? [b, ...buckets] : [...buckets, b])
+    onUpdate([...buckets, b])
   }
 
   async function deleteBucket(bucket) {
     let i = buckets.findIndex(b => b.thing.url === bucket.thing.url)
     await deleteThing(bucket.thing)
     updateBuckets([...buckets.slice(0, i), ...buckets.slice(i + 1)])
+    onUpdate([...buckets.slice(0, i), ...buckets.slice(i + 1)])
   }
 
   function updateBucket(bucket, field, toggle) {
@@ -42,6 +43,7 @@ const Buckets = ({ accounts, bucketData }) => {
       let updatedList = [...buckets.slice(0, i), { ...bucket, [field]: value, thing }, ...buckets.slice(i + 1)];
       if (toggle) updatedList = updatedList.sort(a => a.pinned ? -1 : 0)
       updateBuckets(updatedList)
+      onUpdate(updatedList)
     }
   }
 
@@ -50,6 +52,11 @@ const Buckets = ({ accounts, bucketData }) => {
     let thing = setAttr(bucket.thing, bucketStruct.balance, value)
     updateQueue(addToUpdateQueue(queue, thing))
     updateBuckets(
+      [...buckets.slice(0, i),
+      { ...bucket, balance: value, thing },
+      ...buckets.slice(i + 1)]
+    )
+    onUpdate(
       [...buckets.slice(0, i),
       { ...bucket, balance: value, thing },
       ...buckets.slice(i + 1)]
