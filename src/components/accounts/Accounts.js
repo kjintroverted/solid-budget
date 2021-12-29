@@ -94,6 +94,7 @@ const Accounts = ({ accountData, bucketData }) => {
                 <Badge
                   badgeContent={ +a.balance - bucketSum(a.title) }
                   color="secondary"
+                  invisible={ +a.balance - bucketSum(a.title) > 0 }
                 >
                   <BalanceInput
                     onUpdate={ updateAccount(a, 'balance') }
