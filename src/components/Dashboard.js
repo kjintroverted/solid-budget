@@ -76,11 +76,12 @@ const Layout = styled.div`
   display: grid;
   grid-template-rows: 5.2em 1fr;
   grid-template-areas: 
-    "header"
-    "main";
-`
+  "header"
+  "main";
+  `
 
 const Content = styled.div`
+  background: ${ THEME.light };
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
