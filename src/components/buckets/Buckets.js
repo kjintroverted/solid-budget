@@ -12,6 +12,7 @@ const Buckets = ({ accounts, bucketData }) => {
   const { updateQueue, queue } = useContext(SaveState)
 
   const [isAdding, setIsAdding] = useState(false)
+  const [show, setShow] = useState(true)
   const [buckets, updateBuckets] = useState([])
 
   useEffect(() => {
@@ -41,8 +42,11 @@ const Buckets = ({ accounts, bucketData }) => {
   return (
     <Container>
       <Row align="center">
-        <CardHeader>Buckets</CardHeader>
+        <CardHeader>{ buckets.length } Buckets</CardHeader>
         <Spacer />
+        <IconButton onClick={ () => setShow(!show) } color="primary">
+          <span className="material-icons">{ show ? 'visibility_off' : 'visibility' }</span>
+        </IconButton>
         <IconButton onClick={ () => setIsAdding(!isAdding) } color="primary">
           <span className="material-icons">{ isAdding ? 'close' : 'add' }</span>
         </IconButton>
@@ -54,6 +58,7 @@ const Buckets = ({ accounts, bucketData }) => {
         </Card>
       }
       {
+        show &&
         buckets.map(b => (
           <Card key={ b.thing.url }>
             <Row>
