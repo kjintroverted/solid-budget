@@ -8,6 +8,7 @@ import { THEME } from "../util";
 import Accounts from "./accounts/Accounts";
 import { accountStruct } from "./accounts/accountStruct";
 import { bucketStruct } from "./buckets/bucketStruct";
+import BillSchedule from "./schedule/BillSchedule";
 
 const Dashboard = ({ user, data }) => {
 
@@ -53,6 +54,7 @@ const Dashboard = ({ user, data }) => {
       </HeaderBar>
       <Content>
         <Accounts accountData={ accounts } bucketData={ buckets } />
+        <BillSchedule balance={ accounts.find(a => a.primary) } />
       </Content>
       {
         !!queue.length &&
