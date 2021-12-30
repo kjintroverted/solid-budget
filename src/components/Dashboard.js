@@ -9,6 +9,7 @@ import Accounts from "./accounts/Accounts";
 import { accountStruct } from "./accounts/accountStruct";
 import { bucketStruct } from "./buckets/bucketStruct";
 import BillSchedule from "./schedule/BillSchedule";
+import { billStruct } from "./schedule/billStruct";
 
 const Dashboard = ({ user, data }) => {
 
@@ -16,6 +17,7 @@ const Dashboard = ({ user, data }) => {
 
   const [accounts, setAccounts] = useState([])
   const [buckets, setBuckets] = useState([])
+  const [bills, setBills] = useState([])
 
   useEffect(() => {
     if (!data) return;
@@ -23,10 +25,12 @@ const Dashboard = ({ user, data }) => {
       .then(setAccounts)
     loadBuckets(data)
       .then(setBuckets)
+    loadBills(data)
+      .then(setBills)
   }, [data])
 
   async function loadAccounts(things) {
-    // GET ALL RECIPE DATA
+    // GET ALL ACCOUNT DATA
     return await Promise.all(
       things
         .filter(nameFilter('account'))
@@ -35,11 +39,20 @@ const Dashboard = ({ user, data }) => {
   }
 
   async function loadBuckets(things) {
-    // GET ALL RECIPE DATA
+    // GET ALL BUCKET DATA
     return await Promise.all(
       things
         .filter(nameFilter('bucket'))
         .map(t => loadThing(t.url, bucketStruct))
+    );
+  }
+
+  async function loadBills(things) {
+    // GET ALL BILL DATA
+    return await Promise.all(
+      things
+        .filter(nameFilter('bill'))
+        .map(t => loadThing(t.url, billStruct))
     );
   }
 
@@ -54,7 +67,7 @@ const Dashboard = ({ user, data }) => {
       </HeaderBar>
       <Content>
         <Accounts accountData={ accounts } bucketData={ buckets } />
-        <BillSchedule balance={ accounts.find(a => a.primary) } />
+        <BillSchedule account={ accounts.find(a => a.primary) } billData={ bills } />
       </Content>
       {
         !!queue.length &&
