@@ -1,6 +1,6 @@
 import { IconButton } from "@material-ui/core";
 import { useEffect, useState } from "react";
-import { Card, CardHeader, Column, Divider, Pane, Row, Spacer } from "solid-core/dist/components/styled"
+import { Card, CardHeader, Column, Divider, Icon, Pane, Row, Spacer } from "solid-core/dist/components/styled"
 import { initThing, loadThing, saveThing, setAllAttr } from "solid-core/dist/pods";
 import styled from "styled-components";
 import { THEME } from "../../util"
@@ -23,7 +23,6 @@ const BillSchedule = ({ settingsThing, billData, account }) => {
 
   useEffect(() => {
     if (!settingsThing) return
-    debugger
     loadThing(settingsThing.url, settingsStruct)
       .then(updateSettings)
   }, [settingsThing])
@@ -49,6 +48,45 @@ const BillSchedule = ({ settingsThing, billData, account }) => {
     setEditSettings(false)
   }
 
+  function getNextPayDate(basePayDate, date, inclusive) {
+    let dayDiff = Math.floor((date.getTime() - basePayDate.getTime()) / 86400000) % 14;
+    return !dayDiff && inclusive ? date.getDate() : date.getDate() + 14 - dayDiff;
+  }
+
+  function buildPayDays() {
+    const d = new Date(now.getTime());
+    let date = getNextPayDate(new Date(settings.payday), d);
+    d.setDate(date);
+    date = d.getDate();
+    let days = [];
+
+    while (d.getMonth() === now.getMonth()) {
+      days.push({
+        title: "Payday",
+        credit: settings.paycheck,
+        date,
+        month: d.getMonth() + 1,
+      })
+      d.setDate(date + 14);
+      date = d.getDate();
+    }
+
+    days.push({
+      title: "Payday",
+      credit: settings.paycheck,
+      date,
+      month: d.getMonth() + 1,
+    })
+
+    return days;
+  }
+
+  function getDebitBefore(date, month) {
+    return bills
+      .filter(b => (+b.date <= date) && (!b.month || b.month === month))
+      .reduce((prev, curr) => +curr.debit + prev, 0)
+  }
+
   function buildSchedule() {
     if (!account || !bills.length) return <></>
 
@@ -56,26 +94,60 @@ const BillSchedule = ({ settingsThing, billData, account }) => {
     let date = now.getDate()
     let month = now.getMonth() + 1;
 
-    let runningBalance = account.balance;
+    let runningBalance = +account.balance;
+    let minBalance = runningBalance;
+
+    // GET PAYDAYS
+    let paydays = buildPayDays()
 
     // BUILD OUT EXHAUSTIVE BILL/PAYDAY LIST
-    let readout = bills
+    let readout = [...bills, ...paydays]
+      .sort((a, b) => +a.date - +b.date)
       .filter(b => !b.month || b.month === month)
       .map(b => {
+
         let paid = date > +b.date;
-        runningBalance -= paid ? 0 : +b.debit;
+        if (!paid) {
+          runningBalance += b.credit ? +b.credit : -(+b.debit);
+          minBalance = runningBalance < minBalance ? runningBalance : minBalance;
+        }
+
         return (
-          <ScheduleRow className={ paid ? 'paid' : '' } key={ b.thing.url }>
+          <ScheduleRow className={ paid ? 'paid' : '' } key={ b.thing ? b.thing.url : b.date }>
             <DateText>{ month }/{ b.date }</DateText>
             <p>{ b.title }</p>
             <Spacer />
             <Column align="flex-end">
-              <Debit>({ b.debit })</Debit>
+              {
+                b.credit ?
+                  <Credit>+{ b.credit }</Credit>
+                  : <Debit>({ b.debit })</Debit>
+              }
               { !paid && <p style={ { margin: 0 } }>{ runningBalance }</p> }
             </Column>
           </ScheduleRow>
         )
       })
+
+    let nextPayday = paydays[paydays.length - 1];
+    let availableFunds = runningBalance - getDebitBefore(nextPayday.date, nextPayday.month)
+
+    readout = [
+      <Display>
+        <Icon className="material-icons">info</Icon>
+        Operational Budget: <b>{ availableFunds < minBalance ? availableFunds : minBalance }</b>
+      </Display>,
+      ...readout,
+      <Info>
+        <Icon className="material-icons">info</Icon>
+        Next Payday: <b>{ nextPayday.month }/{ nextPayday.date }</b>
+      </Info>,
+      <Info>
+        <Icon className="material-icons">info</Icon>
+        Available Funds: <b>{ availableFunds }</b>
+      </Info>
+    ]
+
     return readout;
   }
 
@@ -120,8 +192,27 @@ const ScheduleRow = styled.div`
   }
 `
 
+const Credit = styled.p`
+  color: green;
+`
+
 const Debit = styled.p`
   color: red;
+`
+
+const Info = styled.div`
+  display: flex;
+  align-items: center;
+  font-style: italic;
+  opacity: .5;
+  margin-top: .5em;
+`
+
+const Display = styled.div`
+  display: flex;
+  align-items: center;
+  font-style: italic;
+  margin-bottom: .5em;
 `
 
 const DateText = styled.p`
