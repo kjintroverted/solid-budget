@@ -1,7 +1,7 @@
 import { IconButton } from "@material-ui/core";
 import { useEffect, useState } from "react";
 import { Card, CardHeader, Column, Divider, Pane, Row, Spacer } from "solid-core/dist/components/styled"
-import { initThing, saveThing, setAllAttr } from "solid-core/dist/pods";
+import { initThing, loadThing, saveThing, setAllAttr } from "solid-core/dist/pods";
 import styled from "styled-components";
 import { THEME } from "../../util"
 import BillForm from "./BillForm";
@@ -21,9 +21,12 @@ const BillSchedule = ({ settingsThing, billData, account }) => {
     if (billData) updateBills(billData.sort((a, b) => +a.date - +b.date))
   }, [billData])
 
-  // useEffect(() => {
-  //   if (settingsThing) 
-  // }, [settingsThing])
+  useEffect(() => {
+    if (!settingsThing) return
+    debugger
+    loadThing(settingsThing.url, settingsStruct)
+      .then(updateSettings)
+  }, [settingsThing])
 
   async function addBill(bill) {
     setIsAdding(false)

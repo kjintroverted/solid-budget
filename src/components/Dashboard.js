@@ -67,7 +67,10 @@ const Dashboard = ({ user, data }) => {
       </HeaderBar>
       <Content>
         <Accounts accountData={ accounts } bucketData={ buckets } />
-        <BillSchedule account={ accounts.find(a => a.primary) } billData={ bills } />
+        <BillSchedule
+          account={ accounts.find(a => a.primary) }
+          billData={ bills }
+          settingsThing={ data ? data.filter(nameFilter('settings'))[0] : null } />
       </Content>
       {
         !!queue.length &&
