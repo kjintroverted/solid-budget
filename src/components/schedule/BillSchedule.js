@@ -27,6 +27,15 @@ const BillSchedule = ({ settingsThing, billData, account }) => {
       .then(updateSettings)
   }, [settingsThing])
 
+  function toggleBill(b) {
+    let i = bills.findIndex(bill => bill.thing.url === b.thing.url)
+    updateBills([
+      ...bills.slice(0, i),
+      { ...b, override: !b.override },
+      ...bills.slice(i + 1)
+    ])
+  }
+
   async function addBill(bill) {
     setIsAdding(false)
     let thing = await initThing('bill', bill, billStruct)
@@ -107,6 +116,8 @@ const BillSchedule = ({ settingsThing, billData, account }) => {
       .map(b => {
 
         let paid = date > +b.date;
+        paid = b.override ? !paid : paid;
+
         if (!paid) {
           runningBalance += b.credit ? +b.credit : -(+b.debit);
           minBalance = runningBalance < minBalance ? runningBalance : minBalance;
@@ -115,7 +126,7 @@ const BillSchedule = ({ settingsThing, billData, account }) => {
         return (
           <ScheduleRow className={ paid ? 'paid' : '' } key={ b.thing ? b.thing.url : b.date }>
             <DateText>{ month }/{ b.date }</DateText>
-            <p>{ b.title }</p>
+            <p onClick={ () => toggleBill(b) }>{ b.title }</p>
             <Spacer />
             <Column align="flex-end">
               {
