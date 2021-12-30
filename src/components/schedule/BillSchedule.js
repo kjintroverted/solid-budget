@@ -1,20 +1,29 @@
 import { IconButton } from "@material-ui/core";
 import { useEffect, useState } from "react";
-import { Card, CardHeader, Column, Divider, Pane, Row, Spacer, Subtitle } from "solid-core/dist/components/styled"
-import { initThing } from "solid-core/dist/pods";
+import { Card, CardHeader, Column, Divider, Pane, Row, Spacer } from "solid-core/dist/components/styled"
+import { initThing, saveThing, setAllAttr } from "solid-core/dist/pods";
 import styled from "styled-components";
 import { THEME } from "../../util"
 import BillForm from "./BillForm";
 import { billStruct } from "./billStruct";
+import SettingsForm from "./SettingsForm";
+import { settingsStruct } from "./settingsStruct";
 
-const BillSchedule = ({ billData, account }) => {
+const BillSchedule = ({ settingsThing, billData, account }) => {
 
   const [isAdding, setIsAdding] = useState(false)
+  const [settings, updateSettings] = useState({})
+  const [editSettings, setEditSettings] = useState(false)
   const [bills, updateBills] = useState([]);
+  const [now] = useState(new Date());
 
   useEffect(() => {
     if (billData) updateBills(billData.sort((a, b) => +a.date - +b.date))
   }, [billData])
+
+  // useEffect(() => {
+  //   if (settingsThing) 
+  // }, [settingsThing])
 
   async function addBill(bill) {
     setIsAdding(false)
@@ -25,12 +34,24 @@ const BillSchedule = ({ billData, account }) => {
     )
   }
 
+  async function saveSettings(s) {
+    let thing;
+    if (!settings.thing) {
+      thing = await initThing('settings', s, settingsStruct)
+    } else {
+      thing = setAllAttr(settings.thing, settingsStruct, s)
+      await saveThing(thing)
+    }
+    updateSettings({ ...s, thing })
+    setEditSettings(false)
+  }
+
   function buildSchedule() {
     if (!account || !bills.length) return <></>
 
     // GET CURR DATE INFO
-    let date = new Date().getDate()
-    let month = new Date().getMonth() + 1;
+    let date = now.getDate()
+    let month = now.getMonth() + 1;
 
     let runningBalance = account.balance;
 
@@ -62,11 +83,18 @@ const BillSchedule = ({ billData, account }) => {
         <Row align="center">
           <CardHeader>Bill Schedule</CardHeader>
           <Spacer />
+          <IconButton onClick={ () => setEditSettings(!editSettings) } color="primary">
+            <span className="material-icons">settings</span>
+          </IconButton>
           <IconButton onClick={ () => setIsAdding(!isAdding) } color="primary">
             <span className="material-icons">{ isAdding ? 'close' : 'add' }</span>
           </IconButton>
         </Row>
         <Divider theme={ THEME } />
+        {
+          editSettings &&
+          <SettingsForm onSubmit={ saveSettings } savedSettings={ settings } />
+        }
         {
           isAdding &&
           <BillForm onSubmit={ addBill } />
