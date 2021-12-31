@@ -110,6 +110,7 @@ const Content = styled.div`
   background: ${ THEME.light };
   display: flex;
   flex-direction: row;
+  justify-content: center;
   flex-wrap: wrap;
   grid-area: main;
 `
