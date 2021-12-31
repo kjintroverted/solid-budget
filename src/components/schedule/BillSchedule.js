@@ -1,7 +1,7 @@
 import { IconButton } from "@material-ui/core";
 import { useEffect, useState } from "react";
 import { Card, CardHeader, Column, Divider, Icon, Pane, Row, Spacer } from "solid-core/dist/components/styled"
-import { deleteThing, initThing, loadThing, saveThing, setAllAttr } from "solid-core/dist/pods";
+import { deleteThing, initThing, saveThing, setAllAttr } from "solid-core/dist/pods";
 import styled from "styled-components";
 import { THEME } from "../../util"
 import BillForm from "./BillForm";
@@ -9,7 +9,7 @@ import { billStruct } from "./billStruct";
 import SettingsForm from "./SettingsForm";
 import { settingsStruct } from "./settingsStruct";
 
-const BillSchedule = ({ settingsThing, billData, account }) => {
+const BillSchedule = ({ savedSettings, billData, account }) => {
 
   const [isAdding, setIsAdding] = useState(false)
   const [danger, setDanger] = useState(false)
@@ -23,10 +23,8 @@ const BillSchedule = ({ settingsThing, billData, account }) => {
   }, [billData])
 
   useEffect(() => {
-    if (!settingsThing) return
-    loadThing(settingsThing.url, settingsStruct)
-      .then(updateSettings)
-  }, [settingsThing])
+    if (savedSettings) updateSettings(savedSettings)
+  }, [savedSettings])
 
   function toggleBill(b) {
     let i = bills.findIndex(bill => bill.thing.url === b.thing.url)
@@ -73,6 +71,7 @@ const BillSchedule = ({ settingsThing, billData, account }) => {
   }
 
   function buildPayDays() {
+    if (!settings.payday && !settings.paycheck) return []
     const d = new Date(now.getTime());
     let date = getNextPayDate(new Date(settings.payday), d);
     d.setDate(date);
@@ -156,6 +155,16 @@ const BillSchedule = ({ settingsThing, billData, account }) => {
           </ScheduleRow>
         )
       })
+
+    if (!settings.payday && !settings.paycheck) {
+      return [
+        <Row>
+          <Icon className="material-icons">warning</Icon>
+          For full readout please enter estimated paycheck value and a past pay date in settings.
+        </Row>,
+        ...readout
+      ]
+    }
 
     let nextPayday = paydays[paydays.length - 1];
     let availableFunds = runningBalance - getDebitBefore(nextPayday.date, nextPayday.month)

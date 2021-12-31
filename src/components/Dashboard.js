@@ -10,6 +10,7 @@ import { accountStruct } from "./accounts/accountStruct";
 import { bucketStruct } from "./buckets/bucketStruct";
 import BillSchedule from "./schedule/BillSchedule";
 import { billStruct } from "./schedule/billStruct";
+import { settingsStruct } from "./schedule/settingsStruct";
 
 const Dashboard = ({ user, data }) => {
 
@@ -18,6 +19,7 @@ const Dashboard = ({ user, data }) => {
   const [accounts, setAccounts] = useState([])
   const [buckets, setBuckets] = useState([])
   const [bills, setBills] = useState([])
+  const [settings, setSettings] = useState(null)
 
   useEffect(() => {
     if (!data) return;
@@ -27,6 +29,10 @@ const Dashboard = ({ user, data }) => {
       .then(setBuckets)
     loadBills(data)
       .then(setBills)
+
+    let settingsThing = data.find(nameFilter('settings'));
+    if (settingsThing) loadThing(settingsThing.url, settingsStruct).then(setSettings)
+
   }, [data])
 
   async function loadAccounts(things) {
@@ -70,7 +76,7 @@ const Dashboard = ({ user, data }) => {
         <BillSchedule
           account={ accounts.find(a => a.primary) }
           billData={ bills }
-          settingsThing={ data ? data.filter(nameFilter('settings'))[0] : null } />
+          savedSettings={ settings } />
       </Content>
       {
         !!queue.length &&
