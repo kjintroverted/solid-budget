@@ -11,6 +11,7 @@ import { bucketStruct } from "./buckets/bucketStruct";
 import BillSchedule from "./schedule/BillSchedule";
 import { billStruct } from "./schedule/billStruct";
 import { settingsStruct } from "./schedule/settingsStruct";
+import BigPicture from "./year/BigPicture";
 
 const Dashboard = ({ user, data }) => {
 
@@ -77,6 +78,7 @@ const Dashboard = ({ user, data }) => {
           account={ accounts.find(a => a.primary) }
           billData={ bills }
           savedSettings={ settings } />
+        { settings && <BigPicture bills={ bills } settings={ settings } /> }
       </Content>
       {
         !!queue.length &&

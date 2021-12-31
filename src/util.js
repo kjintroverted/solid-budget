@@ -9,3 +9,14 @@ export const THEME = {
 }
 
 export const AppTheme = createContext(THEME)
+
+export function getNextPayDate(basePayDate, date, inclusive) {
+  let dayDiff = Math.floor((date.getTime() - basePayDate.getTime()) / 86400000) % 14;
+  return !dayDiff && inclusive ? date.getDate() : date.getDate() + 14 - dayDiff;
+}
+
+export function getDebitBefore(bills, date, month) {
+  return bills
+    .filter(b => (+b.date <= date) && (!b.month || b.month === month))
+    .reduce((prev, curr) => +curr.debit + prev, 0)
+}
