@@ -1,7 +1,7 @@
 import { IconButton } from "@material-ui/core";
 import { useEffect, useState } from "react";
 import { Card, CardHeader, Column, Divider, Icon, Pane, Row, Spacer } from "solid-core/dist/components/styled"
-import { initThing, loadThing, saveThing, setAllAttr } from "solid-core/dist/pods";
+import { deleteThing, initThing, loadThing, saveThing, setAllAttr } from "solid-core/dist/pods";
 import styled from "styled-components";
 import { THEME } from "../../util"
 import BillForm from "./BillForm";
@@ -12,6 +12,7 @@ import { settingsStruct } from "./settingsStruct";
 const BillSchedule = ({ settingsThing, billData, account }) => {
 
   const [isAdding, setIsAdding] = useState(false)
+  const [danger, setDanger] = useState(false)
   const [settings, updateSettings] = useState({})
   const [editSettings, setEditSettings] = useState(false)
   const [bills, updateBills] = useState([]);
@@ -43,6 +44,15 @@ const BillSchedule = ({ settingsThing, billData, account }) => {
       [...bills, { ...bill, thing }]
         .sort((a, b) => +a.date - +b.date)
     )
+  }
+
+  async function deleteBill(b) {
+    let i = bills.findIndex(bill => bill.thing.url === b.thing.url)
+    await deleteThing(b.thing)
+    updateBills([
+      ...bills.slice(0, i),
+      ...bills.slice(i + 1)
+    ])
   }
 
   async function saveSettings(s) {
@@ -96,6 +106,7 @@ const BillSchedule = ({ settingsThing, billData, account }) => {
       .reduce((prev, curr) => +curr.debit + prev, 0)
   }
 
+  // MAIN READOUT ==============
   function buildSchedule() {
     if (!account || !bills.length) return <></>
 
@@ -126,7 +137,7 @@ const BillSchedule = ({ settingsThing, billData, account }) => {
         return (
           <ScheduleRow className={ paid ? 'paid' : '' } key={ b.thing ? b.thing.url : b.date }>
             <DateText>{ month }/{ b.date }</DateText>
-            <p onClick={ () => toggleBill(b) }>{ b.title }</p>
+            <p className="clickable" onClick={ () => toggleBill(b) }>{ b.title }</p>
             <Spacer />
             <Column align="flex-end">
               {
@@ -136,6 +147,12 @@ const BillSchedule = ({ settingsThing, billData, account }) => {
               }
               { !paid && <p style={ { margin: 0 } }>{ runningBalance }</p> }
             </Column>
+            {
+              (danger && b.debit) &&
+              <IconButton onClick={ () => deleteBill(b) } color="secondary">
+                <span className="material-icons">delete</span>
+              </IconButton>
+            }
           </ScheduleRow>
         )
       })
@@ -169,6 +186,9 @@ const BillSchedule = ({ settingsThing, billData, account }) => {
         <Row align="center">
           <CardHeader>Bill Schedule</CardHeader>
           <Spacer />
+          <IconButton onClick={ () => setDanger(!danger) } color="primary">
+            <span className="material-icons">{ danger ? 'done' : 'edit' }</span>
+          </IconButton>
           <IconButton onClick={ () => setEditSettings(!editSettings) } color="primary">
             <span className="material-icons">settings</span>
           </IconButton>

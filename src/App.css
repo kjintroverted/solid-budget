@@ -38,6 +38,10 @@ input[type="number"] {
   text-align: right;
 }
 
+.clickable:hover {
+  cursor: pointer;
+}
+
 /* MATERIAL OVERRIDES */
 
 button span {
