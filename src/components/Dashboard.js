@@ -63,6 +63,11 @@ const Dashboard = ({ user, data }) => {
     );
   }
 
+  function updateAccount(acc) {
+    let i = accounts.findIndex(a => a.thing.url === acc.thing.url)
+    setAccounts([...accounts.slice(0, i), acc, ...accounts.slice(i + 1)])
+  }
+
   return (
     <Layout>
       <HeaderBar theme={ THEME }>
@@ -73,7 +78,7 @@ const Dashboard = ({ user, data }) => {
         </Link>
       </HeaderBar>
       <Content>
-        <Accounts accountData={ accounts } bucketData={ buckets } />
+        <Accounts accountData={ accounts } bucketData={ buckets } onUpdate={ updateAccount } />
         <BillSchedule
           account={ accounts.find(a => a.primary) }
           billData={ bills }
