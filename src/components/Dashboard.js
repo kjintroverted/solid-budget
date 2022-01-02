@@ -11,6 +11,7 @@ import { bucketStruct } from "./buckets/bucketStruct";
 import BillSchedule from "./schedule/BillSchedule";
 import { billStruct } from "./schedule/billStruct";
 import { settingsStruct } from "./schedule/settingsStruct";
+import BigPicture from "./year/BigPicture";
 
 const Dashboard = ({ user, data }) => {
 
@@ -62,6 +63,11 @@ const Dashboard = ({ user, data }) => {
     );
   }
 
+  function updateAccount(acc) {
+    let i = accounts.findIndex(a => a.thing.url === acc.thing.url)
+    setAccounts([...accounts.slice(0, i), acc, ...accounts.slice(i + 1)])
+  }
+
   return (
     <Layout>
       <HeaderBar theme={ THEME }>
@@ -72,11 +78,12 @@ const Dashboard = ({ user, data }) => {
         </Link>
       </HeaderBar>
       <Content>
-        <Accounts accountData={ accounts } bucketData={ buckets } />
+        <Accounts accountData={ accounts } bucketData={ buckets } onUpdate={ updateAccount } />
         <BillSchedule
           account={ accounts.find(a => a.primary) }
           billData={ bills }
           savedSettings={ settings } />
+        { settings && <BigPicture bills={ bills } settings={ settings } /> }
       </Content>
       {
         !!queue.length &&

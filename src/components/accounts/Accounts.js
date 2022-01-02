@@ -9,7 +9,7 @@ import Buckets from "../buckets/Buckets";
 import AccountForm from "./AccountForm";
 import { accountStruct } from "./accountStruct";
 
-const Accounts = ({ accountData, bucketData }) => {
+const Accounts = ({ accountData, bucketData, onUpdate }) => {
 
   const { queue, updateQueue } = useContext(SaveState);
 
@@ -20,7 +20,7 @@ const Accounts = ({ accountData, bucketData }) => {
   useEffect(() => {
     if (accountData) updateAccounts(
       accountData
-        .map(a => ({ ...a, details: false }))
+        .map(a => ({ ...a, details: !!a.details }))
         .sort((a) => a.primary ? -1 : 0))
   }, [accountData])
 
@@ -48,6 +48,7 @@ const Accounts = ({ accountData, bucketData }) => {
       let thing = setAttr(acc.thing, accountStruct[field], value)
       if (thing) updateQueue(addToUpdateQueue(queue, thing))
       else thing = acc.thing
+      onUpdate({ ...acc, [field]: value, thing })
       updateAccounts([...accounts.slice(0, i), { ...acc, [field]: value, thing }, ...accounts.slice(i + 1)])
     }
   }
@@ -94,7 +95,7 @@ const Accounts = ({ accountData, bucketData }) => {
                 <Badge
                   badgeContent={ +a.balance - bucketSum(a.title) }
                   color="secondary"
-                  invisible={ +a.balance - bucketSum(a.title) > 0 }
+                  invisible={ +a.balance - bucketSum(a.title) >= 0 }
                 >
                   <BalanceInput
                     onUpdate={ updateAccount(a, 'balance') }

@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { Card, CardHeader, Column, Divider, Icon, Pane, Row, Spacer } from "solid-core/dist/components/styled"
 import { deleteThing, initThing, saveThing, setAllAttr } from "solid-core/dist/pods";
 import styled from "styled-components";
-import { THEME } from "../../util"
+import { getDebitBefore, getNextPayDate, THEME } from "../../util"
 import BillForm from "./BillForm";
 import { billStruct } from "./billStruct";
 import SettingsForm from "./SettingsForm";
@@ -65,11 +65,6 @@ const BillSchedule = ({ savedSettings, billData, account }) => {
     setEditSettings(false)
   }
 
-  function getNextPayDate(basePayDate, date, inclusive) {
-    let dayDiff = Math.floor((date.getTime() - basePayDate.getTime()) / 86400000) % 14;
-    return !dayDiff && inclusive ? date.getDate() : date.getDate() + 14 - dayDiff;
-  }
-
   function buildPayDays() {
     if (!settings.payday && !settings.paycheck) return []
     const d = new Date(now.getTime());
@@ -97,12 +92,6 @@ const BillSchedule = ({ savedSettings, billData, account }) => {
     })
 
     return days;
-  }
-
-  function getDebitBefore(date, month) {
-    return bills
-      .filter(b => (+b.date <= date) && (!b.month || b.month === month))
-      .reduce((prev, curr) => +curr.debit + prev, 0)
   }
 
   // MAIN READOUT ==============
@@ -167,7 +156,7 @@ const BillSchedule = ({ savedSettings, billData, account }) => {
     }
 
     let nextPayday = paydays[paydays.length - 1];
-    let availableFunds = runningBalance - getDebitBefore(nextPayday.date, nextPayday.month)
+    let availableFunds = runningBalance - getDebitBefore(bills, nextPayday.date, nextPayday.month)
 
     readout = [
       <Display>
