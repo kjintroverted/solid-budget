@@ -123,7 +123,7 @@ const BillSchedule = ({ savedSettings, billData, account }) => {
         }
 
         return (
-          <ScheduleRow className={ paid ? 'paid' : '' } key={ b.thing ? b.thing.url : b.date }>
+          <ScheduleRow className={ paid ? 'paid' : b.credit ? 'credit' : '' } key={ b.thing ? b.thing.url : b.date }>
             <DateText>{ month }/{ b.date }</DateText>
             <p className="clickable" onClick={ () => toggleBill(b) }>{ b.title }</p>
             <Spacer />
@@ -216,8 +216,13 @@ export default BillSchedule;
 const ScheduleRow = styled.div`
   display: flex;
   border-bottom: solid 1px whitesmoke;
+  padding: 5px;
+  border-radius: 4px;
   &.paid {
     opacity: .5;
+  }
+  &.credit {
+    background: ${ THEME.secondary + "30" };
   }
 `
 
