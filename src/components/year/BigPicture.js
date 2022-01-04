@@ -1,5 +1,6 @@
 import { useState } from "react"
 import { Card, CardHeader, Column, Divider, Icon, Pane, Row, Spacer, Title } from "solid-core/dist/components/styled"
+import styled from "styled-components"
 import { getDebitBefore, getNextPayDate, THEME, Credit, Debit, Info } from "../../util"
 
 const MONTHS = [
@@ -57,7 +58,15 @@ const BigPicture = ({ settings, bills }) => {
       readout = [...readout,
       <>
         <Row>
-          <Title>{ MONTHS[month] }</Title>
+          <Title>
+            {
+              paydays[MONTHS[month]] > 2 &&
+              <Decoration className="material-icons">
+                auto_awesome
+              </Decoration>
+            }
+            { MONTHS[month] }
+          </Title>
           <Spacer />
           <Column align="center">
             <h3>{ credit - debit }</h3>
@@ -93,3 +102,11 @@ const BigPicture = ({ settings, bills }) => {
 }
 
 export default BigPicture;
+
+const Decoration = styled.span`
+  font-size: .7em;
+  position: absolute;
+  top: -.3em;
+  right: -1em;
+  color: ${ THEME.secondary }
+`
