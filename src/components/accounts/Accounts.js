@@ -15,7 +15,7 @@ const Accounts = ({ accountData, bucketData, onUpdate }) => {
 
   const [isAdding, setIsAdding] = useState(false)
   const [accounts, updateAccounts] = useState([])
-  const [buckets, updateBuckets] = useState(null)
+  const [buckets, updateBuckets] = useState([])
 
   useEffect(() => {
     if (accountData) updateAccounts(
@@ -26,15 +26,13 @@ const Accounts = ({ accountData, bucketData, onUpdate }) => {
 
   useEffect(() => {
     if (bucketData) {
-      (function (list) {
-        let bucketObject = accountData.reduce(
-          (prev, curr) => (
-            { ...prev, [curr.title]: list.filter(bucket => bucket.account === curr.title) }
-          ), {})
-        updateBuckets(bucketObject)
-      })(bucketData)
+      let bucketObject = bucketData.reduce(
+        (prev, curr) => (
+          { ...prev, [curr.account]: prev[curr.account] ? [...prev[curr.account], curr] : [curr] }
+        ), {})
+      updateBuckets(bucketObject)
     }
-  }, [bucketData, accountData])
+  }, [bucketData])
 
   async function addAccount(acc) {
     setIsAdding(false)
@@ -54,9 +52,9 @@ const Accounts = ({ accountData, bucketData, onUpdate }) => {
   }
 
   function sortBuckets(list) {
-    let bucketObject = accounts.reduce(
+    let bucketObject = list.reduce(
       (prev, curr) => (
-        { ...prev, [curr.title]: list.filter(bucket => bucket.account === curr.title) }
+        { ...prev, [curr.account]: prev[curr.account] ? [...prev[curr.account], curr] : [curr] }
       ), {})
     updateBuckets(bucketObject)
   }
