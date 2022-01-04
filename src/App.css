@@ -22,6 +22,10 @@ ul {
   font-size: xx-large;
 }
 
+* {
+  position: relative;
+}
+
 .click {
   cursor: pointer;
 }
