@@ -27,6 +27,7 @@ const BillSchedule = ({ savedSettings, billData, account }) => {
   }, [savedSettings])
 
   function toggleBill(b) {
+    if (!b.thing) return
     let i = bills.findIndex(bill => bill.thing.url === b.thing.url)
     updateBills([
       ...bills.slice(0, i),
