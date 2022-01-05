@@ -75,7 +75,7 @@ function App() {
 
   return (
     <SaveState.Provider value={ { queue, updateQueue, saveFromQ } }>
-      <AppTheme.Provider value={ THEME }>
+      <AppTheme.Provider value={ { ...THEME, mui } }>
         <mui.ThemeProvider theme={ muiTheme }>
           <Main>
             <Router>

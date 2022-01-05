@@ -1,10 +1,11 @@
-import { Fab, IconButton } from "@material-ui/core";
+import { IconButton } from "@material-ui/core";
 import { useContext, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { HeaderBar, SaveButton, Spacer } from "solid-core/dist/components/styled";
+import SaveButton from "solid-core/dist/components/SaveButton";
+import { HeaderBar, Spacer } from "solid-core/dist/components/styled";
 import { loadThing, nameFilter, SaveState } from "solid-core/dist/pods";
 import styled from "styled-components";
-import { THEME } from "../util";
+import { AppTheme, THEME } from "../util";
 import Accounts from "./accounts/Accounts";
 import { accountStruct } from "./accounts/accountStruct";
 import { bucketStruct } from "./buckets/bucketStruct";
@@ -16,6 +17,7 @@ import BigPicture from "./year/BigPicture";
 const Dashboard = ({ user, data }) => {
 
   const { queue, saveFromQ } = useContext(SaveState);
+  const { mui } = useContext(AppTheme);
 
   const [accounts, setAccounts] = useState([])
   const [buckets, setBuckets] = useState([])
@@ -85,16 +87,7 @@ const Dashboard = ({ user, data }) => {
           savedSettings={ settings } />
         { settings && <BigPicture bills={ bills } settings={ settings } /> }
       </Content>
-      {
-        !!queue.length &&
-        <SaveButton>
-          <Fab
-            color="secondary"
-            onClick={ saveFromQ }>
-            <span className="material-icons">save</span>
-          </Fab>
-        </SaveButton>
-      }
+      <SaveButton ui={ mui } save={ saveFromQ } queue={ queue } />
     </Layout>
   )
 }
