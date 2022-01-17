@@ -1,6 +1,14 @@
 import { createContext } from "react"
 import styled from "styled-components"
 
+
+// TODO: REMOVE AND UPDATE STYLED IN CORE
+export const Spacer = styled.span`
+  flex: ${ props => props.width || props.height ? 'none' : 1 };
+  height: ${ props => props.height };
+  width: ${ props => props.width };
+`
+
 // https://poolors.com/4c1e81-0787a2-795a3f-e6cad4
 export const THEME = {
   light: '#e6cad4',
