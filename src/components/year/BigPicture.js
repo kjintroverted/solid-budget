@@ -56,7 +56,7 @@ const BigPicture = ({ settings, bills }) => {
       totalDebit += debit;
 
       readout = [...readout,
-      <>
+      <div key={ MONTHS[month] }>
         <Row>
           <Title>
             {
@@ -75,13 +75,13 @@ const BigPicture = ({ settings, bills }) => {
           </Column>
         </Row>
         <Divider theme={ THEME } />
-      </>
+      </div>
       ]
       month = month >= 11 ? 0 : month + 1;
     }
     return [
       readout,
-      <Info>
+      <Info key="money-usage">
         <Icon className="material-icons">info</Icon>
         Money with a Job: <b>{ Math.round((totalDebit / totalCredit) * 100) }%</b>
       </Info>
@@ -104,9 +104,9 @@ const BigPicture = ({ settings, bills }) => {
 export default BigPicture;
 
 const Decoration = styled.span`
-  font-size: .7em;
-  position: absolute;
-  top: -.3em;
-  right: -1em;
-  color: ${ THEME.secondary }
-`
+        font-size: .7em;
+        position: absolute;
+        top: -.3em;
+        right: -1em;
+        color: ${ THEME.secondary }
+        `

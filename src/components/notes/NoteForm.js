@@ -1,6 +1,6 @@
 import { Button, FormControl, Input, InputLabel, MenuItem, Select } from "@material-ui/core"
 import { useContext, useState } from "react";
-import { Column, Divider, Row, CardHeader } from "solid-core/dist/components/styled";
+import { Column, Divider, CardHeader } from "solid-core/dist/components/styled";
 import { AppTheme } from "../../util";
 
 const ACTION_TYPES = {
@@ -10,7 +10,6 @@ const ACTION_TYPES = {
 }
 
 const NoteForm = ({ onSubmit }) => {
-  debugger
 
   const THEME = useContext(AppTheme)
   const [note, updateNote] = useState({});
