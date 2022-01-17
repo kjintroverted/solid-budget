@@ -124,7 +124,7 @@ const BillSchedule = ({ savedSettings, billData, account }) => {
         }
 
         return (
-          <ScheduleRow className={ paid ? 'paid' : b.credit ? 'credit' : '' } key={ b.thing ? b.thing.url : b.date }>
+          <ScheduleRow key={ b.title + b.date } className={ paid ? 'paid' : b.credit ? 'credit' : '' }>
             <DateText>{ month }/{ b.date }</DateText>
             <p className="clickable" onClick={ () => toggleBill(b) }>{ b.title }</p>
             <Spacer />
@@ -148,7 +148,7 @@ const BillSchedule = ({ savedSettings, billData, account }) => {
 
     if (!settings.payday && !settings.paycheck) {
       return [
-        <Row>
+        <Row key="info">
           <Icon className="material-icons">warning</Icon>
           For full readout please enter estimated paycheck value and a past pay date in settings.
         </Row>,
@@ -160,16 +160,16 @@ const BillSchedule = ({ savedSettings, billData, account }) => {
     let availableFunds = runningBalance - getDebitBefore(bills, nextPayday.date, nextPayday.month)
 
     readout = [
-      <Display>
+      <Display key="op-budget">
         <Icon className="material-icons">info</Icon>
         Operational Budget: <b>{ availableFunds < minBalance ? availableFunds : minBalance }</b>
       </Display>,
       ...readout,
-      <Info>
+      <Info key="next-payday">
         <Icon className="material-icons">info</Icon>
         Next Payday: <b>{ nextPayday.month }/{ nextPayday.date }</b>
       </Info>,
-      <Info>
+      <Info key="avail-funds">
         <Icon className="material-icons">info</Icon>
         Available Funds: <b>{ availableFunds }</b>
       </Info>
