@@ -6,7 +6,7 @@ import NoteForm from "./NoteForm";
 import { notebookStruct } from "./noteStruct";
 
 
-const Notes = (data) => {
+const Notes = ({ data }) => {
 
   const [isAdding, setIsAdding] = useState(false);
   const [noteBook, updateNotes] = useState({ notes: [] })

@@ -3,7 +3,7 @@ import { useContext, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import SaveButton from "solid-core/dist/components/SaveButton";
 import { HeaderBar, Spacer } from "solid-core/dist/components/styled";
-import { appLogin, loadThing, nameFilter, SaveState } from "solid-core/dist/pods";
+import { appLogin, getThings, loadFromDataset, loadThing, nameFilter, SaveState } from "solid-core/dist/pods";
 import styled from "styled-components";
 import { AppTheme, THEME } from "../util";
 import Accounts from "./accounts/Accounts";
@@ -15,7 +15,7 @@ import { billStruct } from "./schedule/billStruct";
 import { settingsStruct } from "./schedule/settingsStruct";
 import BigPicture from "./year/BigPicture";
 
-const Dashboard = ({ user, data }) => {
+const Dashboard = ({ user, dataset }) => {
 
   const { queue, saveFromQ } = useContext(SaveState);
   const { mui } = useContext(AppTheme);
@@ -26,25 +26,30 @@ const Dashboard = ({ user, data }) => {
   const [settings, setSettings] = useState(null)
 
   useEffect(() => {
-    if (!data) return;
-    loadAccounts(data)
+    if (!dataset) return;
+
+    const things = getThings(dataset)
+
+    loadAccounts(things)
       .then(setAccounts)
-    loadBuckets(data)
+
+    loadBuckets(things)
       .then(setBuckets)
-    loadBills(data)
+
+    loadBills(things)
       .then(setBills)
 
-    let settingsThing = data.find(nameFilter('settings'));
-    if (settingsThing) loadThing(settingsThing.url, settingsStruct).then(setSettings)
+    let settingsThing = things.find(nameFilter('settings'));
+    if (settingsThing) setSettings(loadFromDataset(dataset, settingsThing.url, settingsStruct))
 
-  }, [data])
+  }, [dataset])
 
   async function loadAccounts(things) {
     // GET ALL ACCOUNT DATA
     return await Promise.all(
       things
         .filter(nameFilter('account'))
-        .map(t => loadThing(t.url, accountStruct))
+        .map(t => loadFromDataset(dataset, t.url, accountStruct))
     );
   }
 
@@ -53,7 +58,7 @@ const Dashboard = ({ user, data }) => {
     return await Promise.all(
       things
         .filter(nameFilter('bucket'))
-        .map(t => loadThing(t.url, bucketStruct))
+        .map(t => loadFromDataset(dataset, t.url, bucketStruct))
     );
   }
 
@@ -62,7 +67,7 @@ const Dashboard = ({ user, data }) => {
     return await Promise.all(
       things
         .filter(nameFilter('bill'))
-        .map(t => loadThing(t.url, billStruct))
+        .map(t => loadFromDataset(dataset, t.url, billStruct))
     );
   }
 

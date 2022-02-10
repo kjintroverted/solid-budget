@@ -4,7 +4,6 @@ import {
   Main,
   appLogin,
   getDomain,
-  getThings,
   loadDataset,
   loadThing,
   save,
@@ -25,7 +24,7 @@ const muiTheme = newTheme(THEME)
 function App() {
 
   const [user, setUser] = useState();
-  const [things, setThings] = useState();
+  const [dataset, setDataset] = useState();
   const [queue, updateQueue] = useState([]);
   // PROFILE STATE
   const [profile, setProfile] = useState();
@@ -38,9 +37,8 @@ function App() {
 
   useEffect(() => {
     const getUser = async function () {
-      let session = await handleIncomingRedirect()
+      await handleIncomingRedirect()
       let { info } = getDefaultSession()
-      debugger
       if (info.isLoggedIn) setUser(info.webId)
       else await appLogin()
     }
@@ -66,9 +64,7 @@ function App() {
     if (profile) {
       // LOAD BUDGET DATASET
       loadDataset(getDomain(user) + "/budget")
-        .then(data => {
-          setThings(getThings(data))
-        });
+        .then(setDataset)
     }
   }, [profile, user])
 
@@ -79,7 +75,7 @@ function App() {
           <Main>
             <Router>
               <Routes>
-                <Route path="/" element={ <Dashboard data={ things } user={ profile } /> } />
+                <Route path="/" element={ <Dashboard dataset={ dataset } user={ profile } /> } />
                 <Route path="/profile"
                   element={
                     <SaveState.Consumer>
