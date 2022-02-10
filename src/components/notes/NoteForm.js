@@ -1,7 +1,7 @@
 import { Button, FormControl, Input, InputLabel, MenuItem, Select } from "@material-ui/core"
 import { useContext, useState } from "react";
-import { Column, Divider, CardHeader } from "solid-core/dist/components/styled";
-import { AppTheme, Spacer } from "../../util";
+import { Column, Divider, CardHeader, Spacer } from "solid-core/dist/components/styled";
+import { AppTheme } from "../../util";
 
 const ACTION_TYPES = {
   NONE: "NONE",

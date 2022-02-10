@@ -1,9 +1,9 @@
-import { IconButton } from "@material-ui/core";
+import { Button, IconButton } from "@material-ui/core";
 import { useContext, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import SaveButton from "solid-core/dist/components/SaveButton";
 import { HeaderBar, Spacer } from "solid-core/dist/components/styled";
-import { loadThing, nameFilter, SaveState } from "solid-core/dist/pods";
+import { appLogin, loadThing, nameFilter, SaveState } from "solid-core/dist/pods";
 import styled from "styled-components";
 import { AppTheme, THEME } from "../util";
 import Accounts from "./accounts/Accounts";
@@ -76,9 +76,14 @@ const Dashboard = ({ user, data }) => {
       <HeaderBar theme={ THEME }>
         <h2>{ user ? `${ user.firstName }'s` : "My" } Budget</h2>
         <Spacer />
-        <Link to="/profile">
-          <IconButton color="inherit"><span className="material-icons">person</span></IconButton>
-        </Link>
+        {
+          user ?
+            <Link to="/profile">
+              <IconButton color="inherit"><span className="material-icons">person</span></IconButton>
+            </Link>
+            :
+            <Button onClick={ appLogin } color="inherit">Login</Button>
+        }
       </HeaderBar>
       <Content>
         <Accounts accountData={ accounts } bucketData={ buckets } onUpdate={ updateAccount } />

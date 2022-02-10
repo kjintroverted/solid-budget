@@ -24,7 +24,6 @@ const muiTheme = newTheme(THEME)
 
 function App() {
 
-  const [err, setError] = useState();
   const [user, setUser] = useState();
   const [things, setThings] = useState();
   const [queue, updateQueue] = useState([]);
@@ -39,13 +38,14 @@ function App() {
 
   useEffect(() => {
     const getUser = async function () {
-      await handleIncomingRedirect()
+      let session = await handleIncomingRedirect()
       let { info } = getDefaultSession()
+      debugger
       if (info.isLoggedIn) setUser(info.webId)
-      else appLogin()
+      else await appLogin()
     }
     getUser()
-  }, [err])
+  }, [])
 
   // USER LOADED => GET SESSION
   useEffect(() => {
@@ -55,7 +55,6 @@ function App() {
         .then(res => {
           if (res instanceof Error) {
             console.error(res)
-            setError(res)
           }
           else setProfile(res)
         })
