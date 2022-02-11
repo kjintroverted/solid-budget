@@ -3,7 +3,7 @@ import { useContext, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import SaveButton from "solid-core/dist/components/SaveButton";
 import { HeaderBar, Spacer } from "solid-core/dist/components/styled";
-import { appLogin, getThings, loadFromDataset, loadThing, nameFilter, SaveState } from "solid-core/dist/pods";
+import { appLogin, getThings, loadFromDataset, nameFilter, SaveState } from "solid-core/dist/pods";
 import styled from "styled-components";
 import { AppTheme, THEME } from "../util";
 import Accounts from "./accounts/Accounts";
@@ -30,46 +30,23 @@ const Dashboard = ({ user, dataset }) => {
 
     const things = getThings(dataset)
 
-    loadAccounts(things)
-      .then(setAccounts)
-
-    loadBuckets(things)
-      .then(setBuckets)
-
-    loadBills(things)
-      .then(setBills)
+    setAccounts(things
+      .filter(nameFilter('account'))
+      .map(t => loadFromDataset(dataset, t.url, accountStruct))
+    )
+    setBuckets(things
+      .filter(nameFilter('bucket'))
+      .map(t => loadFromDataset(dataset, t.url, bucketStruct))
+    )
+    setBills(things
+      .filter(nameFilter('bill'))
+      .map(t => loadFromDataset(dataset, t.url, billStruct))
+    )
 
     let settingsThing = things.find(nameFilter('settings'));
     if (settingsThing) setSettings(loadFromDataset(dataset, settingsThing.url, settingsStruct))
 
   }, [dataset])
-
-  async function loadAccounts(things) {
-    // GET ALL ACCOUNT DATA
-    return await Promise.all(
-      things
-        .filter(nameFilter('account'))
-        .map(t => loadFromDataset(dataset, t.url, accountStruct))
-    );
-  }
-
-  async function loadBuckets(things) {
-    // GET ALL BUCKET DATA
-    return await Promise.all(
-      things
-        .filter(nameFilter('bucket'))
-        .map(t => loadFromDataset(dataset, t.url, bucketStruct))
-    );
-  }
-
-  async function loadBills(things) {
-    // GET ALL BILL DATA
-    return await Promise.all(
-      things
-        .filter(nameFilter('bill'))
-        .map(t => loadFromDataset(dataset, t.url, billStruct))
-    );
-  }
 
   function updateAccount(acc) {
     let i = accounts.findIndex(a => a.thing.url === acc.thing.url)
