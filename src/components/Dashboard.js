@@ -3,7 +3,7 @@ import { useContext, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import SaveButton from "solid-core/dist/components/SaveButton";
 import { HeaderBar, Spacer } from "solid-core/dist/components/styled";
-import { appLogin, getThings, loadFromDataset, nameFilter, SaveState } from "solid-core/dist/pods";
+import { appLogin, getThings, loadAllByName, loadByName, loadFromDataset, nameFilter, SaveState } from "solid-core/dist/pods";
 import styled from "styled-components";
 import { AppTheme, THEME } from "../util";
 import Accounts from "./accounts/Accounts";
@@ -28,23 +28,10 @@ const Dashboard = ({ user, dataset }) => {
   useEffect(() => {
     if (!dataset) return;
 
-    const things = getThings(dataset)
-
-    setAccounts(things
-      .filter(nameFilter('account'))
-      .map(t => loadFromDataset(dataset, t.url, accountStruct))
-    )
-    setBuckets(things
-      .filter(nameFilter('bucket'))
-      .map(t => loadFromDataset(dataset, t.url, bucketStruct))
-    )
-    setBills(things
-      .filter(nameFilter('bill'))
-      .map(t => loadFromDataset(dataset, t.url, billStruct))
-    )
-
-    let settingsThing = things.find(nameFilter('settings'));
-    if (settingsThing) setSettings(loadFromDataset(dataset, settingsThing.url, settingsStruct))
+    setAccounts(loadAllByName(dataset, 'account', accountStruct));
+    setBuckets(loadAllByName(dataset, 'bucket', bucketStruct));
+    setBills(loadAllByName(dataset, 'bill', billStruct));
+    setSettings(loadByName(dataset, 'settings', settingsStruct));
 
   }, [dataset])
 
@@ -74,7 +61,7 @@ const Dashboard = ({ user, dataset }) => {
           billData={ bills }
           savedSettings={ settings } />
         { settings && <BigPicture bills={ bills } settings={ settings } /> }
-        <Notes />
+        <Notes data />
       </Content>
       <SaveButton ui={ mui } save={ saveFromQ } queue={ queue } />
     </Layout>
