@@ -13,10 +13,12 @@ export const AppTheme = createContext(THEME)
 
 export const Credit = styled.p`
   color: green;
-`
+  margin: .1em;
+  `
 
 export const Debit = styled.p`
   color: red;
+  margin: .1em;
 `
 
 export const Info = styled.div`
