@@ -79,7 +79,7 @@ const Dashboard = ({ user, dataset }) => {
   return (
     <Layout>
       <HeaderBar theme={ THEME }>
-        <h2>{ user ? `${ user.firstName }'s` : "My" } Budget</h2>
+        <h2>{ user ? `${ user.name }'s` : "My" } Budget</h2>
         <Spacer />
         {
           user ?
