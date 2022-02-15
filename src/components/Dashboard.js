@@ -73,7 +73,7 @@ const Dashboard = ({ user, data }) => {
   return (
     <Layout>
       <HeaderBar theme={ THEME }>
-        <h2>{ user ? `${ user.firstName }'s` : "My" } Budget</h2>
+        <h2>{ user ? `${ user.name }'s` : "My" } Budget</h2>
         <Spacer />
         <Link to="/profile">
           <IconButton color="inherit"><span className="material-icons">person</span></IconButton>
