@@ -3,7 +3,7 @@ import { useContext, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import SaveButton from "solid-core/dist/components/SaveButton";
 import { HeaderBar, Spacer } from "solid-core/dist/components/styled";
-import { loadThing, nameFilter, SaveState } from "solid-core/dist/pods";
+import { loadAllByName, loadByName, SaveState } from "solid-core/dist/pods";
 import styled from "styled-components";
 import { AppTheme, THEME } from "../util";
 import Accounts from "./accounts/Accounts";
@@ -26,44 +26,11 @@ const Dashboard = ({ user, data }) => {
 
   useEffect(() => {
     if (!data) return;
-    loadAccounts(data)
-      .then(setAccounts)
-    loadBuckets(data)
-      .then(setBuckets)
-    loadBills(data)
-      .then(setBills)
-
-    let settingsThing = data.find(nameFilter('settings'));
-    if (settingsThing) loadThing(settingsThing.url, settingsStruct).then(setSettings)
-
+    setAccounts(loadAllByName(data, 'account', accountStruct))
+    setBuckets(loadAllByName(data, 'bucket', bucketStruct))
+    setBills(loadAllByName(data, 'bill', billStruct))
+    setSettings(loadByName(data, 'settings', settingsStruct))
   }, [data])
-
-  async function loadAccounts(things) {
-    // GET ALL ACCOUNT DATA
-    return await Promise.all(
-      things
-        .filter(nameFilter('account'))
-        .map(t => loadThing(t.url, accountStruct))
-    );
-  }
-
-  async function loadBuckets(things) {
-    // GET ALL BUCKET DATA
-    return await Promise.all(
-      things
-        .filter(nameFilter('bucket'))
-        .map(t => loadThing(t.url, bucketStruct))
-    );
-  }
-
-  async function loadBills(things) {
-    // GET ALL BILL DATA
-    return await Promise.all(
-      things
-        .filter(nameFilter('bill'))
-        .map(t => loadThing(t.url, billStruct))
-    );
-  }
 
   function updateAccount(acc) {
     let i = accounts.findIndex(a => a.thing.url === acc.thing.url)

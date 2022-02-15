@@ -4,7 +4,6 @@ import {
   Main,
   appLogin,
   getDomain,
-  getThings,
   loadDataset,
   loadThing,
   save,
@@ -26,7 +25,7 @@ function App() {
 
   const [err, setError] = useState();
   const [user, setUser] = useState();
-  const [things, setThings] = useState();
+  const [dataset, setDataset] = useState();
   const [queue, updateQueue] = useState([]);
   // PROFILE STATE
   const [profile, setProfile] = useState();
@@ -67,9 +66,7 @@ function App() {
     if (profile) {
       // LOAD BUDGET DATASET
       loadDataset(getDomain(user) + "/budget")
-        .then(data => {
-          setThings(getThings(data))
-        });
+        .then(setDataset);
     }
   }, [profile, user])
 
@@ -80,7 +77,7 @@ function App() {
           <Main>
             <Router>
               <Routes>
-                <Route path="/" element={ <Dashboard data={ things } user={ profile } /> } />
+                <Route path="/" element={ <Dashboard data={ dataset } user={ profile } /> } />
                 <Route path="/profile"
                   element={
                     <SaveState.Consumer>
