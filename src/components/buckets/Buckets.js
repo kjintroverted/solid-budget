@@ -93,5 +93,4 @@ export default Buckets;
 
 const Container = styled.div`
   width: 90%;
-  max-width: 350px;
 `

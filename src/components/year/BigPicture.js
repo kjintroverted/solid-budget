@@ -89,7 +89,7 @@ const BigPicture = ({ settings, bills }) => {
   }
 
   return (
-    <Pane>
+    <Pane width='100%'>
       <Card>
         <CardHeader>BigPicture</CardHeader>
         <Divider theme={ THEME } />

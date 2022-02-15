@@ -180,7 +180,7 @@ const BillSchedule = ({ savedSettings, billData, account }) => {
 
   // RENDER ==================================
   return (
-    <Pane>
+    <Pane width='100%'>
       <Card>
         <Row align="center">
           <CardHeader>Bill Schedule</CardHeader>

@@ -13,7 +13,7 @@ const Notes = () => {
   }, []);
 
   return (
-    <Pane width="500px">
+    <Pane width="100%">
       <Row align="center">
         <CardHeader>Notes</CardHeader>
         <Spacer />

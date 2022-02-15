@@ -75,9 +75,8 @@ const Layout = styled.div`
 
 const Content = styled.div`
   background: ${ THEME.light };
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 400px));
+  justify-content: center; 
   grid-area: main;
 `

@@ -65,7 +65,7 @@ const Accounts = ({ accountData, bucketData, onUpdate }) => {
   }
 
   return (
-    <Pane>
+    <Pane width='100%'>
       <Card>
         <Row align="center">
           <CardHeader>Accounts</CardHeader>
