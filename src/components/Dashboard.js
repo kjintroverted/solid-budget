@@ -9,7 +9,6 @@ import { AppTheme, THEME } from "../util";
 import Accounts from "./accounts/Accounts";
 import { accountStruct } from "./accounts/accountStruct";
 import { bucketStruct } from "./buckets/bucketStruct";
-import Notes from "./notes/Notes";
 import BillSchedule from "./schedule/BillSchedule";
 import { billStruct } from "./schedule/billStruct";
 import { settingsStruct } from "./schedule/settingsStruct";
@@ -54,7 +53,6 @@ const Dashboard = ({ user, data }) => {
           billData={ bills }
           savedSettings={ settings } />
         { settings && <BigPicture bills={ bills } settings={ settings } /> }
-        <Notes />
       </Content>
       <SaveButton ui={ mui } save={ saveFromQ } queue={ queue } />
     </Layout>

@@ -8,6 +8,7 @@ import BalanceInput from "../BalanceInput";
 import Buckets from "../buckets/Buckets";
 import AccountForm from "./AccountForm";
 import { accountStruct } from "./accountStruct";
+import Notes from '../notes/Notes'
 
 const Accounts = ({ accountData, bucketData, onUpdate }) => {
 
@@ -124,6 +125,7 @@ const Accounts = ({ accountData, bucketData, onUpdate }) => {
         }
       </Card>
       <Buckets accounts={ accounts } bucketData={ bucketData } onUpdate={ sortBuckets } />
+      <Notes />
     </Pane >
   )
 }
