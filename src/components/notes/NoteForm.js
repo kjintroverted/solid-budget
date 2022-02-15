@@ -12,7 +12,7 @@ const ACTION_TYPES = {
 const NoteForm = ({ onSubmit }) => {
 
   const THEME = useContext(AppTheme)
-  const [note, updateNote] = useState({});
+  const [note, updateNote] = useState({ actionType: ACTION_TYPES.NONE });
 
   function handleChange(field) {
     return e => {
@@ -27,7 +27,7 @@ const NoteForm = ({ onSubmit }) => {
       <Input onChange={ handleChange("text") } placeholder="Take a note." />
       <FormControl>
         <InputLabel>Action</InputLabel>
-        <Select value={ note.actionType || "NONE" } label="Action" onChange={ handleChange("actionType") }>
+        <Select value={ note.actionType } label="Action" onChange={ handleChange("actionType") }>
           {
             Object.entries(ACTION_TYPES).map(([_, value]) => <MenuItem key={ value } value={ value }>{ value }</MenuItem>)
           }
