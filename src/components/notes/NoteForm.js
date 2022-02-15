@@ -1,6 +1,6 @@
 import { Button, FormControl, Input, InputLabel, MenuItem, Select } from "@material-ui/core"
 import { useContext, useState } from "react";
-import { Column, Divider, CardHeader } from "solid-core/dist/components/styled";
+import { Column, Divider, CardHeader, Spacer } from "solid-core/dist/components/styled";
 import { AppTheme } from "../../util";
 
 const ACTION_TYPES = {
@@ -21,7 +21,7 @@ const NoteForm = ({ onSubmit }) => {
   }
 
   return (
-    <Column>
+    <Column width='95%'>
       <CardHeader>New Note</CardHeader>
       <Divider theme={ THEME } />
       <Input onChange={ handleChange("text") } placeholder="Take a note." />
@@ -33,7 +33,9 @@ const NoteForm = ({ onSubmit }) => {
           }
         </Select>
       </FormControl>
+      <Spacer height='1em' />
       <Button onClick={ () => onSubmit(note) } variant="outlined" color="secondary">Add</Button>
+      <Spacer height='.5em' />
     </Column>
   )
 }
