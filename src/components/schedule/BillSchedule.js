@@ -216,9 +216,9 @@ export default BillSchedule;
 
 const ScheduleRow = styled.div`
   display: flex;
-  border-bottom: solid 1px whitesmoke;
+  border-bottom: solid 1px ${ THEME.dark }44;
   padding: 5px;
-  border-radius: 4px;
+  border-radius: 3px;
   &.paid {
     opacity: .5;
   }
