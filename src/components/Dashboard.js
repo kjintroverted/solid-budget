@@ -74,7 +74,7 @@ const Layout = styled.div`
 const Content = styled.div`
   background: ${ THEME.light };
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 400px));
+  grid-template-columns: repeat(auto-fit, minmax(300px, 400px));
   justify-content: center; 
   grid-area: main;
 `
