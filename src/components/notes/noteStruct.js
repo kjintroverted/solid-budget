@@ -9,10 +9,10 @@ export const notebookStruct = {
   }
 }
 
-const note = {
-  text: "Message text.",
-  actionType: "TRAN/UP",
-  account: "url",
-  target: "url",
-  recurring: false
-}
+// const note = {
+//   text: "Message text.",
+//   actionType: "TRAN/UP",
+//   account: "url",
+//   target: "url",
+//   recurring: false
+// }

@@ -1,14 +1,16 @@
 import { IconButton } from "@material-ui/core";
 import { useContext, useEffect, useState } from "react";
-import { CardHeader, Pane, Row, Spacer } from "solid-core/dist/components/styled";
-import { initThing, loadByName, SaveState } from "solid-core/dist/pods";
+import { Card, CardHeader, Pane, Row, Spacer } from "solid-core/dist/components/styled";
+import { addToUpdateQueue, initThing, loadByName, SaveState, setAllAttr } from "solid-core/dist/pods";
+import styled from "styled-components";
+import { THEME } from "../../util";
 import NoteForm from "./NoteForm";
 import { notebookStruct } from './noteStruct'
 
 
 const Notes = () => {
 
-  const { dataset } = useContext(SaveState)
+  const { dataset, updateQueue, queue } = useContext(SaveState)
   const [notebook, updateNotes] = useState({ notes: [] });
   const [isAdding, setIsAdding] = useState(false);
 
@@ -28,6 +30,10 @@ const Notes = () => {
 
   function addNote(note) {
     let updatedBook = { ...notebook, notes: [...notebook.notes, note] }
+    let thing = setAllAttr(updatedBook.thing, updatedBook);
+    updateQueue(addToUpdateQueue(queue, thing))
+    setIsAdding(false)
+    updateNotes({ ...updatedBook, thing })
   }
 
   return (
@@ -40,10 +46,24 @@ const Notes = () => {
         </IconButton>
       </Row>
       {
-        isAdding && <NoteForm onSubmit={ console.log } />
+        isAdding && <NoteForm onSubmit={ addNote } />
+      }
+      {
+        notebook.notes.map(note => (
+          <NoteCard key={ note.text }>
+            { note.text }
+          </NoteCard>
+        ))
       }
     </Pane>
   )
 }
 
 export default Notes;
+
+const NoteCard = styled.div`
+  width: 90%;
+  padding: .5em;
+  border: solid 1px ${ THEME.secondary };
+  border-radius: 3px;
+`
