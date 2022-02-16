@@ -12,7 +12,7 @@ const Buckets = ({ accounts, bucketData, onUpdate }) => {
   const { updateQueue, queue } = useContext(SaveState)
 
   const [isAdding, setIsAdding] = useState(false)
-  const [show, setShow] = useState(true)
+  const [show, setShow] = useState(false)
   const [buckets, updateBuckets] = useState([])
 
   useEffect(() => {
