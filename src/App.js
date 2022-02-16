@@ -71,7 +71,7 @@ function App() {
   }, [profile, user])
 
   return (
-    <SaveState.Provider value={ { queue, updateQueue, saveFromQ } }>
+    <SaveState.Provider value={ { queue, updateQueue, saveFromQ, dataset } }>
       <AppTheme.Provider value={ { ...THEME, mui } }>
         <mui.ThemeProvider theme={ muiTheme }>
           <Main>

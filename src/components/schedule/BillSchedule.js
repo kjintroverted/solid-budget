@@ -59,7 +59,7 @@ const BillSchedule = ({ savedSettings, billData, account }) => {
     if (!settings.thing) {
       thing = await initThing('settings', s, settingsStruct)
     } else {
-      thing = setAllAttr(settings.thing, settingsStruct, s)
+      thing = setAllAttr(settings.thing, s)
       await saveThing(thing)
     }
     updateSettings({ ...s, thing })
