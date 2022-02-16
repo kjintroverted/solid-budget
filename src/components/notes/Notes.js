@@ -1,6 +1,6 @@
 import { IconButton } from "@material-ui/core";
 import { useContext, useEffect, useState } from "react";
-import { Card, CardHeader, Pane, Row, Spacer } from "solid-core/dist/components/styled";
+import { CardHeader, Pane, Row, Spacer } from "solid-core/dist/components/styled";
 import { addToUpdateQueue, initThing, loadByName, SaveState, setAllAttr } from "solid-core/dist/pods";
 import styled from "styled-components";
 import { THEME } from "../../util";
