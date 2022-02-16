@@ -18,8 +18,8 @@ const Notes = () => {
     if (!dataset) return;
     let data = loadByName(dataset, 'notes', notebookStruct);
     if (!data) {
+      debugger
       (async function () {
-        debugger
         let data = await initThing('notes', { notes: [] }, notebookStruct)
         updateNotes(data)
       })()
@@ -66,4 +66,5 @@ const NoteCard = styled.div`
   padding: .5em;
   border: solid 1px ${ THEME.secondary };
   border-radius: 3px;
+  margin-bottom: .5em;
 `
