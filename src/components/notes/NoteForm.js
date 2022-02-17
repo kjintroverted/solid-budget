@@ -1,6 +1,6 @@
 import { Button, FormControl, Input, InputLabel, MenuItem, Select } from "@material-ui/core"
 import { useContext, useState } from "react";
-import { Column, Divider, CardHeader, Spacer } from "solid-core/dist/components/styled";
+import { Column, Divider, CardHeader, Spacer, Row } from "solid-core/dist/components/styled";
 import { AppTheme } from "../../util";
 
 const ACTION_TYPES = {
@@ -14,9 +14,9 @@ const NoteForm = ({ onSubmit }) => {
   const THEME = useContext(AppTheme)
   const [note, updateNote] = useState({ actionType: ACTION_TYPES.NONE });
 
-  function handleChange(field) {
+  function handleChange(field, numeric) {
     return e => {
-      updateNote({ ...note, [field]: e.target.value })
+      updateNote({ ...note, [field]: numeric ? +e.target.value : e.target.value })
     }
   }
 
@@ -25,14 +25,21 @@ const NoteForm = ({ onSubmit }) => {
       <CardHeader>New Note</CardHeader>
       <Divider theme={ THEME } />
       <Input onChange={ handleChange("text") } placeholder="Take a note." />
-      <FormControl>
-        <InputLabel>Action</InputLabel>
-        <Select value={ note.actionType } label="Action" onChange={ handleChange("actionType") }>
-          {
-            Object.entries(ACTION_TYPES).map(([_, value]) => <MenuItem key={ value } value={ value }>{ value }</MenuItem>)
-          }
-        </Select>
-      </FormControl>
+      <Row>
+        <FormControl>
+          <InputLabel>Action</InputLabel>
+          <Select value={ note.actionType } label="Action" onChange={ handleChange("actionType") }>
+            {
+              Object.entries(ACTION_TYPES).map(([_, value]) => <MenuItem key={ value } value={ value }>{ value }</MenuItem>)
+            }
+          </Select>
+        </FormControl>
+        <Spacer />
+        {
+          note.actionType !== ACTION_TYPES.NONE &&
+          <Input onChange={ handleChange('value', true) } type="number" placeholder="value" />
+        }
+      </Row>
       <Spacer height='1em' />
       <Button onClick={ () => onSubmit(note) } variant="outlined" color="secondary">Add</Button>
       <Spacer height='.5em' />

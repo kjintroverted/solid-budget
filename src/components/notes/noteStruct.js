@@ -12,6 +12,7 @@ export const notebookStruct = {
 // const note = {
 //   text: "Message text.",
 //   actionType: "TRAN/UP",
+//   value: number,
 //   account: "url",
 //   target: "url",
 //   recurring: false
