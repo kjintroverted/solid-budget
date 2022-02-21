@@ -1,18 +1,29 @@
 import { Button, FormControl, Input, InputLabel, MenuItem, Select } from "@material-ui/core"
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Column, Divider, CardHeader, Spacer, Row } from "solid-core/dist/components/styled";
+import { loadAllByName } from "solid-core/dist/pods";
 import { AppTheme } from "../../util";
+import { accountStruct } from "../accounts/accountStruct";
+import { bucketStruct } from "../buckets/bucketStruct";
 
-const ACTION_TYPES = {
+export const ACTION_TYPES = {
   NONE: "NONE",
   UPDATE: "UPDATE",
   TRANSFER: "TRANSFER"
 }
 
-const NoteForm = ({ onSubmit }) => {
+const NoteForm = ({ dataset, onSubmit }) => {
 
   const THEME = useContext(AppTheme)
   const [note, updateNote] = useState({ actionType: ACTION_TYPES.NONE });
+  const [accounts, updateAccounts] = useState([]);
+
+  useEffect(() => {
+    if (!dataset) return
+    let bank = loadAllByName(dataset, 'account', accountStruct);
+    let buckets = loadAllByName(dataset, 'bucket', bucketStruct);
+    updateAccounts([...bank, ...buckets])
+  }, [dataset])
 
   function handleChange(field, numeric) {
     return e => {
@@ -40,6 +51,20 @@ const NoteForm = ({ onSubmit }) => {
           <Input onChange={ handleChange('value', true) } type="number" placeholder="value" />
         }
       </Row>
+      {
+        note.actionType !== ACTION_TYPES.NONE
+        &&
+        <Row>
+          <FormControl fullWidth>
+            <InputLabel>Account</InputLabel>
+            <Select value={ note.account || "" } label="Account" onChange={ handleChange('account') }>
+              {
+                accounts.map((a) => <MenuItem key={ a.thing.url } value={ a.thing.url }>{ a.title || a.name }</MenuItem>)
+              }
+            </Select>
+          </FormControl>
+        </Row>
+      }
       <Spacer height='1em' />
       <Button onClick={ () => onSubmit(note) } variant="outlined" color="secondary">Add</Button>
       <Spacer height='.5em' />

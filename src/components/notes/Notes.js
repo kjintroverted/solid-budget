@@ -4,7 +4,7 @@ import { CardHeader, Pane, Row, Spacer } from "solid-core/dist/components/styled
 import { addToUpdateQueue, initThing, loadByName, SaveState, setAllAttr } from "solid-core/dist/pods";
 import styled from "styled-components";
 import { THEME } from "../../util";
-import NoteForm from "./NoteForm";
+import NoteForm, { ACTION_TYPES } from "./NoteForm";
 import { notebookStruct } from './noteStruct'
 
 
@@ -43,9 +43,16 @@ const Notes = () => {
     updateNotes({ ...updatedBook, thing })
   }
 
+  function updateAccount(accountURL, value) {
+    console.log('UPDATING', accountURL, value);
+  }
+
   function complete(i) {
     return () => {
-      removeNote(i)
+      let note = notebook.notes[i]
+      if (note.actionType === ACTION_TYPES.UPDATE) updateAccount(note.account, note.value)
+      // else if (note.actionType === ACTION_TYPES.TRANSFER) transfer(note.account, note.target, note.value)
+      // removeNote(i)
     }
   }
 
@@ -59,7 +66,7 @@ const Notes = () => {
         </IconButton>
       </Row>
       {
-        isAdding && <NoteForm onSubmit={ addNote } />
+        isAdding && <NoteForm onSubmit={ addNote } dataset={ dataset } />
       }
       {
         notebook.notes.map((note, i) => (
@@ -67,7 +74,7 @@ const Notes = () => {
             <Row align='center'>
               { note.text }
               <Spacer />
-              <Button color='secondary' onClick={ complete(i) }>Done</Button>
+              <Button color='secondary' onClick={ complete(i) }>{ note.actionType === ACTION_TYPES.NONE ? 'Done' : note.actionType }</Button>
             </Row>
           </NoteCard>
         ))
