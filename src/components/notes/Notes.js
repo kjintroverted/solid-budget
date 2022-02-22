@@ -4,11 +4,12 @@ import { CardHeader, Pane, Row, Spacer } from "solid-core/dist/components/styled
 import { addToUpdateQueue, initThing, loadByName, SaveState, setAllAttr } from "solid-core/dist/pods";
 import styled from "styled-components";
 import { THEME } from "../../util";
+import { accountStruct } from "../accounts/accountStruct";
 import NoteForm, { ACTION_TYPES } from "./NoteForm";
 import { notebookStruct } from './noteStruct'
 
 
-const Notes = () => {
+const Notes = (update) => {
 
   const { dataset, updateQueue, queue } = useContext(SaveState)
   const [notebook, updateNotes] = useState({ notes: [] });
@@ -45,6 +46,11 @@ const Notes = () => {
 
   function updateAccount(accountURL, value) {
     console.log('UPDATING', accountURL, value);
+    let account = loadByName(dataset, accountURL, accountStruct)
+    account.value += value;
+    let thing = setAllAttr(account.thing, account);
+    update({ ...account, thing })
+    updateQueue(addToUpdateQueue(queue, thing))
   }
 
   function complete(i) {
