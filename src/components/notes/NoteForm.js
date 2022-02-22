@@ -63,6 +63,18 @@ const NoteForm = ({ dataset, onSubmit }) => {
               }
             </Select>
           </FormControl>
+          {
+            note.actionType === ACTION_TYPES.TRANSFER
+            &&
+            <FormControl fullWidth>
+              <InputLabel>Account</InputLabel>
+              <Select value={ note.target || "" } label="Target" onChange={ handleChange('target') }>
+                {
+                  accounts.map((a) => <MenuItem key={ a.thing.url } value={ a.thing.url }>{ a.title || a.name }</MenuItem>)
+                }
+              </Select>
+            </FormControl>
+          }
         </Row>
       }
       <Spacer height='1em' />

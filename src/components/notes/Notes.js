@@ -9,7 +9,7 @@ import NoteForm, { ACTION_TYPES } from "./NoteForm";
 import { notebookStruct } from './noteStruct'
 
 
-const Notes = (update) => {
+const Notes = () => {
 
   const { dataset, updateQueue, queue } = useContext(SaveState)
   const [notebook, updateNotes] = useState({ notes: [] });
@@ -49,16 +49,19 @@ const Notes = (update) => {
     let account = loadByName(dataset, accountURL, accountStruct)
     account.value += value;
     let thing = setAllAttr(account.thing, account);
-    update({ ...account, thing })
     updateQueue(addToUpdateQueue(queue, thing))
   }
 
   function complete(i) {
     return () => {
       let note = notebook.notes[i]
-      if (note.actionType === ACTION_TYPES.UPDATE) updateAccount(note.account, note.value)
-      // else if (note.actionType === ACTION_TYPES.TRANSFER) transfer(note.account, note.target, note.value)
-      // removeNote(i)
+      if (note.actionType === ACTION_TYPES.UPDATE) {
+        updateAccount(note.account, note.value)
+      } else if (note.actionType === ACTION_TYPES.TRANSFER) {
+        updateAccount(note.account, note.value * -1)
+        updateAccount(note.target, note.value)
+      }
+      removeNote(i)
     }
   }
 
