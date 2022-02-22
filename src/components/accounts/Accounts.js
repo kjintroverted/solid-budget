@@ -34,7 +34,7 @@ const Accounts = () => {
     )
   }, [dataset])
 
-  useEffect(() => setAccounts(accounts), [accounts])
+  useEffect(() => setAccounts(accounts), [accounts, setAccounts])
 
   async function addAccount(acc) {
     setIsAdding(false)
