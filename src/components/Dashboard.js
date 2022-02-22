@@ -27,7 +27,7 @@ const Dashboard = ({ user }) => {
       <Content>
         <Accounts />
         <BillSchedule />
-        {/* { settings && <BigPicture bills={ bills } settings={ settings } /> } */ }
+        <BigPicture />
       </Content>
       <SaveButton ui={ mui } save={ saveFromQ } queue={ queue } />
     </Layout>

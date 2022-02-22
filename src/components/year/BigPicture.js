@@ -1,7 +1,10 @@
-import { useState } from "react"
+import { useContext, useEffect, useState } from "react"
 import { Card, CardHeader, Column, Divider, Icon, Pane, Row, Spacer, Title } from "solid-core/dist/components/styled"
+import { loadAllByName, loadByName, SaveState } from "solid-core/dist/pods"
 import styled from "styled-components"
 import { getDebitBefore, getNextPayDate, THEME, Credit, Debit, Info } from "../../util"
+import { billStruct } from "../schedule/billStruct"
+import { settingsStruct } from "../schedule/settingsStruct"
 
 const MONTHS = [
   "January",
@@ -18,9 +21,20 @@ const MONTHS = [
   "December"
 ]
 
-const BigPicture = ({ settings, bills }) => {
+const BigPicture = () => {
 
+  const { dataset } = useContext(SaveState);
+  const [settings, updateSettings] = useState(null);
+  const [bills, updateBills] = useState([]);
   const [now] = useState(new Date());
+
+  useEffect(() => {
+    if (!dataset) return
+    updateSettings(loadByName(dataset, 'settings', settingsStruct))
+    updateBills(loadAllByName(dataset, 'bill', billStruct))
+  }, [dataset]);
+
+  if (!settings) return <></>
 
   function getPaydayCount() {
     let counter = {};
