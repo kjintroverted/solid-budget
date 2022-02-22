@@ -13,7 +13,7 @@ import { bucketStruct } from "../buckets/bucketStruct";
 
 const Accounts = () => {
 
-  const { queue, updateQueue, dataset, setDataset } = useContext(SaveState);
+  const { queue, updateQueue, dataset, setDataset, setAccounts } = useContext(SaveState);
 
   const [isAdding, setIsAdding] = useState(false)
   const [accounts, updateAccounts] = useState([])
@@ -38,6 +38,7 @@ const Accounts = () => {
     setIsAdding(false)
     let { dataset, saved } = await initThing('account', acc, accountStruct)
     updateAccounts([...accounts, { ...acc, saved }])
+    setAccounts([...accounts, { ...acc, saved }])
     setDataset(dataset)
   }
 
@@ -48,6 +49,7 @@ const Accounts = () => {
       if (thing) updateQueue(addToUpdateQueue(queue, thing))
       else thing = acc.thing
       updateAccounts([...accounts.slice(0, i), { ...acc, [field]: value, thing }, ...accounts.slice(i + 1)])
+      setAccounts([...accounts.slice(0, i), { ...acc, [field]: value, thing }, ...accounts.slice(i + 1)])
     }
   }
 

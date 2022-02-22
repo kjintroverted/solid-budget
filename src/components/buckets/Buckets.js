@@ -25,10 +25,11 @@ const Buckets = ({ onUpdate }) => {
 
   async function addBucket(b) {
     setIsAdding(false)
-    let thing = await initThing('bucket', b, bucketStruct)
+    let { dataset, thing } = await initThing('bucket', b, bucketStruct)
     b = { ...b, thing }
     updateBuckets(b.pinned ? [b, ...buckets] : [...buckets, b])
     onUpdate([...buckets, b])
+    setDataset(dataset)
   }
 
   async function deleteBucket(bucket) {
