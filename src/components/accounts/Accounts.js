@@ -34,11 +34,12 @@ const Accounts = () => {
     )
   }, [dataset])
 
+  useEffect(() => setAccounts(accounts), [accounts])
+
   async function addAccount(acc) {
     setIsAdding(false)
     let { dataset, saved } = await initThing('account', acc, accountStruct)
     updateAccounts([...accounts, { ...acc, saved }])
-    setAccounts([...accounts, { ...acc, saved }])
     setDataset(dataset)
   }
 
@@ -49,7 +50,6 @@ const Accounts = () => {
       if (thing) updateQueue(addToUpdateQueue(queue, thing))
       else thing = acc.thing
       updateAccounts([...accounts.slice(0, i), { ...acc, [field]: value, thing }, ...accounts.slice(i + 1)])
-      setAccounts([...accounts.slice(0, i), { ...acc, [field]: value, thing }, ...accounts.slice(i + 1)])
     }
   }
 

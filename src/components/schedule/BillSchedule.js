@@ -1,7 +1,7 @@
 import { IconButton } from "@material-ui/core";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Card, CardHeader, Column, Divider, Icon, Pane, Row, Spacer } from "solid-core/dist/components/styled"
-import { deleteThing, initThing, saveThing, setAllAttr } from "solid-core/dist/pods";
+import { deleteThing, initThing, loadAllByName, loadByName, SaveState, saveThing, setAllAttr } from "solid-core/dist/pods";
 import styled from "styled-components";
 import { getDebitBefore, getNextPayDate, THEME } from "../../util"
 import BillForm from "./BillForm";
@@ -9,22 +9,27 @@ import { billStruct } from "./billStruct";
 import SettingsForm from "./SettingsForm";
 import { settingsStruct } from "./settingsStruct";
 
-const BillSchedule = ({ savedSettings, billData, account }) => {
+const BillSchedule = () => {
+
+  const { dataset, setDataset, accounts } = useContext(SaveState)
 
   const [isAdding, setIsAdding] = useState(false)
   const [danger, setDanger] = useState(false)
   const [settings, updateSettings] = useState({})
   const [editSettings, setEditSettings] = useState(false)
   const [bills, updateBills] = useState([]);
+  const [account, updateAccount] = useState(null);
   const [now] = useState(new Date());
 
   useEffect(() => {
-    if (billData) updateBills(billData.sort((a, b) => +a.date - +b.date))
-  }, [billData])
+    if (!dataset) return
+    updateBills(loadAllByName(dataset, 'bill', billStruct).sort((a, b) => +a.date - +b.date))
+    updateSettings(loadByName(dataset, 'settings', settingsStruct))
+  }, [dataset])
 
   useEffect(() => {
-    if (savedSettings) updateSettings(savedSettings)
-  }, [savedSettings])
+    if (accounts) updateAccount(accounts.find(a => a.primary))
+  }, [accounts])
 
   function toggleBill(b) {
     if (!b.thing) return
@@ -38,31 +43,35 @@ const BillSchedule = ({ savedSettings, billData, account }) => {
 
   async function addBill(bill) {
     setIsAdding(false)
-    let thing = await initThing('bill', bill, billStruct)
+    let { dataset, thing } = await initThing('bill', bill, billStruct)
     updateBills(
       [...bills, { ...bill, thing }]
         .sort((a, b) => +a.date - +b.date)
     )
+    setDataset(dataset)
   }
 
   async function deleteBill(b) {
     let i = bills.findIndex(bill => bill.thing.url === b.thing.url)
-    await deleteThing(b.thing)
+    let { dataset } = await deleteThing(b.thing)
     updateBills([
       ...bills.slice(0, i),
       ...bills.slice(i + 1)
     ])
+    setDataset(dataset)
   }
 
   async function saveSettings(s) {
-    let thing;
+    debugger
+    let thing, dataset;
     if (!settings.thing) {
-      thing = await initThing('settings', s, settingsStruct)
+      ({ dataset, thing } = await initThing('settings', s, settingsStruct))
     } else {
-      thing = setAllAttr(settings.thing, s)
-      await saveThing(thing)
+      thing = setAllAttr(settings.thing, s);
+      ({ dataset, saved: thing } = await saveThing(thing))
     }
     updateSettings({ ...s, thing })
+    setDataset(dataset)
     setEditSettings(false)
   }
 
