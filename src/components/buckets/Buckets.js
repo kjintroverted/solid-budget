@@ -1,23 +1,27 @@
 import { IconButton } from "@material-ui/core"
 import { useContext, useEffect, useState } from "react"
 import { Card, Row, Spacer, CardHeader } from "solid-core/dist/components/styled"
-import { addToUpdateQueue, deleteThing, initThing, SaveState, setAttr } from "solid-core/dist/pods"
+import { addToUpdateQueue, deleteThing, initThing, loadAllByName, SaveState, setAttr } from "solid-core/dist/pods"
 import styled from "styled-components"
+import { accountStruct } from "../accounts/accountStruct"
 import BucketForm from "./BucketForm"
 import { bucketStruct } from "./bucketStruct"
 import BucketView from "./BucketView"
 
-const Buckets = ({ accounts, bucketData, onUpdate }) => {
+const Buckets = ({ onUpdate }) => {
 
-  const { updateQueue, queue } = useContext(SaveState)
+  const { updateQueue, queue, dataset, setDataset } = useContext(SaveState)
 
   const [isAdding, setIsAdding] = useState(false)
   const [show, setShow] = useState(false)
   const [buckets, updateBuckets] = useState([])
+  const [accounts, setAccounts] = useState([])
 
   useEffect(() => {
-    if (bucketData) updateBuckets(bucketData.sort(a => a.pinned ? -1 : 0))
-  }, [bucketData])
+    if (!dataset) return
+    updateBuckets(loadAllByName(dataset, 'bucket', bucketStruct).sort(a => a.pinned ? -1 : 0))
+    setAccounts(loadAllByName(dataset, 'account', accountStruct))
+  }, [dataset])
 
   async function addBucket(b) {
     setIsAdding(false)

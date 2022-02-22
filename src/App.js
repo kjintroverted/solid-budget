@@ -32,8 +32,9 @@ function App() {
   const [edit, toggleEdit] = useState(false);
 
   async function saveFromQ() {
-    await save(queue);
-    updateQueue([])
+    let res = await save(queue);
+    setDataset(res);
+    updateQueue([]);
   }
 
   useEffect(() => {
@@ -71,13 +72,13 @@ function App() {
   }, [profile, user])
 
   return (
-    <SaveState.Provider value={ { queue, updateQueue, saveFromQ, dataset } }>
+    <SaveState.Provider value={ { queue, updateQueue, saveFromQ, dataset, setDataset } }>
       <AppTheme.Provider value={ { ...THEME, mui } }>
         <mui.ThemeProvider theme={ muiTheme }>
           <Main>
             <Router>
               <Routes>
-                <Route path="/" element={ <Dashboard data={ dataset } user={ profile } /> } />
+                <Route path="/" element={ <Dashboard user={ profile } /> } />
                 <Route path="/profile"
                   element={
                     <SaveState.Consumer>

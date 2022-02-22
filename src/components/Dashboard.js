@@ -14,28 +14,10 @@ import { billStruct } from "./schedule/billStruct";
 import { settingsStruct } from "./schedule/settingsStruct";
 import BigPicture from "./year/BigPicture";
 
-const Dashboard = ({ user, data }) => {
+const Dashboard = ({ user }) => {
 
   const { queue, saveFromQ } = useContext(SaveState);
   const { mui } = useContext(AppTheme);
-
-  const [accounts, setAccounts] = useState([])
-  const [buckets, setBuckets] = useState([])
-  const [bills, setBills] = useState([])
-  const [settings, setSettings] = useState(null)
-
-  useEffect(() => {
-    if (!data) return;
-    setAccounts(loadAllByName(data, 'account', accountStruct))
-    setBuckets(loadAllByName(data, 'bucket', bucketStruct))
-    setBills(loadAllByName(data, 'bill', billStruct))
-    setSettings(loadByName(data, 'settings', settingsStruct))
-  }, [data])
-
-  function updateAccount(acc) {
-    let i = accounts.findIndex(a => a.thing.url === acc.thing.url)
-    setAccounts([...accounts.slice(0, i), acc, ...accounts.slice(i + 1)])
-  }
 
   return (
     <Layout>
@@ -47,12 +29,12 @@ const Dashboard = ({ user, data }) => {
         </Link>
       </HeaderBar>
       <Content>
-        <Accounts accountData={ accounts } bucketData={ buckets } onUpdate={ updateAccount } />
-        <BillSchedule
+        <Accounts />
+        {/* <BillSchedule
           account={ accounts.find(a => a.primary) }
           billData={ bills }
           savedSettings={ settings } />
-        { settings && <BigPicture bills={ bills } settings={ settings } /> }
+        { settings && <BigPicture bills={ bills } settings={ settings } /> } */}
       </Content>
       <SaveButton ui={ mui } save={ saveFromQ } queue={ queue } />
     </Layout>
