@@ -19,7 +19,11 @@ const Buckets = ({ onUpdate }) => {
 
   useEffect(() => {
     if (!dataset) return
-    updateBuckets(loadAllByName(dataset, 'bucket', bucketStruct).sort(a => a.pinned ? -1 : 0))
+    updateBuckets(
+      loadAllByName(dataset, 'bucket', bucketStruct)
+        .sort((a, b) => a.name.localeCompare(b.name))
+        .sort(a => a.pinned ? -1 : 0)
+    )
     setAccounts(loadAllByName(dataset, 'account', accountStruct))
   }, [dataset])
 
