@@ -112,13 +112,15 @@ const Accounts = () => {
               }
               {
                 (a.details && buckets && buckets[a.title]) &&
-                buckets[a.title].map(b => (
-                  <AccountItem key={ b.thing.url }>
-                    <p>{ b.name }</p>
-                    <Spacer />
-                    <p>{ b.balance }</p>
-                  </AccountItem>
-                ))
+                buckets[a.title]
+                  .sort((a, b) => a.name.localeCompare(b.name))
+                  .map(b => (
+                    <AccountItem key={ b.thing.url }>
+                      <p>{ b.name }</p>
+                      <Spacer />
+                      <p>{ b.balance }</p>
+                    </AccountItem>
+                  ))
               }
               <Divider thin={ true } theme={ THEME } />
             </span>
