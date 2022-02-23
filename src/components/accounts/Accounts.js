@@ -1,43 +1,46 @@
 import { Badge, IconButton } from "@material-ui/core";
 import { useContext, useEffect, useState } from "react";
 import { Card, Pane, Row, Spacer, Title, CardHeader, Divider, Icon } from "solid-core/dist/components/styled";
-import { initThing, setAttr, addToUpdateQueue, SaveState } from "solid-core/dist/pods";
+import { initThing, setAttr, addToUpdateQueue, SaveState, loadAllByName } from "solid-core/dist/pods";
 import styled from "styled-components";
 import { THEME } from "../../util";
 import BalanceInput from "../BalanceInput";
 import Buckets from "../buckets/Buckets";
 import AccountForm from "./AccountForm";
 import { accountStruct } from "./accountStruct";
+import Notes from '../notes/Notes'
+import { bucketStruct } from "../buckets/bucketStruct";
 
-const Accounts = ({ accountData, bucketData, onUpdate }) => {
+const Accounts = () => {
 
-  const { queue, updateQueue } = useContext(SaveState);
+  const { queue, updateQueue, dataset, setDataset, setAccounts } = useContext(SaveState);
 
   const [isAdding, setIsAdding] = useState(false)
   const [accounts, updateAccounts] = useState([])
   const [buckets, updateBuckets] = useState([])
 
   useEffect(() => {
-    if (accountData) updateAccounts(
-      accountData
+    if (!dataset) return
+    updateAccounts(
+      loadAllByName(dataset, 'account', accountStruct)
         .map(a => ({ ...a, details: !!a.details }))
         .sort((a) => a.primary ? -1 : 0))
-  }, [accountData])
+    updateBuckets(
+      loadAllByName(dataset, 'bucket', bucketStruct)
+        .reduce(
+          (prev, curr) => (
+            { ...prev, [curr.account]: prev[curr.account] ? [...prev[curr.account], curr] : [curr] }
+          ), {})
+    )
+  }, [dataset])
 
-  useEffect(() => {
-    if (bucketData) {
-      let bucketObject = bucketData.reduce(
-        (prev, curr) => (
-          { ...prev, [curr.account]: prev[curr.account] ? [...prev[curr.account], curr] : [curr] }
-        ), {})
-      updateBuckets(bucketObject)
-    }
-  }, [bucketData])
+  useEffect(() => setAccounts(accounts), [accounts, setAccounts])
 
   async function addAccount(acc) {
     setIsAdding(false)
-    let thing = await initThing('account', acc, accountStruct)
-    updateAccounts([...accounts, { ...acc, thing }])
+    let { dataset, saved } = await initThing('account', acc, accountStruct)
+    updateAccounts([...accounts, { ...acc, saved }])
+    setDataset(dataset)
   }
 
   function updateAccount(acc, field) {
@@ -46,7 +49,6 @@ const Accounts = ({ accountData, bucketData, onUpdate }) => {
       let thing = setAttr(acc.thing, accountStruct[field], value)
       if (thing) updateQueue(addToUpdateQueue(queue, thing))
       else thing = acc.thing
-      onUpdate({ ...acc, [field]: value, thing })
       updateAccounts([...accounts.slice(0, i), { ...acc, [field]: value, thing }, ...accounts.slice(i + 1)])
     }
   }
@@ -65,7 +67,7 @@ const Accounts = ({ accountData, bucketData, onUpdate }) => {
   }
 
   return (
-    <Pane>
+    <Pane width='100%'>
       <Card>
         <Row align="center">
           <CardHeader>Accounts</CardHeader>
@@ -123,7 +125,8 @@ const Accounts = ({ accountData, bucketData, onUpdate }) => {
           ))
         }
       </Card>
-      <Buckets accounts={ accounts } bucketData={ bucketData } onUpdate={ sortBuckets } />
+      <Buckets onUpdate={ sortBuckets } />
+      <Notes />
     </Pane >
   )
 }

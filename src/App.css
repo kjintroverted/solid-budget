@@ -51,3 +51,7 @@ input[type="number"] {
 button span {
   margin: 0 !important;
 }
+
+span.MuiBadge-badge.MuiBadge-anchorOriginTopRightRectangle.MuiBadge-colorSecondary {
+  right: 10px;
+}
