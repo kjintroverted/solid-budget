@@ -4,7 +4,6 @@ import {
   Main,
   appLogin,
   getDomain,
-  getThings,
   loadDataset,
   loadThing,
   save,
@@ -25,16 +24,18 @@ const muiTheme = newTheme(THEME)
 function App() {
 
   const [err, setError] = useState();
-  const [user, setUser] = useState();
-  const [things, setThings] = useState();
+  const [dataset, setDataset] = useState();
+  const [accounts, setAccounts] = useState();
   const [queue, updateQueue] = useState([]);
   // PROFILE STATE
+  const [user, setUser] = useState();
   const [profile, setProfile] = useState();
   const [edit, toggleEdit] = useState(false);
 
   async function saveFromQ() {
-    await save(queue);
-    updateQueue([])
+    let res = await save(queue);
+    setDataset(res);
+    updateQueue([]);
   }
 
   useEffect(() => {
@@ -67,20 +68,26 @@ function App() {
     if (profile) {
       // LOAD BUDGET DATASET
       loadDataset(getDomain(user) + "/budget")
-        .then(data => {
-          setThings(getThings(data))
-        });
+        .then(setDataset);
     }
   }, [profile, user])
 
   return (
-    <SaveState.Provider value={ { queue, updateQueue, saveFromQ } }>
+    <SaveState.Provider value={ {
+      queue,
+      updateQueue,
+      saveFromQ,
+      dataset,
+      setDataset,
+      accounts,
+      setAccounts
+    } }>
       <AppTheme.Provider value={ { ...THEME, mui } }>
         <mui.ThemeProvider theme={ muiTheme }>
           <Main>
             <Router>
               <Routes>
-                <Route path="/" element={ <Dashboard data={ things } user={ profile } /> } />
+                <Route path="/" element={ <Dashboard user={ profile } /> } />
                 <Route path="/profile"
                   element={
                     <SaveState.Consumer>
