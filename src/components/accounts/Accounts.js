@@ -24,7 +24,7 @@ const Accounts = () => {
     updateAccounts(
       loadAllByName(dataset, 'account', accountStruct)
         .map(a => ({ ...a, details: !!a.details }))
-        .sort((a) => a.primary ? -1 : 0))
+        .sort((a, b) => a.primary ? -1 : a.title.localeCompare(b.title)))
     updateBuckets(
       loadAllByName(dataset, 'bucket', bucketStruct)
         .reduce(
