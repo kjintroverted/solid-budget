@@ -24,7 +24,7 @@ const Accounts = () => {
     updateAccounts(
       loadAllByName(dataset, 'account', accountStruct)
         .map(a => ({ ...a, details: !!a.details }))
-        .sort((a) => a.primary ? -1 : 0))
+        .sort((a, b) => a.primary ? -1 : a.title.localeCompare(b.title)))
     updateBuckets(
       loadAllByName(dataset, 'bucket', bucketStruct)
         .reduce(
@@ -112,13 +112,15 @@ const Accounts = () => {
               }
               {
                 (a.details && buckets && buckets[a.title]) &&
-                buckets[a.title].map(b => (
-                  <AccountItem key={ b.thing.url }>
-                    <p>{ b.name }</p>
-                    <Spacer />
-                    <p>{ b.balance }</p>
-                  </AccountItem>
-                ))
+                buckets[a.title]
+                  .sort((a, b) => a.name.localeCompare(b.name))
+                  .map(b => (
+                    <AccountItem key={ b.thing.url }>
+                      <p>{ b.name }</p>
+                      <Spacer />
+                      <p>{ b.balance }</p>
+                    </AccountItem>
+                  ))
               }
               <Divider thin={ true } theme={ THEME } />
             </span>
