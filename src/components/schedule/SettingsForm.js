@@ -1,6 +1,6 @@
 import { Button, Input } from "@material-ui/core"
 import { useEffect, useState } from "react";
-import { Column, Row } from "solid-core/dist/components/styled";
+import { Column, Row, Spacer } from "solid-core/dist/components/styled";
 
 const SettingsForm = ({ onSubmit, savedSettings }) => {
 
@@ -25,6 +25,7 @@ const SettingsForm = ({ onSubmit, savedSettings }) => {
           style={ { flex: "2" } }
           onChange={ handleChange("payday") }
           placeholder="past payday (mm/dd/yyyy)" />
+        <Spacer width='1em' />
         <Input
           value={ settings.paycheck || "" }
           style={ { flex: "1" } }
