@@ -5,6 +5,7 @@ import { addToUpdateQueue, initThing, loadByName, SaveState, setAllAttr } from "
 import styled from "styled-components";
 import { THEME } from "../../util";
 import { accountStruct } from "../accounts/accountStruct";
+import { bucketStruct } from "../buckets/bucketStruct";
 import NoteForm, { ACTION_TYPES } from "./NoteForm";
 import { notebookStruct } from './noteStruct'
 
@@ -40,28 +41,29 @@ const Notes = () => {
   function removeNote(i) {
     let updatedBook = { ...notebook, notes: [...notebook.notes.slice(0, i), ...notebook.notes.slice(i + 1)] }
     let thing = setAllAttr(updatedBook.thing, updatedBook);
-    updateQueue(addToUpdateQueue(queue, thing))
     updateNotes({ ...updatedBook, thing })
+    return thing;
   }
 
   function updateAccount(accountURL, value) {
-    console.log('UPDATING', accountURL, value);
-    let account = loadByName(dataset, accountURL, accountStruct)
-    account.value += value;
-    let thing = setAllAttr(account.thing, account);
-    updateQueue(addToUpdateQueue(queue, thing))
+    let struct = accountURL.indexOf('account') >= 0 ? accountStruct : bucketStruct;
+    let account = loadByName(dataset, accountURL, struct)
+    account.balance = value + +account.balance;
+    return setAllAttr(account.thing, account);
   }
 
   function complete(i) {
     return () => {
       let note = notebook.notes[i]
+      let updates = [];
       if (note.actionType === ACTION_TYPES.UPDATE) {
-        updateAccount(note.account, note.value)
+        updates = [...updates, updateAccount(note.account, note.value)]
       } else if (note.actionType === ACTION_TYPES.TRANSFER) {
-        updateAccount(note.account, note.value * -1)
-        updateAccount(note.target, note.value)
+        updates = [...updates, updateAccount(note.account, note.value * -1)]
+        updates = [...updates, updateAccount(note.target, note.value)]
       }
-      removeNote(i)
+      updates = [...updates, removeNote(i)]
+      updateQueue(updates.reduce((q, thing) => addToUpdateQueue(q, thing), queue))
     }
   }
 
