@@ -1,4 +1,4 @@
-import { IconButton } from "@material-ui/core";
+import { IconButton, Input } from "@material-ui/core";
 import { useState } from "react";
 import { Card, Column, Divider, Row, Spacer, Subtitle, CardHeader } from "solid-core/dist/components/styled";
 import { THEME } from "../../util";
@@ -11,10 +11,18 @@ const BucketView = ({ bucket, onUpdate, updateBalance, onDelete }) => {
   return (
     <Card>
       <Row>
-        <Column>
-          <CardHeader>{ bucket.name }</CardHeader>
-          <Subtitle>{ bucket.account }</Subtitle>
-        </Column>
+        {
+          !editMode ?
+            <Column>
+              <CardHeader>{ bucket.name }</CardHeader>
+              <Subtitle>{ bucket.account }</Subtitle>
+            </Column>
+            :
+            <Column>
+              <Input value={ bucket.name } onChange={ onUpdate(bucket, 'name') } />
+              <Subtitle>{ bucket.account }</Subtitle>
+            </Column>
+        }
         <Spacer />
         <IconButton onClick={ () => setEditMode(!editMode) } color="primary">
           <span className="material-icons">{ editMode ? 'close' : 'edit' }</span>
