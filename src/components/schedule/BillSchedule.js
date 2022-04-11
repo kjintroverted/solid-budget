@@ -180,7 +180,7 @@ const BillSchedule = () => {
       </Info>,
       <Info key="avail-funds">
         <Icon className="material-icons">info</Icon>
-        Available Funds: <b>{ availableFunds }</b>
+        Available Funds: <b>{ asMoney(availableFunds).dollar }</b>
       </Info>
     ]
 
