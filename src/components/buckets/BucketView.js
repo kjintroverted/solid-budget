@@ -1,10 +1,10 @@
-import { IconButton, Input } from "@material-ui/core";
+import { FormControl, IconButton, Input, InputLabel, MenuItem, Select } from "@material-ui/core";
 import { useState } from "react";
 import { Card, Column, Divider, Row, Spacer, Subtitle, CardHeader } from "solid-core/dist/components/styled";
 import { THEME } from "../../util";
 import BalanceInput from "../BalanceInput";
 
-const BucketView = ({ bucket, onUpdate, updateBalance, onDelete }) => {
+const BucketView = ({ bucket, onUpdate, updateBalance, accounts, onDelete }) => {
 
   const [editMode, setEditMode] = useState(false)
 
@@ -20,7 +20,14 @@ const BucketView = ({ bucket, onUpdate, updateBalance, onDelete }) => {
             :
             <Column>
               <Input value={ bucket.name } onChange={ onUpdate(bucket, 'name') } />
-              <Subtitle>{ bucket.account }</Subtitle>
+              <FormControl>
+                <InputLabel>Account</InputLabel>
+                <Select value={ bucket.account || "" } label="Account" onChange={ onUpdate(bucket, "account") }>
+                  {
+                    accounts.map(({ title }) => <MenuItem key={ title } value={ title }>{ title }</MenuItem>)
+                  }
+                </Select>
+              </FormControl>
             </Column>
         }
         <Spacer />
