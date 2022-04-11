@@ -2,6 +2,7 @@ import { FormControl, IconButton, Input, InputLabel, MenuItem, Select } from "@m
 import { useState } from "react";
 import { Card, Column, Divider, Row, Spacer, Subtitle, CardHeader } from "solid-core/dist/components/styled";
 import { THEME } from "../../util";
+import styled from "styled-components";
 import BalanceInput from "../BalanceInput";
 
 const BucketView = ({ bucket, onUpdate, updateBalance, accounts, onDelete }) => {
@@ -15,7 +16,11 @@ const BucketView = ({ bucket, onUpdate, updateBalance, accounts, onDelete }) => 
           !editMode ?
             <Column>
               <CardHeader>{ bucket.name }</CardHeader>
-              <Subtitle>{ bucket.account }</Subtitle>
+              {
+                accounts.some(a => a.title === bucket.account) ?
+                  <Subtitle>{ bucket.account }</Subtitle>
+                  : <Error>No Valid Account</Error>
+              }
             </Column>
             :
             <Column>
@@ -53,3 +58,7 @@ const BucketView = ({ bucket, onUpdate, updateBalance, accounts, onDelete }) => 
 }
 
 export default BucketView;
+
+const Error = styled.p`
+  color: red;
+`
