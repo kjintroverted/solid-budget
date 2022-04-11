@@ -3,7 +3,7 @@ import { useContext, useEffect, useState } from "react";
 import { Card, CardHeader, Column, Divider, Icon, Pane, Row, Spacer } from "solid-core/dist/components/styled"
 import { deleteThing, initThing, loadAllByName, loadByName, SaveState, saveThing, setAllAttr } from "solid-core/dist/pods";
 import styled from "styled-components";
-import { getDebitBefore, getNextPayDate, THEME } from "../../util"
+import { asMoney, getDebitBefore, getNextPayDate, THEME } from "../../util"
 import BillForm from "./BillForm";
 import { billStruct } from "./billStruct";
 import SettingsForm from "./SettingsForm";
@@ -143,7 +143,7 @@ const BillSchedule = () => {
                   <Credit>+{ b.credit }</Credit>
                   : <Debit>({ b.debit })</Debit>
               }
-              { !paid && <p style={ { margin: 0 } }>{ runningBalance }</p> }
+              { !paid && <p style={ { margin: 0 } }>{ asMoney(runningBalance).dollar }</p> }
             </Column>
             {
               (danger && b.debit) &&
