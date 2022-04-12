@@ -171,7 +171,7 @@ const BillSchedule = () => {
     readout = [
       <Display key="op-budget">
         <Icon className="material-icons">info</Icon>
-        Operational Budget: <b>{ availableFunds < minBalance ? availableFunds : minBalance }</b>
+        Available in { account.title }: <b>{ availableFunds < minBalance ? availableFunds : minBalance }</b>
       </Display>,
       ...readout,
       <Info key="next-payday">
@@ -180,7 +180,7 @@ const BillSchedule = () => {
       </Info>,
       <Info key="avail-funds">
         <Icon className="material-icons">info</Icon>
-        Available Funds: <b>{ asMoney(availableFunds).dollar }</b>
+        Available Funds (EOM): <b>{ asMoney(availableFunds).dollar }</b>
       </Info>
     ]
 
