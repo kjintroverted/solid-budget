@@ -1,4 +1,4 @@
-import { Button, Checkbox, FormControlLabel, FormGroup, Input } from "@material-ui/core"
+import { Button, Checkbox, FormControlLabel, Input } from "@material-ui/core"
 import { useState } from "react";
 import { Column, Row, Spacer } from "solid-core/dist/components/styled";
 
