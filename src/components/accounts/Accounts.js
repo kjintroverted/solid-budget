@@ -1,4 +1,4 @@
-import { Badge, IconButton } from "@material-ui/core";
+import { Badge, IconButton, Input } from "@material-ui/core";
 import { useContext, useEffect, useState } from "react";
 import { Card, Pane, Row, Spacer, Title, CardHeader, Divider, Icon } from "solid-core/dist/components/styled";
 import { initThing, setAttr, addToUpdateQueue, SaveState, loadAllByName } from "solid-core/dist/pods";
@@ -16,6 +16,7 @@ const Accounts = () => {
   const { queue, updateQueue, dataset, setDataset, setAccounts } = useContext(SaveState);
 
   const [isAdding, setIsAdding] = useState(false)
+  const [editMode, updateEditMode] = useState(false)
   const [accounts, updateAccounts] = useState([])
   const [buckets, updateBuckets] = useState([])
 
@@ -72,9 +73,15 @@ const Accounts = () => {
         <Row align="center">
           <CardHeader>Accounts</CardHeader>
           <Spacer />
-          <IconButton onClick={ () => setIsAdding(!isAdding) } color="primary">
-            <span className="material-icons">{ isAdding ? 'close' : 'add' }</span>
+          <IconButton onClick={ () => updateEditMode(!editMode) } color="primary">
+            <span className="material-icons">{ editMode ? 'close' : 'edit' }</span>
           </IconButton>
+          {
+            !editMode &&
+            <IconButton onClick={ () => setIsAdding(!isAdding) } color="primary">
+              <span className="material-icons">{ isAdding ? 'close' : 'add' }</span>
+            </IconButton>
+          }
         </Row>
         <Divider theme={ THEME } />
         {
@@ -84,7 +91,11 @@ const Accounts = () => {
           accounts.map(a => (
             <span key={ a.thing.url ? a.thing.url : a.title }>
               <Row>
-                <Title style={ { margin: 0 } }>{ a.title }</Title>
+                {
+                  !editMode ?
+                    <Title style={ { margin: 0 } }>{ a.title }</Title>
+                    : <Input value={ a.title } onChange={ e => updateAccount(a, "title")(e.target.value) } />
+                }
                 {
                   (buckets && buckets[a.title] && !!buckets[a.title].length) &&
                   <Icon theme={ THEME } onClick={ () => updateAccount(a, "details")(!a.details) }>

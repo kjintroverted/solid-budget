@@ -29,6 +29,16 @@ export const Info = styled.div`
   margin-top: .5em;
 `
 
+export function asMoney(value) {
+  let num = +(value);
+  let str = Math.ceil(num * 100) + "";
+  return {
+    dollar: str.slice(0, -2),
+    full: `${ str.slice(0, -2) }.${ str.slice(-2) }`,
+    ceil: () => +str.slice(0, -2) + 1
+  }
+}
+
 export function getNextPayDate(basePayDate, date, inclusive) {
   let dayDiff = Math.floor((date.getTime() - basePayDate.getTime()) / 86400000) % 14;
   return !dayDiff && inclusive ? date.getDate() : date.getDate() + 14 - dayDiff;

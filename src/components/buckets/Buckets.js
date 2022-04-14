@@ -92,7 +92,7 @@ const Buckets = ({ onUpdate }) => {
       }
       {
         show &&
-        buckets.map(b => <BucketView key={ b.thing.url } bucket={ b } onUpdate={ updateBucket } updateBalance={ updateBalance } onDelete={ deleteBucket } />)
+        buckets.map(b => <BucketView key={ b.thing.url } bucket={ b } onUpdate={ updateBucket } accounts={ accounts } updateBalance={ updateBalance } onDelete={ deleteBucket } />)
       }
     </Container>
   )

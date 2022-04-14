@@ -1,20 +1,40 @@
-import { IconButton } from "@material-ui/core";
+import { FormControl, IconButton, Input, InputLabel, MenuItem, Select } from "@material-ui/core";
 import { useState } from "react";
 import { Card, Column, Divider, Row, Spacer, Subtitle, CardHeader } from "solid-core/dist/components/styled";
 import { THEME } from "../../util";
+import styled from "styled-components";
 import BalanceInput from "../BalanceInput";
 
-const BucketView = ({ bucket, onUpdate, updateBalance, onDelete }) => {
+const BucketView = ({ bucket, onUpdate, updateBalance, accounts, onDelete }) => {
 
   const [editMode, setEditMode] = useState(false)
 
   return (
     <Card>
       <Row>
-        <Column>
-          <CardHeader>{ bucket.name }</CardHeader>
-          <Subtitle>{ bucket.account }</Subtitle>
-        </Column>
+        {
+          !editMode ?
+            <Column>
+              <CardHeader>{ bucket.name }</CardHeader>
+              {
+                accounts.some(a => a.title === bucket.account) ?
+                  <Subtitle>{ bucket.account }</Subtitle>
+                  : <Error>No Valid Account</Error>
+              }
+            </Column>
+            :
+            <Column>
+              <Input value={ bucket.name } onChange={ onUpdate(bucket, 'name') } />
+              <FormControl>
+                <InputLabel>Account</InputLabel>
+                <Select value={ bucket.account || "" } label="Account" onChange={ onUpdate(bucket, "account") }>
+                  {
+                    accounts.map(({ title }) => <MenuItem key={ title } value={ title }>{ title }</MenuItem>)
+                  }
+                </Select>
+              </FormControl>
+            </Column>
+        }
         <Spacer />
         <IconButton onClick={ () => setEditMode(!editMode) } color="primary">
           <span className="material-icons">{ editMode ? 'close' : 'edit' }</span>
@@ -38,3 +58,7 @@ const BucketView = ({ bucket, onUpdate, updateBalance, onDelete }) => {
 }
 
 export default BucketView;
+
+const Error = styled.p`
+  color: red;
+`

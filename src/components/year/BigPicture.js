@@ -2,7 +2,7 @@ import { useContext, useEffect, useState } from "react"
 import { Card, CardHeader, Column, Divider, Icon, Pane, Row, Spacer, Title } from "solid-core/dist/components/styled"
 import { loadAllByName, loadByName, SaveState } from "solid-core/dist/pods"
 import styled from "styled-components"
-import { getDebitBefore, getNextPayDate, THEME, Credit, Debit, Info } from "../../util"
+import { getDebitBefore, getNextPayDate, THEME, Credit, Debit, Info, asMoney } from "../../util"
 import { billStruct } from "../schedule/billStruct"
 import { settingsStruct } from "../schedule/settingsStruct"
 
@@ -83,9 +83,9 @@ const BigPicture = () => {
           </Title>
           <Spacer />
           <Column align="center">
-            <h3>{ credit - debit }</h3>
-            <Credit>{ credit }</Credit>
-            <Debit>({ debit })</Debit>
+            <h3>{ asMoney(credit - debit).dollar }</h3>
+            <Credit>{ asMoney(credit).dollar }</Credit>
+            <Debit>({ asMoney(debit).dollar })</Debit>
           </Column>
         </Row>
         <Divider theme={ THEME } />

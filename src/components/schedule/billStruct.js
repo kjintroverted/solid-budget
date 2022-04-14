@@ -1,5 +1,6 @@
-import { getStringNoLocale, setStringNoLocale } from "@inrupt/solid-client";
+import { getBoolean, getStringNoLocale, setBoolean, setStringNoLocale } from "@inrupt/solid-client";
 import { FOAF, VCARD } from "@inrupt/vocab-common-rdf";
+import { getAndParse, stringifyAndSet } from "solid-core/dist/pods";
 
 export const billStruct = {
   title: {
@@ -19,7 +20,12 @@ export const billStruct = {
   },
   month: {
     predicate: VCARD.note,
-    parse: getStringNoLocale,
-    set: setStringNoLocale
+    parse: getAndParse,
+    set: stringifyAndSet
+  },
+  inactive: {
+    predicate: VCARD.hasSource,
+    parse: getBoolean,
+    set: setBoolean
   }
 }

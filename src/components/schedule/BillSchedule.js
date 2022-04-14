@@ -1,9 +1,9 @@
-import { IconButton } from "@material-ui/core";
+import { Checkbox, FormControlLabel, IconButton, Input } from "@material-ui/core";
 import { useContext, useEffect, useState } from "react";
 import { Card, CardHeader, Column, Divider, Icon, Pane, Row, Spacer } from "solid-core/dist/components/styled"
-import { deleteThing, initThing, loadAllByName, loadByName, SaveState, saveThing, setAllAttr } from "solid-core/dist/pods";
+import { addToUpdateQueue, deleteThing, initThing, loadAllByName, loadByName, SaveState, saveThing, setAllAttr } from "solid-core/dist/pods";
 import styled from "styled-components";
-import { getDebitBefore, getNextPayDate, THEME } from "../../util"
+import { asMoney, getDebitBefore, getNextPayDate, THEME } from "../../util"
 import BillForm from "./BillForm";
 import { billStruct } from "./billStruct";
 import SettingsForm from "./SettingsForm";
@@ -11,7 +11,7 @@ import { settingsStruct } from "./settingsStruct";
 
 const BillSchedule = () => {
 
-  const { dataset, setDataset, accounts } = useContext(SaveState)
+  const { dataset, setDataset, accounts, queue, updateQueue } = useContext(SaveState)
 
   const [isAdding, setIsAdding] = useState(false)
   const [danger, setDanger] = useState(false)
@@ -39,6 +39,25 @@ const BillSchedule = () => {
       { ...b, override: !b.override },
       ...bills.slice(i + 1)
     ])
+  }
+
+  function toggleActive(bill) {
+    return () => {
+      let i = bills.findIndex(b => bill.thing.url === b.thing.url)
+      let thing = setAllAttr(bill.thing, { ...bill, inactive: !bill.inactive })
+      updateQueue(addToUpdateQueue(queue, thing))
+      updateBills([...bills.slice(0, i), { ...bill, inactive: !bill.inactive, thing }, ...bills.slice(i + 1)])
+    }
+  }
+
+  function updateBill(bill, field, numeric) {
+    return e => {
+      let i = bills.findIndex(b => bill.thing.url === b.thing.url)
+      let value = numeric ? +e.target.value : e.target.value;
+      let thing = setAllAttr(bill.thing, { ...bill, [field]: value })
+      updateQueue(addToUpdateQueue(queue, thing))
+      updateBills([...bills.slice(0, i), { ...bill, [field]: value, thing }, ...bills.slice(i + 1)])
+    }
   }
 
   async function addBill(bill) {
@@ -83,23 +102,16 @@ const BillSchedule = () => {
     date = d.getDate();
     let days = [];
 
-    while (d.getMonth() === now.getMonth()) {
+    for (let i = 0; i < 3; i++) {
       days.push({
         title: "Payday",
-        credit: settings.paycheck,
+        credit: +settings.paycheck,
         date,
         month: d.getMonth() + 1,
       })
       d.setDate(date + 14);
       date = d.getDate();
     }
-
-    days.push({
-      title: "Payday",
-      credit: settings.paycheck,
-      date,
-      month: d.getMonth() + 1,
-    })
 
     return days;
   }
@@ -108,52 +120,91 @@ const BillSchedule = () => {
   function buildSchedule() {
     if (!account || !bills.length) return <></>
 
-    // GET CURR DATE INFO
-    let date = now.getDate()
-    let month = now.getMonth() + 1;
-
     let runningBalance = +account.balance;
     let minBalance = runningBalance;
 
     // GET PAYDAYS
     let paydays = buildPayDays()
 
-    // BUILD OUT EXHAUSTIVE BILL/PAYDAY LIST
-    let readout = [...bills, ...paydays]
-      .sort((a, b) => +a.date - +b.date)
-      .filter(b => !b.month || b.month === month)
-      .map(b => {
+    let readout = [];
 
-        let paid = date > +b.date;
-        paid = b.override ? !paid : paid;
+    for (let daysAdded = 0; daysAdded < 31; daysAdded++) {
+      // update date to get month and date
+      let currDate = new Date(now.getTime())
+      currDate.setDate(now.getDate() + daysAdded)
+      let month = currDate.getMonth() + 1;
 
-        if (!paid) {
-          runningBalance += b.credit ? +b.credit : -(+b.debit);
-          minBalance = runningBalance < minBalance ? runningBalance : minBalance;
+      // get list of bills for month/date
+      let dailyBills = bills
+        .filter(b => (
+          +b.date === currDate.getDate())
+          && (
+            ((!b.month || !b.month.length || +b.month === month) && !b.inactive)
+            || danger
+          ))
+        // eslint-disable-next-line
+        .map(b => {
+          runningBalance -= b.debit
+          minBalance = runningBalance < minBalance ? runningBalance : minBalance
+          return (
+            <ScheduleRow key={ b.title + b.date }>
+              <Column>
+                <Row>
+                  <DateText>{ !danger || (!b.month || !b.month.length) ? month : `(${ b.month.join('|') })` }/{ b.date }</DateText>
+                  <p className="clickable" onClick={ () => toggleBill(b) }>{ b.title }</p>
+                </Row>
+                {
+                  danger &&
+                  <FormControlLabel
+                    checked={ !b.inactive }
+                    control={ <Checkbox onChange={ toggleActive(b) } color="secondary" /> } label="Active"
+                  />
+                }
+              </Column>
+              <Spacer />
+              <Column align="flex-end">
+                {
+                  !danger ?
+                    <Debit>({ b.debit })</Debit>
+                    : <Input style={ { width: 75 } } type="number" onChange={ updateBill(b, 'debit', true) } value={ b.debit } />
+                }
+                { !danger && <p style={ { margin: 0 } }>{ asMoney(runningBalance).dollar }</p> }
+              </Column>
+              {
+                (danger && b.debit) &&
+                <IconButton onClick={ () => deleteBill(b) } color="secondary">
+                  <span className="material-icons">delete</span>
+                </IconButton>
+              }
+            </ScheduleRow>
+          )
         }
+        )
 
-        return (
-          <ScheduleRow key={ b.title + b.date } className={ paid ? 'paid' : b.credit ? 'credit' : '' }>
-            <DateText>{ month }/{ b.date }</DateText>
-            <p className="clickable" onClick={ () => toggleBill(b) }>{ b.title }</p>
+      readout = [
+        ...readout,
+        ...dailyBills
+      ]
+
+      // get payday for month/date
+      let payday = paydays.find(p => p.month === month && p.date === currDate.getDate())
+      if (payday) {
+        runningBalance += payday.credit
+        readout = [
+          ...readout,
+          <ScheduleRow key={ payday.title + payday.date } className='credit'>
+            <DateText>{ month }/{ payday.date }</DateText>
+            <p>{ payday.title }</p>
             <Spacer />
             <Column align="flex-end">
-              {
-                b.credit ?
-                  <Credit>+{ b.credit }</Credit>
-                  : <Debit>({ b.debit })</Debit>
-              }
-              { !paid && <p style={ { margin: 0 } }>{ runningBalance }</p> }
+              <Credit>({ payday.credit })</Credit>
+              <p style={ { margin: 0 } }>{ asMoney(runningBalance).dollar }</p>
             </Column>
-            {
-              (danger && b.debit) &&
-              <IconButton onClick={ () => deleteBill(b) } color="secondary">
-                <span className="material-icons">delete</span>
-              </IconButton>
-            }
           </ScheduleRow>
-        )
-      })
+        ]
+      }
+    }
+
 
     if (!settings.payday && !settings.paycheck) {
       return [
@@ -171,17 +222,9 @@ const BillSchedule = () => {
     readout = [
       <Display key="op-budget">
         <Icon className="material-icons">info</Icon>
-        Operational Budget: <b>{ availableFunds < minBalance ? availableFunds : minBalance }</b>
+        Available in { account.title }: <b>{ availableFunds < minBalance ? availableFunds : minBalance }</b>
       </Display>,
-      ...readout,
-      <Info key="next-payday">
-        <Icon className="material-icons">info</Icon>
-        Next Payday: <b>{ nextPayday.month }/{ nextPayday.date }</b>
-      </Info>,
-      <Info key="avail-funds">
-        <Icon className="material-icons">info</Icon>
-        Available Funds: <b>{ availableFunds }</b>
-      </Info>
+      ...readout
     ]
 
     return readout;
@@ -242,14 +285,6 @@ const Credit = styled.p`
 
 const Debit = styled.p`
   color: red;
-`
-
-const Info = styled.div`
-  display: flex;
-  align-items: center;
-  font-style: italic;
-  opacity: .5;
-  margin-top: .5em;
 `
 
 const Display = styled.div`
