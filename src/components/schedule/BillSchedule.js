@@ -124,7 +124,7 @@ const BillSchedule = () => {
           minBalance = runningBalance < minBalance ? runningBalance : minBalance
           return (
             <ScheduleRow key={ b.title + b.date }>
-              <DateText>{ month }/{ b.date }</DateText>
+              <DateText>{ !danger || (!b.month || !b.month.length) ? month : `(${ b.month.join('|') })` }/{ b.date }</DateText>
               <p className="clickable" onClick={ () => toggleBill(b) }>{ b.title }</p>
               <Spacer />
               <Column align="flex-end">
