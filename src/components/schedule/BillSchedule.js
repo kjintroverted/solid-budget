@@ -114,8 +114,8 @@ const BillSchedule = () => {
       let currDate = new Date(now.getTime())
       currDate.setDate(now.getDate() + daysAdded)
       let month = currDate.getMonth() + 1;
+
       // get list of bills for month/date
-      //  map to rows and add to readout
       let dailyBills = bills
         .filter(b => (+b.date === currDate.getDate()) && (!b.month || +b.month === month))
         // eslint-disable-next-line
@@ -147,9 +147,7 @@ const BillSchedule = () => {
         ...dailyBills
       ]
 
-      debugger
       // get payday for month/date
-      //  create row and add to readout
       let payday = paydays.find(p => p.month === month && p.date === currDate.getDate())
       if (payday) {
         runningBalance += payday.credit
