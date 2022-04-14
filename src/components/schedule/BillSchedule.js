@@ -1,4 +1,4 @@
-import { IconButton } from "@material-ui/core";
+import { Checkbox, FormControlLabel, IconButton } from "@material-ui/core";
 import { useContext, useEffect, useState } from "react";
 import { Card, CardHeader, Column, Divider, Icon, Pane, Row, Spacer } from "solid-core/dist/components/styled"
 import { deleteThing, initThing, loadAllByName, loadByName, SaveState, saveThing, setAllAttr } from "solid-core/dist/pods";
@@ -39,6 +39,14 @@ const BillSchedule = () => {
       { ...b, override: !b.override },
       ...bills.slice(i + 1)
     ])
+  }
+
+  function toggleActive(bill) {
+    return () => {
+      let i = bills.findIndex(b => bill.thing.url === b.thing.url)
+      debugger
+      updateBills([...bills.slice(0, i), { ...bill, inactive: !bill.inactive }, ...bills.slice(i + 1)])
+    }
   }
 
   async function addBill(bill) {
@@ -129,8 +137,19 @@ const BillSchedule = () => {
           minBalance = runningBalance < minBalance ? runningBalance : minBalance
           return (
             <ScheduleRow key={ b.title + b.date }>
-              <DateText>{ !danger || (!b.month || !b.month.length) ? month : `(${ b.month.join('|') })` }/{ b.date }</DateText>
-              <p className="clickable" onClick={ () => toggleBill(b) }>{ b.title }</p>
+              <Column>
+                <Row>
+                  <DateText>{ !danger || (!b.month || !b.month.length) ? month : `(${ b.month.join('|') })` }/{ b.date }</DateText>
+                  <p className="clickable" onClick={ () => toggleBill(b) }>{ b.title }</p>
+                </Row>
+                {
+                  danger &&
+                  <FormControlLabel
+                    checked={ !b.inactive }
+                    control={ <Checkbox onChange={ toggleActive(b) } color="secondary" /> } label="Active"
+                  />
+                }
+              </Column>
               <Spacer />
               <Column align="flex-end">
                 <Debit>({ b.debit })</Debit>
