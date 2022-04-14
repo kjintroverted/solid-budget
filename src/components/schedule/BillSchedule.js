@@ -117,7 +117,7 @@ const BillSchedule = () => {
 
       // get list of bills for month/date
       let dailyBills = bills
-        .filter(b => (+b.date === currDate.getDate()) && (!b.month || +b.month === month))
+        .filter(b => (+b.date === currDate.getDate()) && (!b.month || !b.month.length || +b.month === month || danger))
         // eslint-disable-next-line
         .map(b => {
           runningBalance -= b.debit
