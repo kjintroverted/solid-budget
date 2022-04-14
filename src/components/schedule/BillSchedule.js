@@ -1,7 +1,7 @@
 import { Checkbox, FormControlLabel, IconButton } from "@material-ui/core";
 import { useContext, useEffect, useState } from "react";
 import { Card, CardHeader, Column, Divider, Icon, Pane, Row, Spacer } from "solid-core/dist/components/styled"
-import { deleteThing, initThing, loadAllByName, loadByName, SaveState, saveThing, setAllAttr } from "solid-core/dist/pods";
+import { addToUpdateQueue, deleteThing, initThing, loadAllByName, loadByName, SaveState, saveThing, setAllAttr } from "solid-core/dist/pods";
 import styled from "styled-components";
 import { asMoney, getDebitBefore, getNextPayDate, THEME } from "../../util"
 import BillForm from "./BillForm";
@@ -11,7 +11,7 @@ import { settingsStruct } from "./settingsStruct";
 
 const BillSchedule = () => {
 
-  const { dataset, setDataset, accounts } = useContext(SaveState)
+  const { dataset, setDataset, accounts, queue, updateQueue } = useContext(SaveState)
 
   const [isAdding, setIsAdding] = useState(false)
   const [danger, setDanger] = useState(false)
@@ -44,8 +44,9 @@ const BillSchedule = () => {
   function toggleActive(bill) {
     return () => {
       let i = bills.findIndex(b => bill.thing.url === b.thing.url)
-      debugger
-      updateBills([...bills.slice(0, i), { ...bill, inactive: !bill.inactive }, ...bills.slice(i + 1)])
+      let thing = setAllAttr(bill.thing, { ...bill, inactive: !bill.inactive })
+      updateQueue(addToUpdateQueue(queue, thing))
+      updateBills([...bills.slice(0, i), { ...bill, inactive: !bill.inactive, thing }, ...bills.slice(i + 1)])
     }
   }
 
