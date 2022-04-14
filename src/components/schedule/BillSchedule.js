@@ -83,23 +83,16 @@ const BillSchedule = () => {
     date = d.getDate();
     let days = [];
 
-    while (d.getMonth() === now.getMonth()) {
+    for (let i = 0; i < 3; i++) {
       days.push({
         title: "Payday",
-        credit: settings.paycheck,
+        credit: +settings.paycheck,
         date,
         month: d.getMonth() + 1,
       })
       d.setDate(date + 14);
       date = d.getDate();
     }
-
-    days.push({
-      title: "Payday",
-      credit: settings.paycheck,
-      date,
-      month: d.getMonth() + 1,
-    })
 
     return days;
   }
@@ -108,52 +101,73 @@ const BillSchedule = () => {
   function buildSchedule() {
     if (!account || !bills.length) return <></>
 
-    // GET CURR DATE INFO
-    let date = now.getDate()
-    let month = now.getMonth() + 1;
-
     let runningBalance = +account.balance;
     let minBalance = runningBalance;
 
     // GET PAYDAYS
     let paydays = buildPayDays()
 
-    // BUILD OUT EXHAUSTIVE BILL/PAYDAY LIST
-    let readout = [...bills, ...paydays]
-      .sort((a, b) => +a.date - +b.date)
-      .filter(b => !b.month || b.month === month)
-      .map(b => {
+    let readout = [];
 
-        let paid = date > +b.date;
-        paid = b.override ? !paid : paid;
-
-        if (!paid) {
-          runningBalance += b.credit ? +b.credit : -(+b.debit);
-          minBalance = runningBalance < minBalance ? runningBalance : minBalance;
+    for (let daysAdded = 0; daysAdded < 31; daysAdded++) {
+      // update date to get month and date
+      let currDate = new Date(now.getTime())
+      currDate.setDate(now.getDate() + daysAdded)
+      let month = currDate.getMonth() + 1;
+      // get list of bills for month/date
+      //  map to rows and add to readout
+      let dailyBills = bills
+        .filter(b => (+b.date === currDate.getDate()) && (!b.month || +b.month === month))
+        // eslint-disable-next-line
+        .map(b => {
+          runningBalance -= b.debit
+          minBalance = runningBalance < minBalance ? runningBalance : minBalance
+          return (
+            <ScheduleRow key={ b.title + b.date }>
+              <DateText>{ month }/{ b.date }</DateText>
+              <p className="clickable" onClick={ () => toggleBill(b) }>{ b.title }</p>
+              <Spacer />
+              <Column align="flex-end">
+                <Debit>({ b.debit })</Debit>
+                <p style={ { margin: 0 } }>{ asMoney(runningBalance).dollar }</p>
+              </Column>
+              {
+                (danger && b.debit) &&
+                <IconButton onClick={ () => deleteBill(b) } color="secondary">
+                  <span className="material-icons">delete</span>
+                </IconButton>
+              }
+            </ScheduleRow>
+          )
         }
+        )
 
-        return (
-          <ScheduleRow key={ b.title + b.date } className={ paid ? 'paid' : b.credit ? 'credit' : '' }>
-            <DateText>{ month }/{ b.date }</DateText>
-            <p className="clickable" onClick={ () => toggleBill(b) }>{ b.title }</p>
+      readout = [
+        ...readout,
+        ...dailyBills
+      ]
+
+      debugger
+      // get payday for month/date
+      //  create row and add to readout
+      let payday = paydays.find(p => p.month === month && p.date === currDate.getDate())
+      if (payday) {
+        runningBalance += payday.credit
+        readout = [
+          ...readout,
+          <ScheduleRow key={ payday.title + payday.date } className='credit'>
+            <DateText>{ month }/{ payday.date }</DateText>
+            <p>{ payday.title }</p>
             <Spacer />
             <Column align="flex-end">
-              {
-                b.credit ?
-                  <Credit>+{ b.credit }</Credit>
-                  : <Debit>({ b.debit })</Debit>
-              }
-              { !paid && <p style={ { margin: 0 } }>{ asMoney(runningBalance).dollar }</p> }
+              <Credit>({ payday.credit })</Credit>
+              <p style={ { margin: 0 } }>{ asMoney(runningBalance).dollar }</p>
             </Column>
-            {
-              (danger && b.debit) &&
-              <IconButton onClick={ () => deleteBill(b) } color="secondary">
-                <span className="material-icons">delete</span>
-              </IconButton>
-            }
           </ScheduleRow>
-        )
-      })
+        ]
+      }
+    }
+
 
     if (!settings.payday && !settings.paycheck) {
       return [
@@ -173,15 +187,7 @@ const BillSchedule = () => {
         <Icon className="material-icons">info</Icon>
         Available in { account.title }: <b>{ availableFunds < minBalance ? availableFunds : minBalance }</b>
       </Display>,
-      ...readout,
-      <Info key="next-payday">
-        <Icon className="material-icons">info</Icon>
-        Next Payday: <b>{ nextPayday.month }/{ nextPayday.date }</b>
-      </Info>,
-      <Info key="avail-funds">
-        <Icon className="material-icons">info</Icon>
-        Available Funds (EOM): <b>{ asMoney(availableFunds).dollar }</b>
-      </Info>
+      ...readout
     ]
 
     return readout;
@@ -242,14 +248,6 @@ const Credit = styled.p`
 
 const Debit = styled.p`
   color: red;
-`
-
-const Info = styled.div`
-  display: flex;
-  align-items: center;
-  font-style: italic;
-  opacity: .5;
-  margin-top: .5em;
 `
 
 const Display = styled.div`
