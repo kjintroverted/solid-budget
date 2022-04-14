@@ -1,4 +1,4 @@
-import { Checkbox, FormControlLabel, IconButton } from "@material-ui/core";
+import { Checkbox, FormControlLabel, IconButton, Input } from "@material-ui/core";
 import { useContext, useEffect, useState } from "react";
 import { Card, CardHeader, Column, Divider, Icon, Pane, Row, Spacer } from "solid-core/dist/components/styled"
 import { addToUpdateQueue, deleteThing, initThing, loadAllByName, loadByName, SaveState, saveThing, setAllAttr } from "solid-core/dist/pods";
@@ -47,6 +47,16 @@ const BillSchedule = () => {
       let thing = setAllAttr(bill.thing, { ...bill, inactive: !bill.inactive })
       updateQueue(addToUpdateQueue(queue, thing))
       updateBills([...bills.slice(0, i), { ...bill, inactive: !bill.inactive, thing }, ...bills.slice(i + 1)])
+    }
+  }
+
+  function updateBill(bill, field, numeric) {
+    return e => {
+      let i = bills.findIndex(b => bill.thing.url === b.thing.url)
+      let value = numeric ? +e.target.value : e.target.value;
+      let thing = setAllAttr(bill.thing, { ...bill, [field]: value })
+      updateQueue(addToUpdateQueue(queue, thing))
+      updateBills([...bills.slice(0, i), { ...bill, [field]: value, thing }, ...bills.slice(i + 1)])
     }
   }
 
@@ -153,8 +163,12 @@ const BillSchedule = () => {
               </Column>
               <Spacer />
               <Column align="flex-end">
-                <Debit>({ b.debit })</Debit>
-                <p style={ { margin: 0 } }>{ asMoney(runningBalance).dollar }</p>
+                {
+                  !danger ?
+                    <Debit>({ b.debit })</Debit>
+                    : <Input style={ { width: 75 } } type="number" onChange={ updateBill(b, 'debit', true) } value={ b.debit } />
+                }
+                { !danger && <p style={ { margin: 0 } }>{ asMoney(runningBalance).dollar }</p> }
               </Column>
               {
                 (danger && b.debit) &&
