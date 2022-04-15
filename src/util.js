@@ -46,6 +46,6 @@ export function getNextPayDate(basePayDate, date, inclusive) {
 
 export function getDebitBefore(bills, date, month) {
   return bills
-    .filter(b => (+b.date <= date) && (!b.month || b.month === month))
+    .filter(b => (+b.date <= date) && (!b.month || !b.month.length || b.month.includes(month)))
     .reduce((prev, curr) => +curr.debit + prev, 0)
 }

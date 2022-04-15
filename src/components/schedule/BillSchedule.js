@@ -139,7 +139,7 @@ const BillSchedule = () => {
         .filter(b => (
           +b.date === currDate.getDate())
           && (
-            ((!b.month || !b.month.length || +b.month === month) && !b.inactive)
+            ((!b.month || !b.month.length || b.month.includes(month)) && !b.inactive)
             || danger
           ))
         // eslint-disable-next-line
