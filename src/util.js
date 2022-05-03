@@ -44,8 +44,8 @@ export function getNextPayDate(basePayDate, date, inclusive) {
   return !dayDiff && inclusive ? date.getDate() : date.getDate() + 14 - dayDiff;
 }
 
-export function getDebitBefore(bills, date, month) {
+export function getDebitBefore(bills, start, end, month) {
   return bills
-    .filter(b => (+b.date <= date) && (!b.month || !b.month.length || b.month.includes(month)))
+    .filter(b => (+b.date >= start && +b.date <= end) && (!b.month || !b.month.length || b.month.includes(month)))
     .reduce((prev, curr) => +curr.debit + prev, 0)
 }

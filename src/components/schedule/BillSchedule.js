@@ -128,7 +128,8 @@ const BillSchedule = () => {
 
     let readout = [];
 
-    for (let daysAdded = 0; daysAdded < 31; daysAdded++) {
+    let daysAdded;
+    for (daysAdded = 0; daysAdded < 31; daysAdded++) {
       // update date to get month and date
       let currDate = new Date(now.getTime())
       currDate.setDate(now.getDate() + daysAdded)
@@ -216,8 +217,10 @@ const BillSchedule = () => {
       ]
     }
 
+    let currDate = new Date(now.getTime())
+    currDate.setDate(now.getDate() + daysAdded)
     let nextPayday = paydays[paydays.length - 1];
-    let availableFunds = runningBalance - getDebitBefore(bills, nextPayday.date, nextPayday.month)
+    let availableFunds = runningBalance - getDebitBefore(bills, currDate.getDate(), nextPayday.date, nextPayday.month)
 
     readout = [
       <Display key="op-budget">

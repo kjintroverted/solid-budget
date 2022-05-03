@@ -66,7 +66,7 @@ const BigPicture = () => {
     while (month !== now.getMonth()) {
       let credit = +settings.paycheck * paydays[MONTHS[month]];
       totalCredit += credit;
-      let debit = getDebitBefore(bills, 31, month + 1)
+      let debit = getDebitBefore(bills, 0, 31, month + 1)
       totalDebit += debit;
 
       readout = [...readout,
