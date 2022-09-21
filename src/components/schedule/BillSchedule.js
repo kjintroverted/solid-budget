@@ -11,7 +11,7 @@ import { settingsStruct } from "./settingsStruct";
 
 const BillSchedule = () => {
 
-  const { dataset, setDataset, accounts, queue, updateQueue } = useContext(SaveState)
+  const { dataset, setDataset, accounts, buckets, queue, updateQueue } = useContext(SaveState)
 
   const [isAdding, setIsAdding] = useState(false)
   const [danger, setDanger] = useState(false)
@@ -19,6 +19,7 @@ const BillSchedule = () => {
   const [editSettings, setEditSettings] = useState(false)
   const [bills, updateBills] = useState([]);
   const [account, updateAccount] = useState(null);
+  const [primaryBuckets, updatePrimaryBuckets] = useState(null);
   const [now] = useState(new Date());
 
   useEffect(() => {
@@ -30,6 +31,10 @@ const BillSchedule = () => {
   useEffect(() => {
     if (accounts) updateAccount(accounts.find(a => a.primary))
   }, [accounts])
+
+  useEffect(() => {
+    if (account && buckets) updatePrimaryBuckets(buckets.filter(b => b.account === account.title))
+  }, [account, buckets])
 
   function toggleBill(b) {
     if (!b.thing) return
@@ -120,7 +125,8 @@ const BillSchedule = () => {
   function buildSchedule() {
     if (!account || !bills.length) return <></>
 
-    let runningBalance = +account.balance;
+    let bucketSum = primaryBuckets ? primaryBuckets.reduce((sum, next) => +next.balance + sum, 0) : 0;
+    let runningBalance = +account.balance - bucketSum;
     let minBalance = runningBalance;
 
     // GET PAYDAYS

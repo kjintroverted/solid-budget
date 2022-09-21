@@ -10,7 +10,7 @@ import BucketView from "./BucketView"
 
 const Buckets = ({ onUpdate }) => {
 
-  const { updateQueue, queue, dataset, setDataset } = useContext(SaveState)
+  const { updateQueue, queue, dataset, setDataset, setBuckets } = useContext(SaveState)
 
   const [isAdding, setIsAdding] = useState(false)
   const [show, setShow] = useState(false)
@@ -19,13 +19,15 @@ const Buckets = ({ onUpdate }) => {
 
   useEffect(() => {
     if (!dataset) return
+    let bucketData = loadAllByName(dataset, 'bucket', bucketStruct);
+    setBuckets(bucketData)
     updateBuckets(
-      loadAllByName(dataset, 'bucket', bucketStruct)
+      bucketData
         .sort((a, b) => a.name.localeCompare(b.name))
         .sort(a => a.pinned ? -1 : 0)
     )
     setAccounts(loadAllByName(dataset, 'account', accountStruct))
-  }, [dataset])
+  }, [dataset, setBuckets])
 
   async function addBucket(b) {
     setIsAdding(false)

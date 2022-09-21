@@ -26,6 +26,7 @@ function App() {
   const [err, setError] = useState();
   const [dataset, setDataset] = useState();
   const [accounts, setAccounts] = useState();
+  const [buckets, setBuckets] = useState();
   const [queue, updateQueue] = useState([]);
   // PROFILE STATE
   const [user, setUser] = useState();
@@ -80,7 +81,9 @@ function App() {
       dataset,
       setDataset,
       accounts,
-      setAccounts
+      setAccounts,
+      buckets,
+      setBuckets
     } }>
       <AppTheme.Provider value={ { ...THEME, mui } }>
         <mui.ThemeProvider theme={ muiTheme }>
